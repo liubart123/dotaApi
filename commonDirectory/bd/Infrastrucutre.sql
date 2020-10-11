@@ -1,5 +1,6 @@
   show user;
   alter session set container=CDB$ROOT;
+  alter session set container=pdb_kurs;
   
   select * from dba_users;
 
@@ -13,6 +14,7 @@ create user pdb_kurs_admin2 identified  by password;
 grant resource, connect, DBA to pdb_kurs_admin2;
 alter user pdb_kurs_admin2 default role all;
 
+
 --removing pdb
 alter session set container=cdb$root;
 alter pluggable database pdb_kurs close immediate;
@@ -23,6 +25,7 @@ drop pluggable database pdb_kurs including datafiles;
 
 create tablespace main_ts datafile 'C:\kp\tablespaces\main_ts3.dbf' SIZE 50M AUTOEXTEND on maxsize unlimited  online extent management local;
 
+alter user pdb_kurs_admin2 default tablespace main_ts;
 
 
 --create tablespace main_ts datafile 'C:\kp\tablespaces\main_ts2.dbf' size 50m AUTOEXTEND on maxsize unlimited  online;

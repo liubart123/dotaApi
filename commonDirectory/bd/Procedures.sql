@@ -1,17 +1,18 @@
-insert into HEROES values 
-  (12345, 'hero1', 'desc1');
+insert into ITEMS values 
+  (12345, 'item1', 'desc1');
+select * from ITEMS;
+truncate table ITEMS;
 
-  /
-create procedure INSERT_HERO 
-  (hero_id in INT, hero_name in varchar2, hero_description in varchar2) IS
+create procedure INSERT_ITEM 
+  (item_id in INT, item_name in varchar2, item_description in varchar2) IS
   begin
-    insert into HEROES (id, name, description)
+    insert into ITEMS (id, name, description)
     values 
-      (hero_id, hero_name, hero_description);
+      (item_id, item_name, item_description);
   end;
 /
-drop procedure INSERT_HERO;
+drop procedure INSERT_ITEM;
 /
 begin
-  INSERT_HERO(12346, 'hero2', 'desc2');
+  INSERT_ITEM(12346, 'hero2', 'desc2');
 end;
