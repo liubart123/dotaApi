@@ -122,16 +122,18 @@ ALTER TABLE Skills ADD CONSTRAINT Skills_fk0 FOREIGN KEY (hero_id) REFERENCES He
 --SELECT * FROM USER_CONSTRAINTS WHERE owner = 'PDB_KURS_ADMIN2';
 --alter session set container=  pdb_kurs;
 --select * from Mathces;
---drop table Skills purge;
---drop table PlayerMatchTimeStat purge;
---drop table BoughtItems purge;
---drop table Items purge;
---drop table Heroes purge;
---drop table PlayersMatches purge;
---drop table PLAYERS purge;
---drop table Players purge;
---drop table Matches purge;
---drop table Roles purge;
+drop table Skills CASCADE CONSTRAINTS purge;
+drop table PlayerMatchTimeStat CASCADE CONSTRAINTS purge;
+drop table BoughtItems CASCADE CONSTRAINTS purge;
+drop table ITEMS CASCADE CONSTRAINTS purge;
+drop table Heroes CASCADE CONSTRAINTS purge;
+drop table PlayersMatches CASCADE CONSTRAINTS purge;
+drop table PLAYERS CASCADE CONSTRAINTS purge;
+drop table SkillBuilds CASCADE CONSTRAINTS purge;
+drop table Players purge;
+drop table Matches purge;
+drop sequence PLAYERSMATCHES_PK_SEQ;
+drop table Roles purge;
 
 
 

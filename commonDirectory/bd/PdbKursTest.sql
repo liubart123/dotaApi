@@ -19,6 +19,8 @@ ALTER PLUGGABLE DATABASE pdb_kurs
 select distinct object_type from dba_objects ;
 select * from dictionary where table_name like '%proc';
 
+--all objects of user
+select * from dba_objects where owner = 'PDB_KURS_ADMIN2';
 --procedures
 select * from dba_objects where object_type = 'PROCEDURE' and owner = 'PDB_KURS_ADMIN2';
 

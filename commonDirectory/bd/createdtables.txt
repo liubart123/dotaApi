@@ -1,0 +1,15 @@
+"Matches"
+"Players"
+"PlayersMatches" 
+"Heroes"
+"Items"
+"BoughtItems"
+"PlayerMatchTimeStat"
+"Roles"
+"HeroesRoles"
+
+
+
+
+"PLAYERSMATCHES_PLAYER_MATCH_ID_SEQ"
+"ROLES_ID_SEQ"

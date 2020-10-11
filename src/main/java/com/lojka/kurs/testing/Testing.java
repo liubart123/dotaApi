@@ -21,33 +21,33 @@ import java.io.StringWriter;
 @Slf4j
 public class Testing {
     //db access test
-//    static {
-//        IDbRepository rep = new OracleDbRepository();
-//        try {
-//            IDotaDataResource dataResource;
-//            dataResource = new OpenDotaDataResource();
-//            //Hero[] heroes = dataResource.getAllHeroes();
-//            Item[] items = dataResource.getAllItems();
-//            rep.getConnection();
-//        } catch (DbAccessException e) {
-//            e.printStackTrace();
-//        } catch (DotaDataAccessException e) {
-//            e.printStackTrace();
-//        }
-//    }
-    //get requests from dotaapi
     static {
-        IDotaDataResource dataResource;
-        dataResource = new OpenDotaDataResource();
-        log.info("testing...");
+        IDbRepository rep = new OracleDbRepository();
         try {
-            //Match m1 = dataResource.getMatch(-1l);
-            Match m = dataResource.getRecentMatches()[0];
-            Object ads =  null;
+            IDotaDataResource dataResource;
+            dataResource = new OpenDotaDataResource();
+            Hero[] heroes = dataResource.getAllHeroes();
+            //Item[] items = dataResource.getAllItems();
+            rep.getConnection();
+        } catch (DbAccessException e) {
+            e.printStackTrace();
         } catch (DotaDataAccessException e) {
             e.printStackTrace();
         }
     }
+    //get requests from dotaapi
+//    static {
+//        IDotaDataResource dataResource;
+//        dataResource = new OpenDotaDataResource();
+//        log.info("testing...");
+//        try {
+//            //Match m1 = dataResource.getMatch(-1l);
+//            Match m = dataResource.getRecentMatches()[0];
+//            Object ads =  null;
+//        } catch (DotaDataAccessException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     //to get json to create oracle table
 //    static {

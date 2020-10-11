@@ -4,12 +4,16 @@ public class Item {
     Integer id;
     String description;
     String name;
+    String keyName;
 
-    public Item(Integer id, String description, String name) {
-        this.id = id;
-        this.description = description;
-        this.name = name;
+    public String getKeyName() {
+        return keyName;
     }
+
+    public void setKeyName(String keyName) {
+        this.keyName = keyName;
+    }
+
 
     public Item() {
     }

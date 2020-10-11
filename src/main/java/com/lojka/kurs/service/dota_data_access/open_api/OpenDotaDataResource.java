@@ -6,6 +6,7 @@ import com.lojka.kurs.model.HeroRole;
 import com.lojka.kurs.model.Item;
 import com.lojka.kurs.model.Match;
 import com.lojka.kurs.service.dota_data_access.IDotaDataResource;
+import com.lojka.kurs.service.factory.HeroRoleFactory;
 import org.json.*;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -23,6 +24,8 @@ public class OpenDotaDataResource implements IDotaDataResource {
     static String recentProMatchesUrl = "proMatches";
     static String heroesUrl = "constants/heroes";
     static String items = "constants/items";
+
+
     private String getQueryUrl(String param) throws DotaDataAccessException{
         switch (param){
             case "match" : return basicUrl + matchUrl;
@@ -140,7 +143,9 @@ public class OpenDotaDataResource implements IDotaDataResource {
         if (jsonHeroes.getStatusCode() == HttpStatus.OK) {
             JSONObject jsonObject = new JSONObject(jsonHeroes.getBody());
             Map<String,Object> map = jsonObject.toMap();
-            Hero[] result = new Hero[map.size()];
+            Hero[] result = new Hero[map.size()+50];
+//            Hero[] result = new Hero[map.size()];
+
             Object[] keys = (Object[])(map.keySet().toArray());
             for (int i=0;i<map.size();i++){
                 Hero hero = new Hero();
@@ -150,10 +155,11 @@ public class OpenDotaDataResource implements IDotaDataResource {
                 List<HeroRole> roles = new ArrayList<>();
                 for (String role:
                         (ArrayList<String>)heroAttributes.get("roles")) {
-                    roles.add(new HeroRole(role));
+                    roles.add(HeroRoleFactory.createRole(role));
                 }
                 hero.setRoles(roles);
-                result[i] = hero;
+                result[hero.getId()] = hero;
+//                result[i] = hero;
             }
             return result;
         } else {
@@ -184,6 +190,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
                 Map<String, Object> itemAttributes = (Map<String, Object>)map.get(keys[i]);
                 item.setId((Integer)itemAttributes.get("id"));
                 item.setName((String)itemAttributes.get("dname"));
+                item.setKeyName((String)keys[i]);
                 String desc = "";
                 ArrayList<String> hints = (ArrayList<String>)itemAttributes.get("hint");
                 if (hints!=null){
@@ -213,5 +220,10 @@ public class OpenDotaDataResource implements IDotaDataResource {
         } else {
             throw new DotaDataAccessException("request failed");
         }
+    }
+
+    @Override
+    public List<HeroRole> getAllHeroRoles() throws DotaDataAccessException {
+        return HeroRoleFactory.getRoles();
     }
 }

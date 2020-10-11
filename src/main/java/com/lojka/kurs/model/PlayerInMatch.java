@@ -5,8 +5,6 @@ import java.io.Serializable;
 public class PlayerInMatch implements Serializable {
     public Integer hero_id;
     public Long match_id;
-    public Integer[] ability_upgrades_arr;
-    public SkillBuild skillBuild;
     public Long account_id;
     public Integer assists, deaths, kills,towers_killed,courier_kills,observer_kills,sentry_kills,lane_role;
     //public Integer  gold, gold_per_min,xp_per_min, total_gold,total_xp,actions_per_mindenies,ancient_kills,last_hits;
@@ -16,7 +14,6 @@ public class PlayerInMatch implements Serializable {
     public Integer[] lh_t,xp_t;
 
     public Integer hero_damage, hero_healing,tower_damage;
-    public Short item_0,item_1,item_2,item_3,item_4,item_5,item_neutral;
     public Integer level, observer_uses, sentry_uses;
     public Integer lane_efficiency_pct;
     public Integer stuns;
