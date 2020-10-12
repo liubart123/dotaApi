@@ -6,10 +6,12 @@ import com.lojka.kurs.repository.IDbRepository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
 public class OracleDbRepository implements IDbRepository {
+    static String sqlInsertItems =  "begin INSERT_ITEM(?, ?, ?); end;";
     Connection connection;
     @Override
     public void setDbConnection(Connection c) {
@@ -26,12 +28,20 @@ public class OracleDbRepository implements IDbRepository {
     }
 
     @Override
-    public void insertItems(Item[] items) {
+    public void updateItems(Item[] items) {
+        Integer i =0;
         try {
-            PreparedStatement ps = connection.prepareStatement("begin\n" +
-                    "  INSERT_ITEM(12346, 'hero2', 'desc2');\n" +
-                    "end;");
-            ps.executeUpdate();
+            for (i=0;i<items.length;i++){
+                PreparedStatement ps = connection.prepareStatement(sqlInsertItems);
+                ps.setInt(1,items[i].getId());
+                if (items[i].getName()==null || items[i].getName()==""){
+                    ps.setString(2,items[i].getKeyName());
+                }else {
+                    ps.setString(2,items[i].getName());
+                }
+                ps.setString(3,items[i].getDescription());
+                ps.close();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }

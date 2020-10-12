@@ -6,7 +6,6 @@ import com.lojka.kurs.model.Item;
 import com.lojka.kurs.repository.IDbConnector;
 import com.lojka.kurs.repository.IDbRepository;
 import com.lojka.kurs.repository.oracle.OracleDbConnector;
-import com.lojka.kurs.repository.oracle.OracleDbRepository;
 import com.lojka.kurs.service.dota_data_access.IDotaDataResource;
 import com.lojka.kurs.service.dota_data_access.open_api.OpenDotaDataResource;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ public class Testing {
             //Hero[] heroes = dataResource.getAllHeroes();
             Item[] items = dataResource.getAllItems();
             IDbRepository rep = connector.getRepository();
-            rep.insertItems(items);
+            rep.updateItems(items);
         } catch (DbAccessException e) {
             e.printStackTrace();
         } catch (DotaDataAccessException e) {

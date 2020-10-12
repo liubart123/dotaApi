@@ -10,5 +10,5 @@ public interface IDbRepository {
     void setDbConnection(Connection c);
     void insertHeroesData(Hero[] heroes);
     List<Hero> getHeroes();
-    void insertItems(Item[] items);
+    void updateItems(Item[] items);
 }

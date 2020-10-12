@@ -199,7 +199,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
                         desc += hint + "\n";
                     }
                 }
-                desc += itemAttributes.get("notes");
+                desc += "\n" + itemAttributes.get("notes");
 
                 ArrayList<Map<String,Object>> attributes = (ArrayList<Map<String,Object>> )itemAttributes.get("attrib");
                 for (Map<String,Object> atr:

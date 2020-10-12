@@ -61,9 +61,11 @@ CREATE TABLE Heroes (
 CREATE TABLE Items (
 	id INT NOT NULL,
 	name VARCHAR2(40) NOT NULL,
-	description VARCHAR2(255) NOT NULL,
+	description VARCHAR2(500) NOT NULL,
 	constraint ITEMS_PK PRIMARY KEY (id));
 
+
+--alter table Items modify description VARCHAR2(500);
 
 /
 CREATE TABLE BoughtItems (
@@ -102,8 +104,9 @@ ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk2 FOREIGN KEY (hero_i
 
 
 
-ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk0 FOREIGN KEY (item_id) REFERENCES Items(id);
---ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk0 FOREIGN KEY (item_id) REFERENCES Items(id) on delete cascade;
+--ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk0 FOREIGN KEY (item_id) REFERENCES Items(id);
+ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk0 FOREIGN KEY (item_id) REFERENCES Items(id) on delete cascade;
+--alter table BoughtItems drop constraint BoughtItems_fk0 ;
 --ALTER TABLE BoughtItems drop CONSTRAINT BoughtItems_fk0;
 
 ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk1 FOREIGN KEY (player_match_id) REFERENCES PlayersMatches(player_match_id);
@@ -115,8 +118,6 @@ ALTER TABLE HeroesRoles ADD CONSTRAINT HeroesRoles_fk0 FOREIGN KEY (hero_id) REF
 ALTER TABLE HeroesRoles ADD CONSTRAINT HeroesRoles_fk1 FOREIGN KEY (role_id) REFERENCES Roles(id);
 
 
-
-  
 
 drop table Matches cascade constraints purge;
 drop table Players cascade constraints purge;
