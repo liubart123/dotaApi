@@ -65,7 +65,7 @@ CREATE TABLE Items (
 	constraint ITEMS_PK PRIMARY KEY (id));
 
 
---alter table Items modify description VARCHAR2(500);
+--alter table Items modify description VARCHAR2(1000);
 
 /
 CREATE TABLE BoughtItems (

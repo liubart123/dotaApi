@@ -5,7 +5,7 @@ import com.lojka.kurs.model.HeroRole;
 import java.util.ArrayList;
 
 public class HeroRoleFactory {
-    static ArrayList<HeroRole> roles;
+    static ArrayList<HeroRole> roles = new ArrayList<>();
     static Integer id=0;
 
 

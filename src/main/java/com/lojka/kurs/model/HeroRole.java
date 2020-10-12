@@ -13,6 +13,9 @@ public class HeroRole implements Serializable {
 
     Integer id = 0;
 
+    public HeroRole() {
+    }
+
     public Integer getId() {
         return id;
     }
