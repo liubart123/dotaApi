@@ -1,7 +1,7 @@
-
+---------------------------------ITEMS
 
 create procedure INSERT_ITEM 
-  (item_id in INT, item_name in varchar2, item_description in varchar2) IS
+  (item_id in INT, item_name in varchar2, item_description in varchar2, item_key_name in varchar2) IS
   exist PLS_INTEGER;
   begin
     SELECT COUNT(1)
@@ -10,11 +10,11 @@ create procedure INSERT_ITEM
      WHERE id = item_id
        AND ROWNUM = 1;
     if exist = 1 then
-      update ITEMS set  name = item_name,description = item_description where id=item_id;
+      update ITEMS set  name = item_name,description = item_description, key_name = item_key_name where id=item_id;
     else 
-        insert into ITEMS (id, name, description)
+        insert into ITEMS (id, name, description, key_name)
       values 
-        (item_id, item_name, item_description);
+        (item_id, item_name, item_description, item_key_name);
     end if;
   end;
 /
@@ -24,6 +24,8 @@ begin
   INSERT_ITEM(1, 'her', 'desc2');
 end;
 /
+--------------------------------------------HERO ROLE
+
 create procedure INSERT_HERO_ROLE 
   (role_id in INT, role_name in varchar2) IS
   exist PLS_INTEGER;
@@ -45,6 +47,39 @@ create procedure INSERT_HERO_ROLE
 drop procedure INSERT_HERO_ROLE;
 /
 
+--uniting heroes and role_hero
+create procedure INSERT_HEROES_ROLES
+  (phero_id in INT, prole_id in INT) IS
+  exist PLS_INTEGER;
+  begin
+    SELECT COUNT(1)
+      INTO exist
+      FROM HeroesRoles
+     WHERE hero_id = phero_id and role_id = prole_id
+       AND ROWNUM = 1;
+    if exist <> 1 then
+        insert into HeroesRoles (hero_id, role_id)
+      values 
+        (phero_id, prole_id);
+    end if;
+  end;
+/
+drop procedure INSERT_HEROES_ROLES;
+/
+create procedure CLEAR_HEROES_ROLES
+  is
+  begin
+    execute immediate 'truncate table HeroesRoles';
+  end;
+/
+drop procedure CLEAR_HEROES_ROLES;
+/
+begin 
+  CLEAR_HEROES_ROLES;
+end;
+/
+--------------------------------------------HERO ROLE
+/
 create procedure INSERT_HERO 
   (hero_id in INT, hero_name in varchar2) IS
   exist PLS_INTEGER;
@@ -72,3 +107,7 @@ end;
 begin
   INSERT_HERO_ROLE(1, 'herorole1');
 end;
+
+
+/
+

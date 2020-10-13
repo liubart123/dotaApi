@@ -62,9 +62,10 @@ CREATE TABLE Items (
 	id INT NOT NULL,
 	name VARCHAR2(40) NOT NULL,
 	description VARCHAR2(500) NOT NULL,
+  key_name varchar(50),
 	constraint ITEMS_PK PRIMARY KEY (id));
 
-
+--alter table Items add key_name varchar(50);
 --alter table Items modify description VARCHAR2(1000);
 
 /
@@ -93,7 +94,6 @@ CREATE TABLE Roles (
 CREATE TABLE HeroesRoles (
 	hero_id INT NOT NULL,
 	role_id INT NOT NULL);
-
 
 /
 

@@ -25,9 +25,9 @@ public class Testing {
             IDotaDataResource dataResource;
             dataResource = new OpenDotaDataResource();
             Hero[] heroes = dataResource.getAllHeroes();
-            //Item[] items = dataResource.getAllItems();
+            Item[] items = dataResource.getAllItems();
             IDbRepository rep = connector.getRepository();
-            //rep.updateItems(items);
+            rep.updateItems(items);
             HeroRole[] roles = HeroRoleFactory.getRoles().toArray(new HeroRole[0]);
             rep.updateHeroRoles(roles);
             rep.updateHeroes(heroes);
