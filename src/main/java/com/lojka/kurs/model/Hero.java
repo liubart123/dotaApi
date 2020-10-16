@@ -1,13 +1,14 @@
 package com.lojka.kurs.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Hero implements Serializable {
     Integer id;
     String name;
     String description;
-    List<HeroRole> roles;
+    List<HeroRole> roles = new ArrayList<>();
 
     public Integer getId() {
         return id;

@@ -1,0 +1,5 @@
+create service for interaction with db and api (functions that will be called from controllers)
+create exceptions for services
+get matches from db
+
+OLAP

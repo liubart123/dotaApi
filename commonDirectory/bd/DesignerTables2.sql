@@ -5,11 +5,11 @@ CREATE TABLE Matches (
 	radiant_score INT NOT NULL,
 	skill INT,
 	version INT,
-	win BLOB NOT NULL,
+	win NUMBER(1) CHECK (win IN (1,0)) NOT NULL,
 	constraint MATCHES_PK PRIMARY KEY (id));
-
-
 /
+--drop table Matches purge;
+
 CREATE TABLE Players (
 	id NUMBER(9, 0) NOT NULL,
 	constraint PLAYERS_PK PRIMARY KEY (id));
@@ -100,6 +100,7 @@ CREATE TABLE HeroesRoles (
 
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk0 FOREIGN KEY (player_id) REFERENCES Players(id);
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk1 FOREIGN KEY (match_id) REFERENCES Matches(id);
+--alter table PlayersMatches drop constraint PlayersMatches_fk1;
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk2 FOREIGN KEY (hero_id) REFERENCES Heroes(id);
 
 

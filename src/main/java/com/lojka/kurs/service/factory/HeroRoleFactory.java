@@ -3,7 +3,7 @@ package com.lojka.kurs.service.factory;
 import com.lojka.kurs.model.HeroRole;
 
 import java.util.ArrayList;
-
+//get existing instance of role, or create new one, if same instance doesnt exist
 public class HeroRoleFactory {
     static ArrayList<HeroRole> roles = new ArrayList<>();
     static Integer id=0;

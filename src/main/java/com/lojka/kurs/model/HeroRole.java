@@ -5,13 +5,13 @@ import java.util.Objects;
 
 public class HeroRole implements Serializable {
     String roleName;
+    Integer id = 0;
 
     public HeroRole(String roleName, Integer id) {
         this.roleName = roleName;
         this.id = id;
     }
 
-    Integer id = 0;
 
     public HeroRole() {
     }

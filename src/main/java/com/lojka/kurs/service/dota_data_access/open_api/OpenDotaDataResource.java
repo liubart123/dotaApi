@@ -143,7 +143,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
         if (jsonHeroes.getStatusCode() == HttpStatus.OK) {
             JSONObject jsonObject = new JSONObject(jsonHeroes.getBody());
             Map<String,Object> map = jsonObject.toMap();
-            Hero[] result = new Hero[map.size()+50];
+            Hero[] result = new Hero[map.size()];
 //            Hero[] result = new Hero[map.size()];
 
             Object[] keys = (Object[])(map.keySet().toArray());
@@ -158,8 +158,8 @@ public class OpenDotaDataResource implements IDotaDataResource {
                     roles.add(HeroRoleFactory.createRole(role));
                 }
                 hero.setRoles(roles);
-                result[hero.getId()] = hero;
-//                result[i] = hero;
+                //result[hero.getId()] = hero;
+                result[i] = hero;
             }
             return result;
         } else {

@@ -1,6 +1,6 @@
 ---------------------------------ITEMS
 
-create procedure INSERT_ITEM 
+create or replace procedure INSERT_ITEM 
   (item_id in INT, item_name in varchar2, item_description in varchar2, item_key_name in varchar2) IS
   exist PLS_INTEGER;
   begin
@@ -18,15 +18,21 @@ create procedure INSERT_ITEM
     end if;
   end;
 /
-drop procedure INSERT_ITEM;
+--drop procedure INSERT_ITEM;
 /
 begin
   INSERT_ITEM(1, 'her', 'desc2');
 end;
 /
+create or replace procedure SELECT_ITEMS(curs out SYS_REFCURSOR) is
+  begin
+    open curs for select * from ITEMS;
+  end;
+/
+select * from ITEMS order by id desc;
 --------------------------------------------HERO ROLE
 
-create procedure INSERT_HERO_ROLE 
+create or replace procedure INSERT_HERO_ROLE 
   (role_id in INT, role_name in varchar2) IS
   exist PLS_INTEGER;
   begin
@@ -44,11 +50,17 @@ create procedure INSERT_HERO_ROLE
     end if;
   end;
 /
-drop procedure INSERT_HERO_ROLE;
+create or replace procedure SELECT_HERO_ROLES(curs out SYS_REFCURSOR) is
+  begin
+    open curs for select * from Roles;
+  end;
+/
+select * from Roles;
+--drop procedure INSERT_HERO_ROLE;
 /
 
 --uniting heroes and role_hero
-create procedure INSERT_HEROES_ROLES
+create or replace procedure INSERT_HEROES_ROLES
   (phero_id in INT, prole_id in INT) IS
   exist PLS_INTEGER;
   begin
@@ -64,23 +76,29 @@ create procedure INSERT_HEROES_ROLES
     end if;
   end;
 /
-drop procedure INSERT_HEROES_ROLES;
+create or replace procedure SELECT_HEROES_ROLES(curs out SYS_REFCURSOR) is
+  begin
+    open curs for select * from HeroesRoles;
+  end;
 /
-create procedure CLEAR_HEROES_ROLES
+select * from HeroesRoles ;
+--drop procedure INSERT_HEROES_ROLES;
+/
+create or replace procedure CLEAR_HEROES_ROLES
   is
   begin
     execute immediate 'truncate table HeroesRoles';
   end;
 /
-drop procedure CLEAR_HEROES_ROLES;
+--drop procedure CLEAR_HEROES_ROLES;
 /
 begin 
-  CLEAR_HEROES_ROLES;
+  --CLEAR_HEROES_ROLES;
 end;
 /
 --------------------------------------------HERO ROLE
-/
-create procedure INSERT_HERO 
+
+create or replace procedure INSERT_HERO 
   (hero_id in INT, hero_name in varchar2) IS
   exist PLS_INTEGER;
   begin
@@ -98,14 +116,20 @@ create procedure INSERT_HERO
     end if;
   end;
 /
-drop procedure INSERT_HERO;
+create or replace procedure SELECT_HEROES(curs out SYS_REFCURSOR) is
+  begin
+    open curs for select * from Heroes;
+  end;
+/
+select * from Heroes;
+--drop procedure INSERT_HERO;
 /
 begin
-  INSERT_HERO(1, 'hero1');
+  --INSERT_HERO(1, 'hero1');
 end;
 /
 begin
-  INSERT_HERO_ROLE(1, 'herorole1');
+  --INSERT_HERO_ROLE(1, 'herorole1');
 end;
 
 
