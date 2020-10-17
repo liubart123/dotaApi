@@ -1,12 +1,15 @@
 package com.lojka.kurs.testing;
 
 import com.lojka.kurs.exception.DbAccessException;
+import com.lojka.kurs.exception.DotaDataAccessException;
 import com.lojka.kurs.model.Hero;
 import com.lojka.kurs.model.HeroRole;
 import com.lojka.kurs.model.Item;
 import com.lojka.kurs.repository.IDbConnector;
 import com.lojka.kurs.repository.IDbRepository;
 import com.lojka.kurs.repository.oracle.OracleDbConnector;
+import com.lojka.kurs.service.super_service.EFilterForMatchInserting;
+import com.lojka.kurs.service.super_service.SuperService;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
@@ -14,24 +17,40 @@ import java.util.Map;
 
 @Slf4j
 public class Testing {
-    //inserting matches
+    //testin super service
     static {
-        IDbConnector connector = new OracleDbConnector();
         try {
-            IDbRepository rep = connector.getRepository();
-            Map<Integer, Item> items = rep.getItems();
-            Map<Integer, Hero> heroes = rep.getHeroes();
-            Map<Integer, HeroRole> roles = rep.getHeroRoles();
-            rep.addHeroesRolesToHeroes(heroes,roles);
-            Hero h = heroes.get(4);
-            heroes.get(5);
+            SuperService.updateDotaInfoFromApi();
+            SuperService.insertMatch(5660510195L);
+            SuperService.insertMatches(EFilterForMatchInserting.allMatches);
         } catch (DbAccessException e) {
+            log.error("DbAccessException: "  + e.getMessage());
+            e.printStackTrace();
+        } catch (DotaDataAccessException e) {
+            log.error("DotaDataAccessException: " + e.getMessage());
             e.printStackTrace();
         }
-//        catch (DotaDataAccessException e) {
+    }
+
+
+    //inserting matches
+//    static {
+//        IDbConnector connector = new OracleDbConnector();
+//        try {
+//            IDbRepository rep = connector.getRepository();
+//            Map<Integer, Item> items = rep.getItems();
+//            Map<Integer, Hero> heroes = rep.getHeroes();
+//            Map<Integer, HeroRole> roles = rep.getHeroRoles();
+//            rep.addHeroesRolesToHeroes(heroes,roles);
+//            Hero h = heroes.get(4);
+//            heroes.get(5);
+//        } catch (DbAccessException e) {
 //            e.printStackTrace();
 //        }
-    }
+////        catch (DotaDataAccessException e) {
+////            e.printStackTrace();
+////        }
+//    }
 //    //inserting matches
 //    static {
 //        IDbConnector connector = new OracleDbConnector();

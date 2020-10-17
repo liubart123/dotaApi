@@ -1,5 +1,6 @@
 package com.lojka.kurs.repository.oracle;
 
+import com.lojka.kurs.exception.DbAccessException;
 import com.lojka.kurs.model.Hero;
 import com.lojka.kurs.model.HeroRole;
 import com.lojka.kurs.model.Item;
@@ -32,7 +33,7 @@ public class OracleDbRepository implements IDbRepository {
 
     //set connection between heroes and their roles
     @Override
-    public void addHeroesRolesToHeroes(Map<Integer, Hero> heroes, Map<Integer, HeroRole> roles) {
+    public void addHeroesRolesToHeroes(Map<Integer, Hero> heroes, Map<Integer, HeroRole> roles)throws DbAccessException {
         try {
             CallableStatement st = connection.prepareCall(sqlGetHeroesRoles);
             st.registerOutParameter(1, OracleTypes.CURSOR);
@@ -42,11 +43,11 @@ public class OracleDbRepository implements IDbRepository {
                 heroes.get(rs.getInt(1)).getRoles().add(roles.get(rs.getInt(2)));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during adding heroes roles to heroes: " + e.getMessage());
         }
     }
     @Override
-    public Map<Integer, Hero> getHeroes() {
+    public Map<Integer, Hero> getHeroes() throws DbAccessException{
         try {
             Map<Integer, Hero> result = new HashMap<>();
             CallableStatement st = connection.prepareCall(sqlGetHeroes);
@@ -62,13 +63,12 @@ public class OracleDbRepository implements IDbRepository {
             }
             return result;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during getting heroes: " + e.getMessage());
         }
-        return null;
     }
 
     @Override
-    public Map<Integer, Item> getItems() {
+    public Map<Integer, Item> getItems()throws DbAccessException {
         try {
             Map<Integer, Item> result = new HashMap<>();
             CallableStatement st = connection.prepareCall(sqlGetItems);
@@ -85,13 +85,12 @@ public class OracleDbRepository implements IDbRepository {
             }
             return result;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during getting items: " + e.getMessage());
         }
-        return null;
     }
 
     @Override
-    public Map<Integer, HeroRole> getHeroRoles() {
+    public Map<Integer, HeroRole> getHeroRoles()throws DbAccessException {
         try {
             Map<Integer, HeroRole> result = new HashMap<>();
             CallableStatement st = connection.prepareCall(sqlGetHeroRoles);
@@ -106,19 +105,15 @@ public class OracleDbRepository implements IDbRepository {
             }
             return result;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during getting hero roles: " + e.getMessage());
         }
-        return null;
     }
 
     @Override
-    public void updateItems(Item[] items) {
+    public void updateItems(Item[] items)throws DbAccessException {
         Integer i =0;
         try {
             for (i=0;i<items.length;i++){
-                if (i==122){
-                    i=122;
-                }
                 PreparedStatement ps = connection.prepareStatement(sqlInsertItems);
                 ps.setInt(1,items[i].getId());
                 if (items[i].getName()==null || items[i].getName()==""){
@@ -132,11 +127,11 @@ public class OracleDbRepository implements IDbRepository {
                 ps.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during inserting items into db: " + e.getMessage());
         }
     }
     @Override
-    public void updateHeroRoles(HeroRole[] roles) {
+    public void updateHeroRoles(HeroRole[] roles)throws DbAccessException {
         Integer i =0;
         try {
             //filling table hero_roles
@@ -148,11 +143,11 @@ public class OracleDbRepository implements IDbRepository {
                 ps.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during inserting roles into db: " + e.getMessage());
         }
     }
     @Override
-    public void updateHeroes(Hero[] heroes) {
+    public void updateHeroes(Hero[] heroes)throws DbAccessException {
         Integer i =0;
         try {
             //clear talbe heroes_roles
@@ -178,12 +173,12 @@ public class OracleDbRepository implements IDbRepository {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during inserting heroes into db: " + e.getMessage());
         }
     }
 
     @Override
-    public void insertMatch(Match match) {
+    public void insertMatch(Match match)throws DbAccessException {
         Integer i =0;
         try {
             //filling table matches;
@@ -197,12 +192,16 @@ public class OracleDbRepository implements IDbRepository {
             }else {
                 ps.setInt(5, match.getSkill());
             }
-            ps.setInt(6, match.getVersion());
+            if (match.getVersion()==null){
+                ps.setNull(6, Types.INTEGER );
+            }else {
+                ps.setInt(6, match.getVersion());
+            }
             ps.setBoolean(7, match.getRadiant_win());
             ps.execute();
             ps.close();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DbAccessException("error during inserting match into db: " + e.getMessage());
         }
     }
 

@@ -59,7 +59,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
     }
 
     @Override
-    public Match[] getRecentMatches() throws DotaDataAccessException{
+    public ArrayList<Match> getRecentMatches() throws DotaDataAccessException{
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("user-agent",userAgent);
@@ -73,10 +73,10 @@ public class OpenDotaDataResource implements IDotaDataResource {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             MatchFromApi[] ids = response.getBody();
-            Match[] result = new Match[ids.length];
+            ArrayList<Match> result = new ArrayList<Match>();
             for (int i=0;i<ids.length && i <maxCountOfRequests;i++){
                 try{
-                    result[i]=getMatch(ids[i].match_id);
+                    result.add(getMatch(ids[i].match_id));
                 }catch (DotaDataAccessException e){
                     if (i!=0){
                         return result;
@@ -94,7 +94,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
     }
 
     @Override
-    public Match[] getRecentProMatches() throws DotaDataAccessException {
+    public ArrayList<Match> getRecentProMatches() throws DotaDataAccessException {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("user-agent",userAgent);
@@ -108,10 +108,10 @@ public class OpenDotaDataResource implements IDotaDataResource {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             ProMatchFromApi[] ids = response.getBody();
-            Match[] result = new Match[ids.length];
+            ArrayList<Match> result = new ArrayList<Match>();
             for (int i=0;i<ids.length && i <maxCountOfRequests;i++){
                 try{
-                    result[i]=getMatch(ids[i].match_id);
+                    result.add(getMatch(ids[i].match_id));
                 }catch (DotaDataAccessException e){
                     if (i!=0){
                         return result;
