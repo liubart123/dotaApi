@@ -11,13 +11,15 @@ CREATE TABLE Matches (
 --drop table Matches purge;
 
 CREATE TABLE Players (
-	id NUMBER(9, 0) NOT NULL,
+	id NUMBER(11, 0) NOT NULL,
 	constraint PLAYERS_PK PRIMARY KEY (id));
-
+--alter table Players modify id NUMBER(11, 0);
 
 /
+--alter table PlayersMatches modify player_match_id NUMBER(23, 0) ;
+--alter table PlayersMatches modify player_id NUMBER(11, 0) ;
 CREATE TABLE PlayersMatches (
-	player_id NUMBER(9, 0) NOT NULL,
+	player_id NUMBER(11, 0) NOT NULL,
 	match_id NUMBER(12, 0) NOT NULL,
 	hero_id INT NOT NULL,
 	kills INT NOT NULL,
@@ -27,7 +29,7 @@ CREATE TABLE PlayersMatches (
 	healing INT NOT NULL,
 	tower_damage INT NOT NULL,
 	teamfight FLOAT NOT NULL,
-	player_match_id NUMBER(21, 0) NOT NULL,
+	player_match_id NUMBER(23, 0) NOT NULL,
 	tower_kills INT NOT NULL,
 	courier_kills INT NOT NULL,
 	sentry_kills INT NOT NULL,
@@ -61,7 +63,7 @@ CREATE TABLE Heroes (
 CREATE TABLE Items (
 	id INT NOT NULL,
 	name VARCHAR2(40) NOT NULL,
-	description VARCHAR2(500) NOT NULL,
+	description VARCHAR2(1000) NOT NULL,
   key_name varchar(50),
 	constraint ITEMS_PK PRIMARY KEY (id));
 
@@ -69,18 +71,21 @@ CREATE TABLE Items (
 --alter table Items modify description VARCHAR2(1000);
 
 /
+--alter table BoughtItems modify player_match_id NUMBER(23, 0);
 CREATE TABLE BoughtItems (
 	item_id INT NOT NULL,
-	player_match_id NUMBER(21, 0) NOT NULL,
+	player_match_id NUMBER(23, 0) NOT NULL,
 	timing INT NOT NULL);
 
 
 /
+--alter table PlayerMatchTimeStat modify player_match_id NUMBER(23, 0);
 CREATE TABLE PlayerMatchTimeStat (
-	player_match_id NUMBER(21, 0) NOT NULL,
+	player_match_id NUMBER(23, 0) NOT NULL,
 	time INT NOT NULL,
 	gold INT NOT NULL,
-	xp INT NOT NULL);
+	xp INT NOT NULL,
+	constraint PLAYER_MATCH_STAT_PK PRIMARY KEY (player_match_id,time));
 
 
 /
@@ -100,8 +105,10 @@ CREATE TABLE HeroesRoles (
 
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk0 FOREIGN KEY (player_id) REFERENCES Players(id);
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk1 FOREIGN KEY (match_id) REFERENCES Matches(id);
---alter table PlayersMatches drop constraint PlayersMatches_fk1;
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk2 FOREIGN KEY (hero_id) REFERENCES Heroes(id);
+--alter table PlayersMatches drop constraint PlayersMatches_fk0;
+--alter table PlayersMatches drop constraint PlayersMatches_fk1;
+--alter table PlayersMatches drop constraint PlayersMatches_fk2;
 
 
 
@@ -111,8 +118,10 @@ ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk0 FOREIGN KEY (item_id) REF
 --ALTER TABLE BoughtItems drop CONSTRAINT BoughtItems_fk0;
 
 ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk1 FOREIGN KEY (player_match_id) REFERENCES PlayersMatches(player_match_id);
+--ALTER TABLE BoughtItems drop CONSTRAINT BoughtItems_fk1;
 
 ALTER TABLE PLAYERMATCHTIMESTAT ADD CONSTRAINT PLAYERMATCHTIMESTAT_FK0 FOREIGN KEY (PLAYER_MATCH_ID) REFERENCES PLAYERSMATCHES (PLAYER_MATCH_ID);
+--ALTER TABLE PLAYERMATCHTIMESTAT drop CONSTRAINT PLAYERMATCHTIMESTAT_FK0;
 
 
 ALTER TABLE HeroesRoles ADD CONSTRAINT HeroesRoles_fk0 FOREIGN KEY (hero_id) REFERENCES Heroes(id);

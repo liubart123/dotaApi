@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class OpenDotaDataResource implements IDotaDataResource {
-    static int maxCountOfRequests= 2;
+    static int maxCountOfRequests= 50;
     static String userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36";
     static String basicUrl =  "https://api.opendota.com/api/";
     static String matchUrl = "matches/";

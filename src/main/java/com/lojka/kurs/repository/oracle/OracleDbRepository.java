@@ -1,13 +1,12 @@
 package com.lojka.kurs.repository.oracle;
 
 import com.lojka.kurs.exception.DbAccessException;
-import com.lojka.kurs.model.Hero;
-import com.lojka.kurs.model.HeroRole;
-import com.lojka.kurs.model.Item;
-import com.lojka.kurs.model.Match;
+import com.lojka.kurs.model.*;
 import com.lojka.kurs.repository.IDbRepository;
 import oracle.jdbc.OracleTypes;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +18,11 @@ public class OracleDbRepository implements IDbRepository {
     static String sqlInsertHeroesRoles =  "begin INSERT_HEROES_ROLES(?, ?); end;";
     static String sqlInsertMatch =  "begin INSERT_MATCH(?,?,?,?,?,?,?); end;";
     static String sqlClearHeroRoles =  "begin CLEAR_HEROES_ROLES; end;";
+
+    static String sqlInsertMatchPlayer =  "begin INSERT_PLAYER_IN_MATCH(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?); end;";
+    static String sqlInsertMatchPlayerStat =  "begin INSERT_PLAYER_MATCH_STAT(?,?,?,?); end;";
+    static String sqlInsertMatchPlayerItems =  "begin INSERT_BOUGHT_ITEMS(?,?,?); end;";
+    static String sqlClearMatchPlayerItems =  "begin CLEAR_BOUGHT_ITEMS(?); end;";
 
     static String sqlGetHeroes = "begin SELECT_HEROES(?); end;";
     static String sqlGetItems = "begin SELECT_ITEMS(?); end;";
@@ -182,24 +186,84 @@ public class OracleDbRepository implements IDbRepository {
         Integer i =0;
         try {
             //filling table matches;
-            PreparedStatement ps = connection.prepareStatement(sqlInsertMatch);
-            ps.setLong(1, match.getMatch_id());
-            ps.setInt(2, match.getDuration());
-            ps.setInt(3, match.getDire_score());
-            ps.setInt(4, match.getRadiant_score());
+            CallableStatement cs = connection.prepareCall(sqlInsertMatch);
+            cs.setLong(1, match.getMatch_id());
+            cs.setInt(2, match.getDuration());
+            cs.setInt(3, match.getDire_score());
+            cs.setInt(4, match.getRadiant_score());
             if (match.getSkill()==null){
-                ps.setNull(5, Types.INTEGER );
+                cs.setNull(5, Types.INTEGER );
             }else {
-                ps.setInt(5, match.getSkill());
+                cs.setInt(5, match.getSkill());
             }
             if (match.getVersion()==null){
-                ps.setNull(6, Types.INTEGER );
+                cs.setNull(6, Types.INTEGER );
             }else {
-                ps.setInt(6, match.getVersion());
+                cs.setInt(6, match.getVersion());
             }
-            ps.setBoolean(7, match.getRadiant_win());
-            ps.execute();
-            ps.close();
+            cs.setBoolean(7, match.getRadiant_win());
+            cs.execute();
+            cs.close();
+            for (PlayerInMatch pim :
+                 match.getPlayers()) {
+                cs = connection.prepareCall(sqlInsertMatchPlayer);
+                cs.setLong(1, pim.getAccount_id());
+                cs.setLong(2, pim.getMatch_id());
+                cs.setInt(3, pim.getHero_id());
+                cs.setInt(4, pim.getKills());
+                cs.setInt(5, pim.getDeaths());
+                cs.setInt(6, pim.getAssists());
+                cs.setInt(7, pim.getHero_damage());
+                cs.setInt(8, pim.getHero_healing());
+                cs.setInt(9, pim.getTower_damage());
+                cs.setFloat(10, pim.getTeamfight_participation());
+                cs.registerOutParameter(11, OracleTypes.NUMBER);
+                cs.setInt(12, pim.getTowers_killed());
+                cs.setInt(13, pim.getCourier_kills());
+                cs.setInt(14, pim.getSentry_kills());
+                cs.setInt(15, pim.getSentry_uses());
+                cs.setInt(16, pim.getObserver_kills());
+                cs.setInt(17, pim.getObserver_uses());
+                cs.setInt(18, pim.getCamps_stacked());
+                cs.setInt(19, pim.getLast_hits());
+                cs.setInt(20, pim.getDenies());
+                cs.setFloat(21, pim.getStuns());
+                cs.setInt(22, pim.getLane_efficiency_pct());
+                cs.registerOutParameter(23, OracleTypes.INTEGER);
+                cs.executeQuery();
+                //BigInteger matchPlayerId = cs.getObject(11, BigInteger.class);
+                Integer wasInsertedNewMatch = cs.getObject(23, Integer.class);
+                BigDecimal matchPlayerIdDec = cs.getObject(11, BigDecimal.class);
+                cs.close();
+                if (wasInsertedNewMatch==1){
+                    //continue;
+                }
+                //inserting gpm and xpm
+                for(int j=0;j<pim.getGold_t().length;j++){
+                    cs = connection.prepareCall(sqlInsertMatchPlayerStat);
+                    cs.setBigDecimal(1, matchPlayerIdDec);
+                    cs.setInt(2, j);
+                    cs.setInt(3, pim.getGold_t()[j]);
+                    cs.setInt(4, pim.getXp_t()[j]);
+                    cs.executeQuery();
+                    cs.close();
+                }
+                //clear already existing items log for this pim
+                cs = connection.prepareCall(sqlClearMatchPlayerItems);
+                cs.setBigDecimal(1,matchPlayerIdDec);
+                cs.executeQuery();
+                cs.close();
+                //inserting items bought log
+                for(BoughtItem item : pim.getPurchase_log()){
+
+                    cs = connection.prepareCall(sqlInsertMatchPlayerItems);
+                    cs.setInt(1, item.getItemId());
+                    cs.setBigDecimal(2, matchPlayerIdDec);
+                    cs.setInt(3, item.getTime());
+                    cs.executeQuery();
+                    cs.close();
+                }
+            }
         } catch (SQLException e) {
             throw new DbAccessException("error during inserting match into db: " + e.getMessage());
         }

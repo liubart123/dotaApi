@@ -2,10 +2,7 @@ package com.lojka.kurs.service.super_service;
 
 import com.lojka.kurs.exception.DbAccessException;
 import com.lojka.kurs.exception.DotaDataAccessException;
-import com.lojka.kurs.model.Hero;
-import com.lojka.kurs.model.HeroRole;
-import com.lojka.kurs.model.Item;
-import com.lojka.kurs.model.Match;
+import com.lojka.kurs.model.*;
 import com.lojka.kurs.repository.IDbConnector;
 import com.lojka.kurs.repository.IDbRepository;
 import com.lojka.kurs.repository.oracle.OracleDbConnector;
@@ -17,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 @Slf4j
 //main service with all main functions. Controllers should interact with him
@@ -24,6 +22,7 @@ public class SuperService {
     static IDbRepository rep;
     static IDotaDataResource dotaDataResource;
     static Map<Integer, Item> items;
+    static Map<String, Item> itemsByName = new HashMap<>();
     static Map<Integer, Hero> heroes;
     static Map<Integer, HeroRole> roles;
     static IDbConnector connector;
@@ -39,6 +38,11 @@ public class SuperService {
         try {
             rep = connector.getRepository();
             items = rep.getItems();
+            itemsByName.clear();
+            for (Map.Entry<Integer, Item> item:
+                 items.entrySet()) {
+                itemsByName.put(item.getValue().getKeyName(),item.getValue());
+            }
             heroes = rep.getHeroes();
             roles = rep.getHeroRoles();
             rep.addHeroesRolesToHeroes(heroes,roles);
@@ -63,6 +67,7 @@ public class SuperService {
     //insert match from remote api to db
     public static void insertMatch(Long id)throws DbAccessException, DotaDataAccessException{
         Match m = dotaDataResource.getMatch(id);
+        reachMatchData(m);
         rep.insertMatch(m);
     }
     //insert match from remote api to db
@@ -72,11 +77,23 @@ public class SuperService {
                 ArrayList<Match> mathces = dotaDataResource.getRecentMatches();
                 for (Match m:
                         mathces) {
+                    reachMatchData(m);
                     rep.insertMatch(m);
                 }
                 break;
             }
             case professionals:{break;}//TODO: filters for mathces inserting
+        }
+    }
+
+    //reach match data by items instances
+    static void reachMatchData(Match match){
+        for (PlayerInMatch pl:
+             match.getPlayers()) {
+            for (BoughtItem item:
+                 pl.getPurchase_log()) {
+                item.setItemId(itemsByName.get(item.getKey()).getId());
+            }
         }
     }
 }
