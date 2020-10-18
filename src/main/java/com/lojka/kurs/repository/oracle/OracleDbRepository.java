@@ -3,20 +3,21 @@ package com.lojka.kurs.repository.oracle;
 import com.lojka.kurs.exception.DbAccessException;
 import com.lojka.kurs.model.*;
 import com.lojka.kurs.repository.IDbRepository;
+import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.OracleTypes;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class OracleDbRepository implements IDbRepository {
     static String sqlInsertItems =  "begin INSERT_ITEM(?, ?, ?, ?); end;";
     static String sqlInsertHeroRoles =  "begin INSERT_HERO_ROLE(?, ?); end;";
     static String sqlInsertHeroes =  "begin INSERT_HERO(?, ?); end;";
     static String sqlInsertHeroesRoles =  "begin INSERT_HEROES_ROLES(?, ?); end;";
-    static String sqlInsertMatch =  "begin INSERT_MATCH(?,?,?,?,?,?,?); end;";
+    static String sqlInsertMatch =  "begin INSERT_MATCH(?,?,?,?,?,?,?,?); end;";
     static String sqlClearHeroRoles =  "begin CLEAR_HEROES_ROLES; end;";
 
     static String sqlInsertMatchPlayer =  "begin INSERT_PLAYER_IN_MATCH(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?); end;";
@@ -30,9 +31,17 @@ public class OracleDbRepository implements IDbRepository {
     static String sqlGetHeroesRoles = "begin SELECT_HEROES_ROLES(?); end;";
 
     Connection connection;
+
+
     @Override
     public void setDbConnection(Connection c) {
         connection = c;
+        try {
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            log.error("setting autocommit error: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     //set connection between heroes and their roles
@@ -131,7 +140,18 @@ public class OracleDbRepository implements IDbRepository {
                 ps.close();
             }
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
             throw new DbAccessException("error during inserting items into db: " + e.getMessage());
+        }finally {
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                log.error("commit error");
+            }
         }
     }
     @Override
@@ -147,7 +167,18 @@ public class OracleDbRepository implements IDbRepository {
                 ps.close();
             }
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
             throw new DbAccessException("error during inserting roles into db: " + e.getMessage());
+        }finally {
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                log.error("commit error");
+            }
         }
     }
     @Override
@@ -177,7 +208,18 @@ public class OracleDbRepository implements IDbRepository {
                 }
             }
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
             throw new DbAccessException("error during inserting heroes into db: " + e.getMessage());
+        }finally {
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                log.error("commit error");
+            }
         }
     }
 
@@ -196,13 +238,16 @@ public class OracleDbRepository implements IDbRepository {
             }else {
                 cs.setInt(5, match.getSkill());
             }
-            if (match.getVersion()==null){
+            if (match.getPatch()==null){
                 cs.setNull(6, Types.INTEGER );
             }else {
-                cs.setInt(6, match.getVersion());
+                cs.setInt(6, match.getPatch());
             }
             cs.setBoolean(7, match.getRadiant_win());
+            cs.setDate(8, new Date(match.getStart_date().getTime()));
             cs.execute();
+//            if (true)
+//                throw new SQLException("asd");
             cs.close();
             for (PlayerInMatch pim :
                  match.getPlayers()) {
@@ -236,7 +281,7 @@ public class OracleDbRepository implements IDbRepository {
                 BigDecimal matchPlayerIdDec = cs.getObject(11, BigDecimal.class);
                 cs.close();
                 if (wasInsertedNewMatch==1){
-                    //continue;
+                    continue;
                 }
                 //inserting gpm and xpm
                 for(int j=0;j<pim.getGold_t().length;j++){
@@ -265,7 +310,26 @@ public class OracleDbRepository implements IDbRepository {
                 }
             }
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
             throw new DbAccessException("error during inserting match into db: " + e.getMessage());
+        }catch ( Exception e){
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
+            throw new DbAccessException("strange error during inserting match into db: " + e.getMessage());
+        }
+        finally {
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                log.error("commit error");
+            }
         }
     }
 

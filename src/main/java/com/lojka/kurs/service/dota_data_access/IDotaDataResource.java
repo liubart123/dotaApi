@@ -8,7 +8,7 @@ import com.lojka.kurs.model.Match;
 
 import java.util.ArrayList;
 import java.util.List;
-
+//getting info from remote api
 public interface IDotaDataResource {
     Match getMatch(Long id) throws DotaDataAccessException;
     ArrayList<Match> getRecentMatches() throws DotaDataAccessException;

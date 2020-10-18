@@ -6,7 +6,8 @@ create or replace procedure INSERT_MATCH
     radiant_score INT,
     skill_p INT,
     version_p INT,
-    win INT)
+    win INT,
+    start_date_p DATE)
    IS
   exist PLS_INTEGER;
   begin
@@ -23,7 +24,8 @@ create or replace procedure INSERT_MATCH
           radiant_score,
           skill,
           version,
-          win 
+          win,
+          start_date
           )
       values 
         (match_id,
@@ -32,7 +34,8 @@ create or replace procedure INSERT_MATCH
           radiant_score,
           skill_p,
           version_p,
-          win );
+          win,
+          start_date_p);
     else 
       update MATCHES set MATCHES.skill = skill_p, MATCHES.version = version_p where MATCHES.id = match_id;
     end if;

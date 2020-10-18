@@ -1,18 +1,47 @@
 package com.lojka.kurs.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Match implements Serializable {
-    public Long match_id;//
-    public PlayerInMatch[] players;//
-    public Integer dire_score;//
-    public Integer radiant_score;//
-    public Integer duration;//
+    Long match_id;//
+    PlayerInMatch[] players;//
+    Integer dire_score;//
+    Integer radiant_score;//
+    Integer duration;//
     //public Integer[] radiant_gold_adv;
     //public Integer[] radiant_xp_adv;
-    public Boolean radiant_win;
-    public Integer skill;//
-    public Short version;//
+    Boolean radiant_win;
+    Integer skill;//
+    Short patch;//
+    Long start_time;
+    Date start_date;
+    Object picks_bans;
+
+    public Object getPicks_bans() {
+        return picks_bans;
+    }
+
+    public void setPicks_bans(Object picks_bans) {
+        this.picks_bans = picks_bans;
+    }
+
+    public Date getStart_date() {
+        return start_date;
+    }
+
+    public void setStart_date(Date start_date) {
+        this.start_date = start_date;
+    }
+
+    public Long getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(Long start_time) {
+        this.start_time = start_time;
+        start_date = new Date(start_time*1000);
+    }
 
     public Long getMatch_id() {
         return match_id;
@@ -73,11 +102,11 @@ public class Match implements Serializable {
         this.skill = skill;
     }
 
-    public Short getVersion() {
-        return version;
+    public Short getPatch() {
+        return patch;
     }
 
-    public void setVersion(Short version) {
-        this.version = version;
+    public void setPatch(Short patch) {
+        this.patch = patch;
     }
 }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+//interacting with my db
 public interface IDbRepository {
     //set connection to db. Do it before other functions
     void setDbConnection(Connection c)throws DbAccessException;

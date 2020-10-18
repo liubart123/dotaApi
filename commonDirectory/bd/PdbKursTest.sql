@@ -91,4 +91,15 @@ end;
 /
 drop procedure insert_many;
 
+
+/
+begin
+  INSERT_ITEM(3, 'her', 'desc2', 'key');
+end;
+/
+  commit;
+  /
+  rollback;
+/
+select * from items;
      

@@ -6,6 +6,7 @@ CREATE TABLE Matches (
 	skill INT,
 	version INT,
 	win NUMBER(1) CHECK (win IN (1,0)) NOT NULL,
+  start_date DATE NOT NULL,
 	constraint MATCHES_PK PRIMARY KEY (id));
 /
 --drop table Matches purge;

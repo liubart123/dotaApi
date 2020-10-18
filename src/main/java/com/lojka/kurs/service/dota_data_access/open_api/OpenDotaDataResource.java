@@ -52,6 +52,11 @@ public class OpenDotaDataResource implements IDotaDataResource {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Match m = response.getBody();
+            //m.setStart_time(m.getStart_time());
+            //mathc data is invalid
+            if (m.getPicks_bans()==null){
+                return null;
+            }
             return m;
         } else {
             throw new DotaDataAccessException("request failed");
@@ -76,7 +81,11 @@ public class OpenDotaDataResource implements IDotaDataResource {
             ArrayList<Match> result = new ArrayList<Match>();
             for (int i=0;i<ids.length && i <maxCountOfRequests;i++){
                 try{
-                    result.add(getMatch(ids[i].match_id));
+                    Match m = getMatch(ids[i].match_id);
+                    if (m==null){
+                        continue;
+                    }
+                    result.add(m);
                 }catch (DotaDataAccessException e){
                     if (i!=0){
                         return result;
@@ -111,7 +120,11 @@ public class OpenDotaDataResource implements IDotaDataResource {
             ArrayList<Match> result = new ArrayList<Match>();
             for (int i=0;i<ids.length && i <maxCountOfRequests;i++){
                 try{
-                    result.add(getMatch(ids[i].match_id));
+                    Match m = getMatch(ids[i].match_id);
+                    if (m==null){
+                        continue;
+                    }
+                    result.add(m);
                 }catch (DotaDataAccessException e){
                     if (i!=0){
                         return result;

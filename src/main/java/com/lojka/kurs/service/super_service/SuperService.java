@@ -1,6 +1,7 @@
 package com.lojka.kurs.service.super_service;
 
 import com.lojka.kurs.exception.DbAccessException;
+import com.lojka.kurs.exception.DotaApiException;
 import com.lojka.kurs.exception.DotaDataAccessException;
 import com.lojka.kurs.model.*;
 import com.lojka.kurs.repository.IDbConnector;
@@ -65,8 +66,11 @@ public class SuperService {
     }
 
     //insert match from remote api to db
-    public static void insertMatch(Long id)throws DbAccessException, DotaDataAccessException{
+    public static void insertMatch(Long id)throws DbAccessException, DotaDataAccessException {
         Match m = dotaDataResource.getMatch(id);
+        if (m==null)
+            return;
+            //throw new DotaApiException("invalid data from dota api");
         reachMatchData(m);
         rep.insertMatch(m);
     }
