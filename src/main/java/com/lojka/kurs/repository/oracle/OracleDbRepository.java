@@ -1,11 +1,13 @@
 package com.lojka.kurs.repository.oracle;
 
 import com.lojka.kurs.exception.DbAccessException;
+import com.lojka.kurs.exception.DbConnectionClosedException;
 import com.lojka.kurs.model.*;
 import com.lojka.kurs.repository.IDbRepository;
 import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.OracleTypes;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.HashMap;
@@ -34,6 +36,15 @@ public class OracleDbRepository implements IDbRepository {
 
 
     @Override
+    public Boolean isConnectionsClosed() {
+        try {
+            return connection.isClosed();
+        } catch (SQLException e) {
+            return true;
+        }
+    }
+
+    @Override
     public void setDbConnection(Connection c) {
         connection = c;
         try {
@@ -46,7 +57,7 @@ public class OracleDbRepository implements IDbRepository {
 
     //set connection between heroes and their roles
     @Override
-    public void addHeroesRolesToHeroes(Map<Integer, Hero> heroes, Map<Integer, HeroRole> roles)throws DbAccessException {
+    public void addHeroesRolesToHeroes(Map<Integer, Hero> heroes, Map<Integer, HeroRole> roles) throws DbAccessException, DbConnectionClosedException {
         try {
             CallableStatement st = connection.prepareCall(sqlGetHeroesRoles);
             st.registerOutParameter(1, OracleTypes.CURSOR);
@@ -56,11 +67,19 @@ public class OracleDbRepository implements IDbRepository {
                 heroes.get(rs.getInt(1)).getRoles().add(roles.get(rs.getInt(2)));
             }
         } catch (SQLException e) {
+
+            try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
+            } catch (SQLException ex) {
+                log.error("db access error");
+            }
             throw new DbAccessException("error during adding heroes roles to heroes: " + e.getMessage());
         }
     }
     @Override
-    public Map<Integer, Hero> getHeroes() throws DbAccessException{
+    public Map<Integer, Hero> getHeroes() throws DbAccessException, DbConnectionClosedException {
         try {
             Map<Integer, Hero> result = new HashMap<>();
             CallableStatement st = connection.prepareCall(sqlGetHeroes);
@@ -76,12 +95,20 @@ public class OracleDbRepository implements IDbRepository {
             }
             return result;
         } catch (SQLException e) {
+
+            try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
+            } catch (SQLException ex) {
+                log.error("db access error");
+            }
             throw new DbAccessException("error during getting heroes: " + e.getMessage());
         }
     }
 
     @Override
-    public Map<Integer, Item> getItems()throws DbAccessException {
+    public Map<Integer, Item> getItems() throws DbAccessException, DbConnectionClosedException {
         try {
             Map<Integer, Item> result = new HashMap<>();
             CallableStatement st = connection.prepareCall(sqlGetItems);
@@ -98,12 +125,19 @@ public class OracleDbRepository implements IDbRepository {
             }
             return result;
         } catch (SQLException e) {
+            try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
+            } catch (SQLException ex) {
+                log.error("db access error");
+            }
             throw new DbAccessException("error during getting items: " + e.getMessage());
         }
     }
 
     @Override
-    public Map<Integer, HeroRole> getHeroRoles()throws DbAccessException {
+    public Map<Integer, HeroRole> getHeroRoles() throws DbAccessException, DbConnectionClosedException {
         try {
             Map<Integer, HeroRole> result = new HashMap<>();
             CallableStatement st = connection.prepareCall(sqlGetHeroRoles);
@@ -118,12 +152,19 @@ public class OracleDbRepository implements IDbRepository {
             }
             return result;
         } catch (SQLException e) {
+            try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
+            } catch (SQLException ex) {
+                log.error("db access error");
+            }
             throw new DbAccessException("error during getting hero roles: " + e.getMessage());
         }
     }
 
     @Override
-    public void updateItems(Item[] items)throws DbAccessException {
+    public void updateItems(Item[] items) throws DbAccessException, DbConnectionClosedException {
         Integer i =0;
         try {
             for (i=0;i<items.length;i++){
@@ -139,8 +180,12 @@ public class OracleDbRepository implements IDbRepository {
                 ps.execute();
                 ps.close();
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
                 connection.rollback();
             } catch (SQLException ex) {
                 log.error("rollback error");
@@ -155,7 +200,7 @@ public class OracleDbRepository implements IDbRepository {
         }
     }
     @Override
-    public void updateHeroRoles(HeroRole[] roles)throws DbAccessException {
+    public void updateHeroRoles(HeroRole[] roles) throws DbAccessException, DbConnectionClosedException {
         Integer i =0;
         try {
             //filling table hero_roles
@@ -168,6 +213,9 @@ public class OracleDbRepository implements IDbRepository {
             }
         } catch (SQLException e) {
             try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
                 connection.rollback();
             } catch (SQLException ex) {
                 log.error("rollback error");
@@ -182,7 +230,7 @@ public class OracleDbRepository implements IDbRepository {
         }
     }
     @Override
-    public void updateHeroes(Hero[] heroes)throws DbAccessException {
+    public void updateHeroes(Hero[] heroes) throws DbAccessException, DbConnectionClosedException {
         Integer i =0;
         try {
             //clear talbe heroes_roles
@@ -209,6 +257,10 @@ public class OracleDbRepository implements IDbRepository {
             }
         } catch (SQLException e) {
             try {
+
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
                 connection.rollback();
             } catch (SQLException ex) {
                 log.error("rollback error");
@@ -224,7 +276,7 @@ public class OracleDbRepository implements IDbRepository {
     }
 
     @Override
-    public void insertMatch(Match match)throws DbAccessException {
+    public void insertMatch(Match match) throws DbAccessException, DbConnectionClosedException {
         Integer i =0;
         try {
             //filling table matches;
@@ -311,6 +363,9 @@ public class OracleDbRepository implements IDbRepository {
             }
         } catch (SQLException e) {
             try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
                 connection.rollback();
             } catch (SQLException ex) {
                 log.error("rollback error");

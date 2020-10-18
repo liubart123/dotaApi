@@ -1,6 +1,7 @@
 package com.lojka.kurs.testing;
 
 import com.lojka.kurs.exception.DbAccessException;
+import com.lojka.kurs.exception.DbConnectionClosedException;
 import com.lojka.kurs.exception.DotaApiException;
 import com.lojka.kurs.exception.DotaDataAccessException;
 import com.lojka.kurs.model.Hero;
@@ -21,7 +22,9 @@ public class Testing {
     //testin super service
     static {
         try {
-            SuperService.updateDotaInfoFromApi();
+            if (!SuperService.updateDotaInfoFromApi()){
+                SuperService.updateDotaInfoFromApi();
+            }
             //SuperService.insertMatch(5661553712l);
             SuperService.insertMatches(EFilterForMatchInserting.allMatches);
         } catch (DbAccessException e) {
@@ -29,6 +32,8 @@ public class Testing {
             e.printStackTrace();
         } catch (DotaDataAccessException e) {
             log.error("DotaDataAccessException: " + e.getMessage());
+            e.printStackTrace();
+        } catch (DbConnectionClosedException e) {
             e.printStackTrace();
         }
     }
