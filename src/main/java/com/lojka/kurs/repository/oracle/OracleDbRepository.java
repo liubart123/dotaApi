@@ -22,7 +22,7 @@ public class OracleDbRepository implements IDbRepository {
     static String sqlInsertMatch =  "begin INSERT_MATCH(?,?,?,?,?,?,?,?); end;";
     static String sqlClearHeroRoles =  "begin CLEAR_HEROES_ROLES; end;";
 
-    static String sqlInsertMatchPlayer =  "begin INSERT_PLAYER_IN_MATCH(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?); end;";
+    static String sqlInsertMatchPlayer =  "begin INSERT_PLAYER_IN_MATCH(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?); end;";
     static String sqlInsertMatchPlayerStat =  "begin INSERT_PLAYER_MATCH_STAT(?,?,?,?); end;";
     static String sqlInsertMatchPlayerItems =  "begin INSERT_BOUGHT_ITEMS(?,?,?); end;";
     static String sqlClearMatchPlayerItems =  "begin CLEAR_BOUGHT_ITEMS(?); end;";
@@ -326,6 +326,7 @@ public class OracleDbRepository implements IDbRepository {
                 cs.setInt(20, pim.getDenies());
                 cs.setFloat(21, pim.getStuns());
                 cs.setInt(22, pim.getLane_efficiency_pct());
+                cs.setBoolean(24, pim.getWin());
                 cs.registerOutParameter(23, OracleTypes.INTEGER);
                 cs.executeQuery();
                 //BigInteger matchPlayerId = cs.getObject(11, BigInteger.class);

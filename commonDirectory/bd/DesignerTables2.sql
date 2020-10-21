@@ -42,6 +42,7 @@ CREATE TABLE PlayersMatches (
 	creep_denies INT NOT NULL,
 	stunning FLOAT NOT NULL,
 	lane_efficiency INT NOT NULL,
+	win NUMBER(1) CHECK (win IN (1,0)) NOT NULL,
 	constraint PLAYERSMATCHES_PK PRIMARY KEY (player_match_id));
 
 CREATE sequence PLAYERSMATCHES_ID_SEQ;

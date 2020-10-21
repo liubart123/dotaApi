@@ -22,6 +22,16 @@ public class PlayerInMatch implements Serializable {
 
     public BoughtItem[] purchase_log;
 
+    public Boolean win;
+
+    public Boolean getWin() {
+        return win;
+    }
+
+    public void setWin(Boolean win) {
+        this.win = win;
+    }
+
     public Integer getLast_hits() {
         return last_hits;
     }

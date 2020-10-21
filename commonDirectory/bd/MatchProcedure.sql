@@ -41,13 +41,6 @@ create or replace procedure INSERT_MATCH
     end if;
   end;
 /
-begin
-  INSERT_MATCH(5660510195, 1760, 8, 34, NULL, NULL, 1);
-end;
-/
-select * from MATCHES;
-select * from PlayersMatches;
-/
 --insert player in match info
 create or replace procedure INSERT_PLAYER_IN_MATCH
   ( 
@@ -73,7 +66,8 @@ create or replace procedure INSERT_PLAYER_IN_MATCH
     creep_denies_p INT,
     stunning_p FLOAT,
     lane_efficiency_p INT,
-    was_new_insert out INT
+    was_new_insert out INT,
+    win_p INT
   )
    IS
   exist PLS_INTEGER;
@@ -117,7 +111,8 @@ create or replace procedure INSERT_PLAYER_IN_MATCH
           creep_kills ,
           creep_denies ,
           stunning,
-          lane_efficiency 
+          lane_efficiency,
+          win
         )
       values 
         (
@@ -142,7 +137,8 @@ create or replace procedure INSERT_PLAYER_IN_MATCH
           creep_kills_p ,
           creep_denies_p ,
           stunning_p,
-          lane_efficiency_p 
+          lane_efficiency_p,
+          win_p
         );
       player_match_id_p := PLAYERSMATCHES_ID_SEQ.currval;
     else 
@@ -165,7 +161,8 @@ create or replace procedure INSERT_PLAYER_IN_MATCH
         creep_kills  = creep_kills_p,
         creep_denies  = creep_denies_p,
         stunning = stunning_p,
-        lane_efficiency = lane_efficiency_p
+        lane_efficiency = lane_efficiency_p,
+        win = win_p
       where player_id = player_id_p and match_id = match_id_p;
     SELECT player_match_id
       INTO player_match_id_p
@@ -175,31 +172,7 @@ create or replace procedure INSERT_PLAYER_IN_MATCH
     end if;
     was_new_insert := exist;
   end;
-  --/
-  --declare seq number;
-  --begin
-  --  INSERT_PLAYER_IN_MATCH(123,0,1,0,0,0,0,0,0,0, seq, 0 ,0,0,0,0,0,0,0,0,0,0);
-   -- DBMS_OUTPUT.PUT_LINE(seq);
-  --end;
-  --/
-  --select * from Players;
-  --truncate table Players;
-  --select * from PlayersMatches;
-  --truncate table PlayersMatches;
-  /
-declare 
-  asda number(9);
-begin
-  asda := PLAYERSMATCHES_ID_SEQ.currval;
-  DBMS_OUTPUT.PUT_LINE(asda);
-  DBMS_OUTPUT.PUT_LINE(PLAYERSMATCHES_ID_SEQ.currval);
-end;
 /
-PLAYERSMATCHES_ID_SEQ.curval;
-select PLAYERSMATCHES_ID_SEQ.curval from roles; 
-
-/
-
 --inserting banchmark (gpm,expm)
 create or replace procedure INSERT_PLAYER_MATCH_STAT(
   player_match_id_p NUMBER,
