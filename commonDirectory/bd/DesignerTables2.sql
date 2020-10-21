@@ -1,18 +1,18 @@
 CREATE TABLE Matches (
-	id NUMBER(12, 0) NOT NULL,
-	duration INT NOT NULL,
-	dire_score INT NOT NULL,
-	radiant_score INT NOT NULL,
+	id NUMBER(12, 0) ,
+	duration INT ,
+	dire_score INT ,
+	radiant_score INT ,
 	skill INT,
 	version INT,
-	win NUMBER(1) CHECK (win IN (1,0)) NOT NULL,
-  start_date DATE NOT NULL,
+	win NUMBER(1) CHECK (win IN (1,0)) ,
+  start_date DATE ,
 	constraint MATCHES_PK PRIMARY KEY (id));
 /
 --drop table Matches purge;
 
 CREATE TABLE Players (
-	id NUMBER(11, 0) NOT NULL,
+	id NUMBER(11, 0) ,
 	constraint PLAYERS_PK PRIMARY KEY (id));
 --alter table Players modify id NUMBER(11, 0);
 
@@ -20,29 +20,29 @@ CREATE TABLE Players (
 --alter table PlayersMatches modify player_match_id NUMBER(23, 0) ;
 --alter table PlayersMatches modify player_id NUMBER(11, 0) ;
 CREATE TABLE PlayersMatches (
-	player_id NUMBER(11, 0) NOT NULL,
-	match_id NUMBER(12, 0) NOT NULL,
-	hero_id INT NOT NULL,
-	kills INT NOT NULL,
-	deaths INT NOT NULL,
-	assists INT NOT NULL,
-	damage INT NOT NULL,
-	healing INT NOT NULL,
-	tower_damage INT NOT NULL,
-	teamfight FLOAT NOT NULL,
-	player_match_id NUMBER(23, 0) NOT NULL,
-	tower_kills INT NOT NULL,
-	courier_kills INT NOT NULL,
-	sentry_kills INT NOT NULL,
-	sentry_builds INT NOT NULL,
-	observer_kills INT NOT NULL,
-	observer_builds INT NOT NULL,
-	camps_stacked INT NOT NULL,
-	creep_kills INT NOT NULL,
-	creep_denies INT NOT NULL,
-	stunning FLOAT NOT NULL,
-	lane_efficiency INT NOT NULL,
-	win NUMBER(1) CHECK (win IN (1,0)) NOT NULL,
+	player_id NUMBER(11, 0) ,
+	match_id NUMBER(12, 0) ,
+	hero_id INT ,
+	kills INT ,
+	deaths INT ,
+	assists INT ,
+	damage INT ,
+	healing INT ,
+	tower_damage INT ,
+	teamfight FLOAT ,
+	player_match_id NUMBER(23, 0) ,
+	tower_kills INT ,
+	courier_kills INT ,
+	sentry_kills INT ,
+	sentry_builds INT ,
+	observer_kills INT ,
+	observer_builds INT ,
+	camps_stacked INT ,
+	creep_kills INT ,
+	creep_denies INT ,
+	stunning FLOAT ,
+	lane_efficiency INT ,
+	win NUMBER(1) CHECK (win IN (1,0)) ,
 	constraint PLAYERSMATCHES_PK PRIMARY KEY (player_match_id));
 
 CREATE sequence PLAYERSMATCHES_ID_SEQ;
@@ -56,16 +56,16 @@ end;
 
 /
 CREATE TABLE Heroes (
-	id INT NOT NULL,
-	name VARCHAR2(30) NOT NULL,
+	id INT ,
+	name VARCHAR2(30) ,
 	constraint HEROES_PK PRIMARY KEY (id));
 
 
 /
 CREATE TABLE Items (
-	id INT NOT NULL,
-	name VARCHAR2(40) NOT NULL,
-	description VARCHAR2(1000) NOT NULL,
+	id INT ,
+	name VARCHAR2(40) ,
+	description VARCHAR2(1000) ,
   key_name varchar(50),
 	constraint ITEMS_PK PRIMARY KEY (id));
 
@@ -75,32 +75,32 @@ CREATE TABLE Items (
 /
 --alter table BoughtItems modify player_match_id NUMBER(23, 0);
 CREATE TABLE BoughtItems (
-	item_id INT NOT NULL,
-	player_match_id NUMBER(23, 0) NOT NULL,
-	timing INT NOT NULL);
+	item_id INT ,
+	player_match_id NUMBER(23, 0) ,
+	timing INT );
 
 
 /
 --alter table PlayerMatchTimeStat modify player_match_id NUMBER(23, 0);
 CREATE TABLE PlayerMatchTimeStat (
-	player_match_id NUMBER(23, 0) NOT NULL,
-	time INT NOT NULL,
-	gold INT NOT NULL,
-	xp INT NOT NULL,
+	player_match_id NUMBER(23, 0) ,
+	time INT ,
+	gold INT ,
+	xp INT ,
 	constraint PLAYER_MATCH_STAT_PK PRIMARY KEY (player_match_id,time));
 
 
 /
 CREATE TABLE Roles (
-	name VARCHAR2(30) UNIQUE NOT NULL,
-	id INT NOT NULL,
+	name VARCHAR2(30) UNIQUE ,
+	id INT ,
 	constraint ROLES_PK PRIMARY KEY (id));
 
 
 /
 CREATE TABLE HeroesRoles (
-	hero_id INT NOT NULL,
-	role_id INT NOT NULL);
+	hero_id INT ,
+	role_id INT );
 
 /
 

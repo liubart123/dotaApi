@@ -132,13 +132,29 @@ public class SuperService {
                 }
                 break;
             }
-            case professionals:{break;}//TODO: filters for mathces inserting
+            case professionals:{
+                ArrayList<Match> mathces = dotaDataResource.getRecentProMatches();
+                for (Match m:
+                        mathces) {
+                    reachMatchData(m);
+                    try {
+                        rep.insertMatch(m);
+                    } catch (DbConnectionClosedException e) {
+                        log.error("connection was closed");
+                        if (!repairConnection())
+                            throw e;
+                        return false;
+                    }
+                }
+                break;
+            }
         }
         return true;
     }
 
     //reach match data by items instances
     static void reachMatchData(Match match){
+        log.trace("reaching match with items data. id: " + match.getMatch_id());
         for (PlayerInMatch pl:
              match.getPlayers()) {
             for (BoughtItem item:

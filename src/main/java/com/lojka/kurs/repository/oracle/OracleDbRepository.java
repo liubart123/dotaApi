@@ -277,6 +277,7 @@ public class OracleDbRepository implements IDbRepository {
 
     @Override
     public void insertMatch(Match match) throws DbAccessException, DbConnectionClosedException {
+        log.debug("inserting match with id: " + match.getMatch_id());
         Integer i =0;
         try {
             //filling table matches;
@@ -325,7 +326,11 @@ public class OracleDbRepository implements IDbRepository {
                 cs.setInt(19, pim.getLast_hits());
                 cs.setInt(20, pim.getDenies());
                 cs.setFloat(21, pim.getStuns());
-                cs.setInt(22, pim.getLane_efficiency_pct());
+                if (pim.getLane_efficiency_pct()==null){
+                    cs.setNull(22, pim.getLane_efficiency_pct());
+                }else {
+                    cs.setInt(22, pim.getLane_efficiency_pct());
+                }
                 cs.setBoolean(24, pim.getWin());
                 cs.registerOutParameter(23, OracleTypes.INTEGER);
                 cs.executeQuery();

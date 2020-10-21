@@ -7,6 +7,7 @@ import com.lojka.kurs.model.Item;
 import com.lojka.kurs.model.Match;
 import com.lojka.kurs.service.dota_data_access.IDotaDataResource;
 import com.lojka.kurs.service.factory.HeroRoleFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.json.*;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -14,14 +15,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
+@Slf4j
 public class OpenDotaDataResource implements IDotaDataResource {
     static int maxCountOfRequests= 50;
     static String userAgent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36";
     static String basicUrl =  "https://api.opendota.com/api/";
     static String matchUrl = "matches/";
-    static String recentMatchesUrl = "parsedMatches";
-    static String recentProMatchesUrl = "proMatches";
+    static String recentMatchesUrl = "publicMatches";
+    static String recentProMatchesUrl = "parsedMatches";
     static String heroesUrl = "constants/heroes";
     static String items = "constants/items";
 
@@ -38,6 +39,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
     }
     @Override
     public Match getMatch(Long id) throws DotaDataAccessException {
+        log.trace("get match from internet with id: " + id);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
 
@@ -54,7 +56,8 @@ public class OpenDotaDataResource implements IDotaDataResource {
             Match m = response.getBody();
             //m.setStart_time(m.getStart_time());
             //mathc data is invalid
-            if (m.getPicks_bans()==null){
+            if (m.getPicks_bans()==null || m.getPlayers()[0].getGold_t()==null){
+                log.trace("getting match: match is null");
                 return null;
             }
             return m;
@@ -65,6 +68,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
 
     @Override
     public ArrayList<Match> getRecentMatches() throws DotaDataAccessException{
+        log.trace("getting recent matches");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("user-agent",userAgent);
@@ -78,25 +82,41 @@ public class OpenDotaDataResource implements IDotaDataResource {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             MatchFromApi[] ids = response.getBody();
-            ArrayList<Match> result = new ArrayList<Match>();
-            for (int i=0;i<ids.length && i <maxCountOfRequests;i++){
-                try{
-                    Match m = getMatch(ids[i].match_id);
-                    if (m==null){
-                        continue;
-                    }
-                    result.add(m);
-                }catch (DotaDataAccessException e){
-                    if (i!=0){
-                        return result;
-                    }else {
+            //i'm getting last id from latest matches, and start new match searching before this last match, to find mathces with full gathered info
+            Long lastId = ids[ids.length-1].match_id;
+            request = new HttpEntity(headers);
+            response = restTemplate.exchange(
+                    getQueryUrl("matches") + "?less_than_match_id=" + (lastId-10000000),
+                    HttpMethod.GET,
+                    request,
+                    MatchFromApi[].class
+            );
+            if (response.getStatusCode() == HttpStatus.OK) {
+                ids = response.getBody();
+                ArrayList<Match> result = new ArrayList<Match>();
+                for (int i=0;i<ids.length && i <maxCountOfRequests;i++){
+                    try{
+                        log.trace("getting matches: getting match with id: " + ids[i].match_id);
+                        Match m = getMatch(ids[i].match_id);
+                        if (m==null){
+                            log.trace("getting matches: match is null");
+                            continue;
+                        }
+                        result.add(m);
+                    }catch (DotaDataAccessException e){
+                        if (i!=0){
+                            return result;
+                        }else {
+                            throw e;
+                        }
+                    }catch (Exception e){
                         throw e;
                     }
-                }catch (Exception e){
-                    throw e;
                 }
+                return result;
+            } else {
+                throw new DotaDataAccessException("request failed");
             }
-            return result;
         } else {
             throw new DotaDataAccessException("request failed");
         }
@@ -104,12 +124,13 @@ public class OpenDotaDataResource implements IDotaDataResource {
 
     @Override
     public ArrayList<Match> getRecentProMatches() throws DotaDataAccessException {
+        log.trace("getting recent pro matches");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("user-agent",userAgent);
         HttpEntity request = new HttpEntity(headers);
         ResponseEntity<ProMatchFromApi[]> response = restTemplate.exchange(
-                getQueryUrl("matches"),
+                getQueryUrl("proMatches"),
                 HttpMethod.GET,
                 request,
                 ProMatchFromApi[].class
@@ -122,6 +143,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
                 try{
                     Match m = getMatch(ids[i].match_id);
                     if (m==null){
+                        log.trace("getting matches: match is null");
                         continue;
                     }
                     result.add(m);
