@@ -1,5 +1,5 @@
 CREATE TABLE Matches (
-	id NUMBER(12, 0) ,
+	id NUMBER ,
 	duration INT ,
 	dire_score INT ,
 	radiant_score INT ,
@@ -12,16 +12,16 @@ CREATE TABLE Matches (
 --drop table Matches purge;
 
 CREATE TABLE Players (
-	id NUMBER(11, 0) ,
+	id NUMBER ,
 	constraint PLAYERS_PK PRIMARY KEY (id));
---alter table Players modify id NUMBER(11, 0);
+--alter table Players modify id NUMBER;
 
 /
---alter table PlayersMatches modify player_match_id NUMBER(23, 0) ;
---alter table PlayersMatches modify player_id NUMBER(11, 0) ;
+--alter table PlayersMatches modify player_match_id NUMBER ;
+--alter table PlayersMatches modify player_id NUMBER ;
 CREATE TABLE PlayersMatches (
-	player_id NUMBER(11, 0) ,
-	match_id NUMBER(12, 0) ,
+	player_id NUMBER ,
+	match_id NUMBER ,
 	hero_id INT ,
 	kills INT ,
 	deaths INT ,
@@ -30,7 +30,7 @@ CREATE TABLE PlayersMatches (
 	healing INT ,
 	tower_damage INT ,
 	teamfight FLOAT ,
-	player_match_id NUMBER(23, 0) ,
+	player_match_id NUMBER ,
 	tower_kills INT ,
 	courier_kills INT ,
 	sentry_kills INT ,
@@ -73,17 +73,17 @@ CREATE TABLE Items (
 --alter table Items modify description VARCHAR2(1000);
 
 /
---alter table BoughtItems modify player_match_id NUMBER(23, 0);
+--alter table BoughtItems modify player_match_id NUMBER;
 CREATE TABLE BoughtItems (
 	item_id INT ,
-	player_match_id NUMBER(23, 0) ,
+	player_match_id NUMBER ,
 	timing INT );
 
 
 /
---alter table PlayerMatchTimeStat modify player_match_id NUMBER(23, 0);
+--alter table PlayerMatchTimeStat modify player_match_id NUMBER;
 CREATE TABLE PlayerMatchTimeStat (
-	player_match_id NUMBER(23, 0) ,
+	player_match_id NUMBER ,
 	time INT ,
 	gold INT ,
 	xp INT ,
@@ -103,6 +103,7 @@ CREATE TABLE HeroesRoles (
 	role_id INT );
 
 /
+
 
 
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk0 FOREIGN KEY (player_id) REFERENCES Players(id);
