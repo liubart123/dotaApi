@@ -148,6 +148,27 @@ public class SuperService {
                 }
                 break;
             }
+            case professionalsEarlier:{
+                Long lowestMatchId;
+                lowestMatchId = rep.getLowestMatchId();
+                if (lowestMatchId==-1){
+                    return false;
+                }
+                ArrayList<Match> mathces = dotaDataResource.getEarlyProMatches(lowestMatchId);
+                for (Match m:
+                        mathces) {
+                    reachMatchData(m);
+                    try {
+                        rep.insertMatch(m);
+                    } catch (DbConnectionClosedException e) {
+                        log.error("connection was closed");
+                        if (!repairConnection())
+                            throw e;
+                        return false;
+                    }
+                }
+                break;
+            }
         }
         return true;
     }

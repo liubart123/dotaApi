@@ -13,6 +13,7 @@ public interface IDotaDataResource {
     Match getMatch(Long id) throws DotaDataAccessException;
     ArrayList<Match> getRecentMatches() throws DotaDataAccessException;
     ArrayList<Match> getRecentProMatches() throws DotaDataAccessException;
+    ArrayList<Match> getEarlyProMatches(Long biggestMatchId) throws DotaDataAccessException;
     Hero[] getAllHeroes() throws DotaDataAccessException;
     Item[] getAllItems() throws DotaDataAccessException;
     List<HeroRole> getAllHeroRoles() throws DotaDataAccessException;

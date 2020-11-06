@@ -9,3 +9,7 @@ delete from pdb_kurs_dwh_admin.heroes where id = 2228;
 select * from pdb_kurs_dwh_admin.heroes order by id desc;
 select * from heroes order by id desc;
 truncate table  pdb_kurs_dwh_admin.heroes ;
+
+select count(*) from matches;
+select count(*) from PlayersMatches;
+select * from 

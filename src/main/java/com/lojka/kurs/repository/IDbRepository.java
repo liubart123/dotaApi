@@ -28,4 +28,5 @@ public interface IDbRepository {
     void updateHeroRoles(HeroRole[] roles) throws DbAccessException, DbConnectionClosedException;
     void updateHeroes(Hero[] heroes) throws DbAccessException, DbConnectionClosedException;
     void insertMatch(Match match) throws DbAccessException, DbConnectionClosedException;
+    Long getLowestMatchId() throws DbAccessException, DbConnectionClosedException;
 }

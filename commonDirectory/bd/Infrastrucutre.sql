@@ -13,6 +13,7 @@ alter session set container=pdb_kurs;
 --user
 create user pdb_kurs_admin2 identified  by password;
 grant resource, connect, DBA to pdb_kurs_admin2;
+grant select any table to pdb_kurs_admin2;
 alter user pdb_kurs_admin2 default role all;
 
 

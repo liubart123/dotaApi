@@ -23,6 +23,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
     static String matchUrl = "matches/";
     static String recentMatchesUrl = "publicMatches";
     static String recentProMatchesUrl = "parsedMatches";
+    static String earlyProMatchesUrl = "parsedMatches?less_than_match_id=";
     static String heroesUrl = "constants/heroes";
     static String items = "constants/items";
 
@@ -32,6 +33,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
             case "match" : return basicUrl + matchUrl;
             case "matches" : return basicUrl + recentMatchesUrl;
             case "proMatches" : return basicUrl + recentProMatchesUrl;
+            case "earlyProMatches" : return basicUrl + earlyProMatchesUrl;
             case "heroes" : return basicUrl + heroesUrl;
             case "items" : return basicUrl + items;
             default: return null;
@@ -121,7 +123,44 @@ public class OpenDotaDataResource implements IDotaDataResource {
             throw new DotaDataAccessException("request failed");
         }
     }
+    @Override
+    public ArrayList<Match> getEarlyProMatches(Long biggestMatchId) throws DotaDataAccessException{
+        log.trace("getting recent pro matches");
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("user-agent",userAgent);
+        HttpEntity request = new HttpEntity(headers);
+        ResponseEntity<ProMatchFromApi[]> response = restTemplate.exchange(
+                getQueryUrl("earlyProMatches") + biggestMatchId.toString(),
+                HttpMethod.GET,
+                request,
+                ProMatchFromApi[].class
+        );
 
+        if (response.getStatusCode() == HttpStatus.OK) {
+            ProMatchFromApi[] ids = response.getBody();
+            ArrayList<Match> result = new ArrayList<Match>();
+            for (int i=0;i<ids.length && i <maxCountOfRequests;i++){
+                try{
+                    Match m = getMatch(ids[i].match_id);
+                    if (m==null){
+                        log.trace("getting matches: match is null");
+                        continue;
+                    }
+                    result.add(m);
+                }catch (DotaDataAccessException e){
+                    if (i!=0){
+                        return result;
+                    }else {
+                        throw e;
+                    }
+                }
+            }
+            return result;
+        } else {
+            throw new DotaDataAccessException("request failed");
+        }
+    }
     @Override
     public ArrayList<Match> getRecentProMatches() throws DotaDataAccessException {
         log.trace("getting recent pro matches");

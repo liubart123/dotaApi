@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Slf4j
 public class OracleDbRepository implements IDbRepository {
@@ -31,6 +32,8 @@ public class OracleDbRepository implements IDbRepository {
     static String sqlGetItems = "begin SELECT_ITEMS(?); end;";
     static String sqlGetHeroRoles = "begin SELECT_HERO_ROLES(?); end;";
     static String sqlGetHeroesRoles = "begin SELECT_HEROES_ROLES(?); end;";
+
+    static String sqlGetLowestMatchId = "begin GET_LOWEST_MATCH_ID(?); end;";
 
     Connection connection;
 
@@ -327,7 +330,7 @@ public class OracleDbRepository implements IDbRepository {
                 cs.setInt(20, pim.getDenies());
                 cs.setFloat(21, pim.getStuns());
                 if (pim.getLane_efficiency_pct()==null){
-                    cs.setNull(22, pim.getLane_efficiency_pct());
+                    cs.setNull(22, OracleTypes.INTEGER);
                 }else {
                     cs.setInt(22, pim.getLane_efficiency_pct());
                 }
@@ -392,6 +395,46 @@ public class OracleDbRepository implements IDbRepository {
                 log.error("commit error");
             }
         }
+    }
+
+
+    @Override
+    public Long getLowestMatchId() throws DbAccessException, DbConnectionClosedException {
+        log.debug("getting lowest match id");
+        Long rs = -1l;
+        try {
+            //filling table matches;
+            CallableStatement cs = connection.prepareCall(sqlGetLowestMatchId);
+            cs.registerOutParameter(1, OracleTypes.NUMBER);
+            cs.execute();
+            rs = cs.getObject(1, Long.class);
+            cs.close();
+        } catch (SQLException e) {
+            try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
+                connection.rollback();
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
+            throw new DbAccessException("error during getting lowest match id: " + e.getMessage());
+        }catch ( Exception e){
+            try {
+                connection.rollback();
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
+            throw new DbAccessException("strange error during getting lowest match id: " + e.getMessage());
+        }
+        finally {
+            try {
+                connection.commit();
+            } catch (SQLException e) {
+                log.error("commit error");
+            }
+        }
+        return rs;
     }
 
 }

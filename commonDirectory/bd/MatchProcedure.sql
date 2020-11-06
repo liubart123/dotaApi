@@ -211,3 +211,36 @@ create or replace procedure CLEAR_BOUGHT_ITEMS(player_match_id_p NUMBER) is
     delete from BoughtItems where player_match_id = player_match_id_p;
   end;
   /
+ 
+select min(id) from matches;
+select * from PDB_KURS_DWH_ADMIN.PLAYERSMATCHES;
+select * from PDB_KURS_DWH_ADMIN.PLAYERSMATCHES;
+select * from dba_tables where owner = 'PDB_KURS_DWH_ADMIN';
+  select min(id) from matches;
+  select min(match_id) from PDB_KURS_DWH_ADMIN.PLAYERSMATCHES;
+/
+--getting lowest match id
+create or replace procedure GET_LOWEST_MATCH_ID(res out number)
+is
+  minRel number;
+  minDwh number;
+begin
+  select min(id) into minRel from PDB_KURS_ADMIN2.matches;
+  select min(match_id) into minDwh from PDB_KURS_DWH_ADMIN.PLAYERSMATCHES;
+  dbms_output.put_line(minRel);
+  dbms_output.put_line(minDwh);
+  if minRel < minDwh then 
+    res:=minRel; 
+  else 
+    res:=minDwh; 
+  end if;
+  
+  
+end;
+/
+declare 
+  res number;
+begin
+  GET_LOWEST_MATCH_ID(res);
+  dbms_output.put_line(res);
+end;

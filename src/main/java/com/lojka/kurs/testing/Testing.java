@@ -26,7 +26,7 @@ public class Testing {
                 SuperService.updateDotaInfoFromApi();
             }
             //SuperService.insertMatch(5661553712l);
-            SuperService.insertMatches(EFilterForMatchInserting.professionals);
+            SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
         } catch (DbAccessException e) {
             log.error("DbAccessException: "  + e.getMessage());
             e.printStackTrace();
