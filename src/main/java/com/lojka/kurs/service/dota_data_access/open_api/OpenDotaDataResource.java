@@ -125,7 +125,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
     }
     @Override
     public ArrayList<Match> getEarlyProMatches(Long biggestMatchId) throws DotaDataAccessException{
-        log.trace("getting recent pro matches");
+        log.trace("getting earlie pro matches");
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.set("user-agent",userAgent);
@@ -226,6 +226,8 @@ public class OpenDotaDataResource implements IDotaDataResource {
                 Map<String, Object> heroAttributes = (Map<String, Object>)map.get(keys[i]);
                 hero.setId((Integer)heroAttributes.get("id"));
                 hero.setName((String)heroAttributes.get("localized_name"));
+                hero.setImg("https://api.opendota.com"  + (String)heroAttributes.get("img"));
+                hero.setIcon("https://api.opendota.com" + (String)heroAttributes.get("icon"));
                 List<HeroRole> roles = new ArrayList<>();
                 for (String role:
                         (ArrayList<String>)heroAttributes.get("roles")) {

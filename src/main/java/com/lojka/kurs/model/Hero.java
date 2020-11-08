@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hero implements Serializable {
+public class Hero implements Serializable, Comparable<Hero> {
     Integer id;
     String name;
     String description;
+    String img;
+    String icon;
     List<HeroRole> roles = new ArrayList<>();
 
     public Integer getId() {
@@ -43,5 +45,26 @@ public class Hero implements Serializable {
 
     public void setRoles(List<HeroRole> roles) {
         this.roles = roles;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
+
+    @Override
+    public int compareTo(Hero o) {
+        return name.compareTo(o.name);
     }
 }

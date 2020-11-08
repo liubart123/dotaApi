@@ -18,7 +18,7 @@ import java.util.Random;
 public class OracleDbRepository implements IDbRepository {
     static String sqlInsertItems =  "begin INSERT_ITEM(?, ?, ?, ?); end;";
     static String sqlInsertHeroRoles =  "begin INSERT_HERO_ROLE(?, ?); end;";
-    static String sqlInsertHeroes =  "begin INSERT_HERO(?, ?); end;";
+    static String sqlInsertHeroes =  "begin INSERT_HERO(?, ?, ?, ?); end;";
     static String sqlInsertHeroesRoles =  "begin INSERT_HEROES_ROLES(?, ?); end;";
     static String sqlInsertMatch =  "begin INSERT_MATCH(?,?,?,?,?,?,?,?); end;";
     static String sqlClearHeroRoles =  "begin CLEAR_HEROES_ROLES; end;";
@@ -93,6 +93,8 @@ public class OracleDbRepository implements IDbRepository {
                 Hero hero = new Hero();
                 hero.setId(rs.getInt(1));
                 hero.setName(rs.getString(2));
+                hero.setImg(rs.getString(3));
+                hero.setIcon(rs.getString(4));
                 //hero.setDescription(rs.getString(3));
                 result.put(hero.getId(),hero);
             }
@@ -247,6 +249,8 @@ public class OracleDbRepository implements IDbRepository {
                 ps = connection.prepareStatement(sqlInsertHeroes);
                 ps.setInt(1, heroes[i].getId());
                 ps.setString(2,heroes[i].getName());
+                ps.setString(3,heroes[i].getImg());
+                ps.setString(4,heroes[i].getIcon());
                 ps.execute();
                 ps.close();
                 for (HeroRole role : heroes[i].getRoles())
@@ -397,7 +401,6 @@ public class OracleDbRepository implements IDbRepository {
         }
     }
 
-
     @Override
     public Long getLowestMatchId() throws DbAccessException, DbConnectionClosedException {
         log.debug("getting lowest match id");
@@ -435,6 +438,25 @@ public class OracleDbRepository implements IDbRepository {
             }
         }
         return rs;
+    }
+
+    @Override
+    public ResultSet executeQuery(String sql) throws DbAccessException, DbConnectionClosedException{
+        try {
+            log.debug("execute custom query: " + sql);
+            ResultSet rs = connection.prepareStatement(sql).executeQuery();
+            return rs;
+        } catch (SQLException e) {
+            try {
+                if (connection.isClosed()){
+                    throw new DbConnectionClosedException("db connection was closed...");
+                }
+            } catch (SQLException ex) {
+                log.error("rollback error");
+            }
+            throw new DbAccessException("error executing custom query: " + e.getMessage());
+        }
+
     }
 
 }

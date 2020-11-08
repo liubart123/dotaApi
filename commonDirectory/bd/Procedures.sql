@@ -26,7 +26,7 @@ end;
 /
 create or replace procedure SELECT_ITEMS(curs out SYS_REFCURSOR) is
   begin
-    open curs for select * from ITEMS;
+    open curs for select * from ITEMS order by name;
   end;
 /
 select * from ITEMS order by id desc;
@@ -52,7 +52,7 @@ create or replace procedure INSERT_HERO_ROLE
 /
 create or replace procedure SELECT_HERO_ROLES(curs out SYS_REFCURSOR) is
   begin
-    open curs for select * from Roles;
+    open curs for select * from Roles order by name;
   end;
 /
 select * from Roles;
@@ -99,7 +99,7 @@ end;
 --------------------------------------------HERO ROLE
 
 create or replace procedure INSERT_HERO 
-  (hero_id in INT, hero_name in varchar2) IS
+  (hero_id in INT, hero_name in varchar2, img in varchar2, icon in varchar2) IS
   exist PLS_INTEGER;
   begin
     SELECT COUNT(1)
@@ -108,17 +108,21 @@ create or replace procedure INSERT_HERO
      WHERE id = hero_id
        AND ROWNUM = 1;
     if exist = 1 then
-      update HEROES set name = hero_name where id=hero_id;
+      update HEROES set 
+        name = hero_name,
+        imgUrl = img ,
+        iconUrl = icon 
+        where id=hero_id;
     else 
-        insert into HEROES (name, id)
+        insert into HEROES (name, id, imgUrl, iconUrl)
       values 
-        (hero_name, hero_id);
+        (hero_name, hero_id, img, icon);
     end if;
   end;
 /
 create or replace procedure SELECT_HEROES(curs out SYS_REFCURSOR) is
   begin
-    open curs for select * from Heroes;
+    open curs for select * from Heroes order by name;
   end;
 /
 select * from Heroes;

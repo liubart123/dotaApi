@@ -8,6 +8,7 @@ import com.lojka.kurs.model.Item;
 import com.lojka.kurs.model.Match;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,4 +30,5 @@ public interface IDbRepository {
     void updateHeroes(Hero[] heroes) throws DbAccessException, DbConnectionClosedException;
     void insertMatch(Match match) throws DbAccessException, DbConnectionClosedException;
     Long getLowestMatchId() throws DbAccessException, DbConnectionClosedException;
+    ResultSet executeQuery(String sql) throws DbAccessException, DbConnectionClosedException;
 }

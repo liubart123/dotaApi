@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chart Setting</title>
+    <style>
+        .block-in-cell{
+            overflow-wrap: break-word;
+        }
+    </style>
+    <script type="text/javascript">
+        function setRadio() {
+            document.getElementById('investigated_hero1').click();
+            document.getElementById('investigated_hero1').checked=true;
+            document.getElementById('investigated_hero1').onchange("my");
+        }
+        alliesTable = document.getElementById("allies_table");
+        enemiesTable = document.getElementById("enemies_table");
+        addHeroToTeam = function (isAlly) {
+            if (isAlly=="ally"){
+                alliesHeroesString = "";
+                document.getElementById("ally_team_icons").innerHTML = "";
+                heroes = document.getElementsByClassName("ally_checkbox");
+                for(i in heroes){
+                    if (heroes[i].checked){
+                        alliesHeroesString+=heroes[i].getAttribute('hero_id') + ",";
+                        document.getElementById("ally_team_icons").innerHTML +=
+                            "<img src=" + heroes[i].getAttribute('hero_icon') + " height=20 width=20/>"
+                    }
+                }
+                document.getElementById("allyTeamHeroesInput").value=alliesHeroesString;
+            }else if (isAlly=="enemy"){
+                enemiesHeroesString = "";
+                document.getElementById("enemy_team_icons").innerHTML = "";
+                heroes = document.getElementsByClassName("enemy_checkbox");
+                for(i in heroes){
+                    if (heroes[i].checked){
+                        enemiesHeroesString+=heroes[i].getAttribute('hero_id') + ",";
+                        document.getElementById("enemy_team_icons").innerHTML +=
+                            "<img src=" + heroes[i].getAttribute('hero_icon') + " height=20 width=20/>"
+                    }
+                }
+                document.getElementById("enemyTeamHeroesInput").value=enemiesHeroesString;
+            }else if (isAlly=="my"){
+                enemiesHeroesString = "";
+                heroes = document.getElementsByClassName("investigated_checkbox");
+                for(i in heroes){
+                    if (heroes[i].checked){
+                        document.getElementById("investigated_hero_icon").innerHTML =
+                            "<img src=" + heroes[i].getAttribute('hero_icon') + " height=20 width=20/>";
+                        enemiesHeroesString += heroes[i].getAttribute('hero_id');
+                    }
+                }
+                document.getElementById("investigatedHeroInput").value=enemiesHeroesString;
+            }
+        }
+    </script>
+</head>
+<body onload = 'setRadio()'>
+    <div style="display:flex;">
+        <table border="1" id="heroes_table">
+            <tr>
+                <th colspan="2">heroes</th>
+                <th >investigated hero</th>
+                <th >allies hero</th>
+                <th >enemies hero</th>
+            </tr>
+            <tr th:each="hero : ${heroes}">
+                <td>
+                    <img th:src="${hero.value.icon}" height="20" width="20"/>
+                </td>
+                <td >
+                    <span th:utext="${hero.value.name}"></span>
+                </td>
+                <td>
+                    <input type="radio"
+                           th:id="'investigated_hero'+${hero.value.id}"
+                           name="myHero" th:value="${hero.value.id}"
+                           class="investigated_checkbox" onchange="addHeroToTeam('my')"
+                           th:hero_id="${hero.value.id}" th:hero_icon="${hero.value.icon}"
+                    >
+                </td>
+                <td>
+                    <input type="checkbox" class="ally_checkbox" onchange="addHeroToTeam('ally')" th:hero_id="${hero.value.id}" th:hero_icon="${hero.value.icon}">
+                </td>
+                <td>
+
+                    <input type="checkbox" class="enemy_checkbox" onchange="addHeroToTeam('enemy')" th:hero_id="${hero.value.id}" th:hero_icon="${hero.value.icon}">
+                </td>
+            </tr>
+        </table>
+        <div style="display: block; padding: 25px; border: black 1px;">
+            <div id="investigated_hero_icon">
+            </div>
+            <div  id="ally_team_icons">
+            </div>
+            <div id="enemy_team_icons"></div>
+        </div>
+        <form th:action="@{/analytic/chart}" method="POST" th:method="POST" autocomplete="off" style="padding: 25px;">
+            <input type="text" name="durationMin" placeholder="duration min">
+            <input type="text" name="durationMax" placeholder="duration max">
+            <br/>
+            <input type="text" name="patchMin" placeholder="patch min">
+            <input type="text" name="patchMax" placeholder="patch max">
+            <br/>
+            minimal date
+            <input type="date" name="dateMin"><br/>
+            maximal date
+            <input type="date" name="dateMax"><br/>
+            y axis:
+            <select name="yAxis">
+                <option value="win">winrate</option>
+                <option value="kda">kda</option>
+                <option value="damage">damage</option>
+                <option value="LAST_GPM_PROPORTION">gpm</option>
+            </select> <br/>
+            x axis:
+            <select name="xAxis">
+                <option value="DURATIONMIN">duration</option>
+                <option value="kda">kda</option>
+                <option value="damage">damage</option>
+                <option value="LAST_GPM_PROPORTION">gpm</option>
+            </select>
+            <Input name="allies" id="allyTeamHeroesInput" value="" type="hidden">
+            <Input name="enemies" id="enemyTeamHeroesInput" value="" type="hidden">
+            <Input name="hero" id="investigatedHeroInput" value="" type="hidden">
+            <input type="submit" value="Get chart"></form>
+        </form>
+    </div>
+
+</body>
+</html>

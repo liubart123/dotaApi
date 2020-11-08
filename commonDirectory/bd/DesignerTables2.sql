@@ -58,9 +58,12 @@ end;
 CREATE TABLE Heroes (
 	id INT ,
 	name VARCHAR2(30) ,
+  imgUrl varchar(500),
+  iconUrl varchar(500),
 	constraint HEROES_PK PRIMARY KEY (id));
 
-
+--/
+--alter table heroes add iconUrl varchar(500);
 /
 CREATE TABLE Items (
 	id INT ,

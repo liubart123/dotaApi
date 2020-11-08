@@ -21,21 +21,25 @@ import java.util.Map;
 public class Testing {
     //testin super service
     static {
-        try {
-            if (!SuperService.updateDotaInfoFromApi()){
-                SuperService.updateDotaInfoFromApi();
-            }
-            //SuperService.insertMatch(5661553712l);
-            SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
-        } catch (DbAccessException e) {
-            log.error("DbAccessException: "  + e.getMessage());
-            e.printStackTrace();
-        } catch (DotaDataAccessException e) {
-            log.error("DotaDataAccessException: " + e.getMessage());
-            e.printStackTrace();
-        } catch (DbConnectionClosedException e) {
-            e.printStackTrace();
-        }
+        SuperService sp = new SuperService();
+//        try {
+//            if (!SuperService.updateDotaInfoFromApi()){
+//                SuperService.updateDotaInfoFromApi();
+//            }
+//            //SuperService.insertMatch(5661553712l);
+////            for (int i=0;i<50;i++){
+////                SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
+////            }
+//        } catch (DbAccessException e) {
+//            log.error("DbAccessException: "  + e.getMessage());
+//            e.printStackTrace();
+//        } catch (DotaDataAccessException e) {
+//            log.error("DotaDataAccessException: " + e.getMessage());
+//            e.printStackTrace();
+//        } catch (DbConnectionClosedException e) {
+//            log.error("DbConnectionClosedException: " + e.getMessage());
+//            e.printStackTrace();
+//        }
     }
 
 

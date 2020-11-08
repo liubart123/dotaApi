@@ -4,6 +4,9 @@ import com.lojka.kurs.exception.DbAccessException;
 import com.lojka.kurs.exception.DbConnectionClosedException;
 import com.lojka.kurs.exception.DotaDataAccessException;
 import com.lojka.kurs.model.*;
+import com.lojka.kurs.model.queries.BubbleCoord;
+import com.lojka.kurs.model.queries.BubbleData;
+import com.lojka.kurs.model.queries.BubbleDataset;
 import com.lojka.kurs.repository.IDbConnector;
 import com.lojka.kurs.repository.IDbRepository;
 import com.lojka.kurs.repository.oracle.OracleDbConnector;
@@ -12,9 +15,10 @@ import com.lojka.kurs.service.dota_data_access.open_api.OpenDotaDataResource;
 import com.lojka.kurs.service.factory.HeroRoleFactory;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
+
 @Slf4j
 //main service with all main functions. Controllers should interact with him
 public class SuperService {
@@ -183,5 +187,116 @@ public class SuperService {
                 item.setItemId(itemsByName.get(item.getKey()).getId());
             }
         }
+    }
+
+    public static Map<Integer, Item> getItems() {
+        return items;
+    }
+
+    public static Map<Integer, Hero> getHeroes() {
+        return heroes;
+    }
+
+    public static Map<Integer, HeroRole> getRoles() {
+        return roles;
+    }
+
+    public static BubbleData GetChart(
+            Integer durationMin,
+            Integer durationMax,
+            Integer patchMin,
+            Integer patchMax,
+            Date dateMin,
+            Date dateMax,
+            String yAxis,
+            String xAxis,
+            List<Hero> allies,
+            List<Hero> enemies,
+            Hero investigatedHero
+    ){
+        log.debug("getting chart");
+        //selection
+        String query = "select my.";
+        query += xAxis + " as xAxis, ";
+        switch (yAxis){
+            case "kda":{
+                query += "sum(my.kills+my.assists)/(sum(my.deaths)+1) as yAxis, ";
+            }
+            default:{
+                query += "avg(my." + yAxis + ") as yAxis, ";
+            }
+        }
+        query += " count(*) as selection ";
+
+
+        //from
+        query += "from pdb_kurs_dwh_admin.playersmatches my ";
+        if (allies.size()!=0){
+            query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id ";
+        }
+        if (enemies.size()!=0){
+            query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id ";
+        }
+
+
+        //conditions
+        query += " where my.hero_id=" + investigatedHero.getId().toString() + " ";
+
+        Integer index = 0;
+        if (allies.size() != 0){
+            query+="and (";
+            for(Hero ally : allies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " allies.hero_id = " + ally.getId();
+                index++;
+            }
+            query+=")";
+        }
+
+
+        index = 0;
+        if (enemies.size() != 0){
+            query+=" and (";
+            for(Hero enemy : enemies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " enemies.hero_id = " + enemy.getId();
+                index++;
+            }
+            query+=")";
+        }
+
+        //grouping
+        query += " group by my." + xAxis + " order by my." + xAxis ;
+
+        try {
+            ResultSet rs = rep.executeQuery(query);
+            BubbleData result = new BubbleData();
+            result.datasets.add(new BubbleDataset());
+            Float maxBubbleSize = 30f;
+            Integer maxSelection = 50;
+            while(rs.next()){
+                result.datasets.get(0).data.add(new BubbleCoord(
+                        rs.getInt(1),
+                        rs.getFloat(2),
+                        Math.min(rs.getInt(3),maxSelection)/maxSelection.floatValue()*maxBubbleSize
+                ));
+            }
+
+            return result;
+        } catch (DbAccessException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        } catch (DbConnectionClosedException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        } catch (SQLException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+        return null;
     }
 }

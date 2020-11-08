@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+    <div  class="chart-container" style="position: relative; height:90%; width:90%">
+        <canvas id="myChart"></canvas>
+    </div>
+    <div id ="json"></div>
+    <div id ="json2"></div>
+    <script>
+        dataJson = JSON.parse("[[${chartData}]]".replace(/(&quot\;)/g,"\""));
+        var config = {
+            type: 'bubble',
+            data:dataJson,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            display: true,
+                            labelString: "winRate"
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: false,
+                            display: true,
+                            labelString: "minute"
+                        }
+                    }]
+                }
+            }
+        };
+        window.onload = function() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            window.myLine = new Chart(ctx, config);
+        };
+    </script>
+</body>
+</html>

@@ -11,5 +11,6 @@ select * from heroes order by id desc;
 truncate table  pdb_kurs_dwh_admin.heroes ;
 
 select count(*) from matches;
+select * from matches where id = 5679244991;
 select count(*) from PlayersMatches;
 select * from 
