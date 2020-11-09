@@ -3,6 +3,7 @@ package com.lojka.kurs;
 
 import org.springframework.context.annotation.*;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring5.SpringTemplateEngine;
@@ -37,5 +38,17 @@ public class Config implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("main");
+    }
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler(
+                "/assets/**",
+                "/js/**"
+                ).addResourceLocations(
+                    "classpath:/assets/",
+                    "classpath:/templates/WEB-INF/assets/",
+                    "classpath:/templates/WEB-INF/assets/js/"
+                );
+
     }
 }

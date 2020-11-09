@@ -1,0 +1,85 @@
+<html><head>
+	<title>bubble test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="utils.js"></script>
+    <script src="chartFuncs.js"></script>
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+<body>
+    <div style="width:75%"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+		<canvas id="canvas" style="display: block; width: 578px; height: 289px;" width="578" height="289" class="chartjs-render-monitor"></canvas>
+	</div>
+    
+	<button id="randomizeData">Randomize Data</button>
+	<script>
+		var color = Chart.helpers.color;
+		function generateData() {
+			var data = [];
+			for (var i = 0; i < 15; i++) {
+				data.push({
+					x: Samples.utils.rand(1,10),
+					y: Samples.utils.rand(1,10),
+					r: Samples.utils.rand(2,10)
+				});
+			}
+			return data;
+		}
+
+		var scatterChartData = {
+			datasets: [{
+				label: 'My First dataset',
+				backgroundColor: GetNextColor(),
+				data: generateData()
+			}, {
+				label: 'My Second dataset',
+				backgroundColor: GetNextColor(),
+				data: generateData()
+			}]
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myScatter = Chart.Bubble(ctx, {
+                type:'bubble',
+				data: scatterChartData,
+				options: {
+                    scales:{
+                        xAxes:[{
+							display:true,
+							scaleLabel:{
+								display:true,
+								labelString:"xAxes"
+							},
+                            ticks:{
+                                beginAtZero:true,
+                                stepSize:3
+                            }
+                        }],
+                        yAxes:[{
+							scaleLabel:{
+								display:true,
+								labelString:"yAxes"
+							},
+                            ticks:{
+                                beginAtZero:true,
+                                stepSize:3
+                            }
+                        }]
+                    },
+					title: {
+						display: true,
+						text: 'Chart.js Scatter Chart'
+					},
+				}
+			});
+		};
+	</script>
+
+
+
+</body></html>

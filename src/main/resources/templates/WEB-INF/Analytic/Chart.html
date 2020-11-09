@@ -1,9 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html  xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Chart</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        var colorIndex = 0;
+        var COLORS = [
+            '#4dc9f6',
+            '#f67019',
+            '#f53794',
+            '#537bc4',
+            '#acc236',
+            '#166a8f',
+            '#00a950',
+            '#58595b',
+            '#8549ba'
+        ];
+        GetNextColor = function(){
+            return COLORS[colorIndex++];
+        }
+    </script>
 </head>
 <body>
     <div  class="chart-container" style="position: relative; height:90%; width:90%">
@@ -13,23 +30,30 @@
     <div id ="json2"></div>
     <script>
         dataJson = JSON.parse("[[${chartData}]]".replace(/(&quot\;)/g,"\""));
+        for(let i = 0;i<dataJson.datasets.length;i++){
+            dataJson.datasets[i].backgroundColor = GetNextColor();
+        }
         var config = {
             type: 'bubble',
             data:dataJson,
             options: {
                 scales: {
                     yAxes: [{
+                        scaleLabel:{
+                            display:true,
+                            labelString:"[[${yAxis}]]"
+                        },
                         ticks: {
-                            beginAtZero: true,
-                            display: true,
-                            labelString: "winRate"
+                            beginAtZero: true
                         }
                     }],
                     xAxes: [{
+                        scaleLabel:{
+                            display:true,
+                            labelString:"[[${xAxis}]]"
+                        },
                         ticks: {
-                            beginAtZero: false,
-                            display: true,
-                            labelString: "minute"
+                            beginAtZero: true
                         }
                     }]
                 }

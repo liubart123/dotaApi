@@ -13,6 +13,7 @@ import com.lojka.kurs.repository.oracle.OracleDbConnector;
 import com.lojka.kurs.service.super_service.EFilterForMatchInserting;
 import com.lojka.kurs.service.super_service.SuperService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Map;
 //import oracle.database.jdbc.*;
@@ -26,10 +27,21 @@ public class Testing {
 //            if (!SuperService.updateDotaInfoFromApi()){
 //                SuperService.updateDotaInfoFromApi();
 //            }
-//            //SuperService.insertMatch(5661553712l);
-////            for (int i=0;i<50;i++){
-////                SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
-////            }
+////            SuperService.insertMatch(5661553712l);
+//            Boolean cycle = true;
+//            while (cycle){
+//                try{
+//                    SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
+//                }catch (HttpClientErrorException e){
+//                    try {
+//                        log.error("429\nsleeping for a minute");
+//                        Thread.sleep(60000);
+//                    } catch (InterruptedException ex) {
+//                        cycle=false;
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
 //        } catch (DbAccessException e) {
 //            log.error("DbAccessException: "  + e.getMessage());
 //            e.printStackTrace();

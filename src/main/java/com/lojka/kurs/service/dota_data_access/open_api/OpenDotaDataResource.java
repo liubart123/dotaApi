@@ -10,6 +10,7 @@ import com.lojka.kurs.service.factory.HeroRoleFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.json.*;
 import org.springframework.http.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
     }
     @Override
     public Match getMatch(Long id) throws DotaDataAccessException {
+
         log.trace("get match from internet with id: " + id);
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -66,6 +68,8 @@ public class OpenDotaDataResource implements IDotaDataResource {
         } else {
             throw new DotaDataAccessException("request failed");
         }
+
+
     }
 
     @Override

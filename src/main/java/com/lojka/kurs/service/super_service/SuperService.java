@@ -4,9 +4,7 @@ import com.lojka.kurs.exception.DbAccessException;
 import com.lojka.kurs.exception.DbConnectionClosedException;
 import com.lojka.kurs.exception.DotaDataAccessException;
 import com.lojka.kurs.model.*;
-import com.lojka.kurs.model.queries.BubbleCoord;
-import com.lojka.kurs.model.queries.BubbleData;
-import com.lojka.kurs.model.queries.BubbleDataset;
+import com.lojka.kurs.model.queriesV2.*;
 import com.lojka.kurs.repository.IDbConnector;
 import com.lojka.kurs.repository.IDbRepository;
 import com.lojka.kurs.repository.oracle.OracleDbConnector;
@@ -214,10 +212,11 @@ public class SuperService {
             List<Hero> enemies,
             Hero investigatedHero
     ){
+        Float scale = 3f;
         log.debug("getting chart");
         //selection
-        String query = "select my.";
-        query += xAxis + " as xAxis, ";
+        String query = "select floor(my.";
+        query += xAxis + "/" + scale.toString() + ")*" + scale.toString() + " as xAxis, ";
         switch (yAxis){
             case "kda":{
                 query += "sum(my.kills+my.assists)/(sum(my.deaths)+1) as yAxis, ";
@@ -270,13 +269,15 @@ public class SuperService {
         }
 
         //grouping
-        query += " group by my." + xAxis + " order by my." + xAxis ;
+        query += "group by floor(my.";
+        query += xAxis + "/" + scale.toString() + ")*" + scale.toString();
+        query += " order by xAxis";
 
         try {
             ResultSet rs = rep.executeQuery(query);
             BubbleData result = new BubbleData();
-            result.datasets.add(new BubbleDataset());
-            Float maxBubbleSize = 30f;
+            result.datasets.add(new BubbleDataSet());
+            Float maxBubbleSize = 10f;
             Integer maxSelection = 50;
             while(rs.next()){
                 result.datasets.get(0).data.add(new BubbleCoord(
@@ -298,5 +299,89 @@ public class SuperService {
             e.printStackTrace();
         }
         return null;
+    }
+    public static BubbleDataSet setBubbleData(BubbleDataSet dataset, BubbleChart chart, Selection selection) throws DbAccessException, Exception{
+        Float scale = chart.xScale;
+        log.debug("setBubbleData");
+        //selection
+        String query = "select floor(my.";
+        query += chart.xAxis + "/" + scale.toString() + ")*" + scale.toString() + " as xAxis, ";
+        switch (chart.yAxis){
+            case "kda":{
+                query += "sum(my.kills+my.assists)/(sum(my.deaths)+1) as yAxis, ";
+            }
+            default:{
+                query += "avg(my." + chart.yAxis + ") as yAxis, ";
+            }
+        }
+        query += " count(*) as selection ";
+        //from
+        query += "from pdb_kurs_dwh_admin.playersmatches my ";
+        if (selection.allies.size()!=0){
+            query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id ";
+        }
+        if (selection.enemies.size()!=0){
+            query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id ";
+        }
+
+
+        //conditions
+        query += " where my.hero_id=" + selection.hero.getId().toString() + " ";
+
+        Integer index = 0;
+        if (selection.allies.size() != 0){
+            query+="and (";
+            for(Hero ally : selection.allies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " allies.hero_id = " + ally.getId();
+                index++;
+            }
+            query+=")";
+        }
+
+
+        index = 0;
+        if (selection.enemies.size() != 0){
+            query+=" and (";
+            for(Hero enemy : selection.enemies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " enemies.hero_id = " + enemy.getId();
+                index++;
+            }
+            query+=")";
+        }
+
+        //grouping
+        query += "group by floor(my.";
+        query += chart.xAxis + "/" + scale.toString() + ")*" + scale.toString();
+        query += " order by xAxis";
+
+
+        ResultSet rs = rep.executeQuery(query);
+        Float maxBubbleSize = 15f;
+        Float minBubbleSize = 2f;
+        Integer maxSelection = 50;
+        while(rs.next()){
+            dataset.data.add(new BubbleCoord(
+                    rs.getInt(1),
+                    rs.getFloat(2),
+                    Math.min(rs.getInt(3),maxSelection)/maxSelection.floatValue()*(maxBubbleSize-minBubbleSize)+minBubbleSize
+            ));
+        }
+        return dataset;
+    }
+    //get bubble chart that will be drawed by js
+    public static BubbleData getBubbleData(BubbleChart bubbleChart) throws DbAccessException, Exception{
+        BubbleData bubbleData = new BubbleData();
+        for(Selection selection : bubbleChart.selections){
+            bubbleData.datasets.add(
+                    setBubbleData(new BubbleDataSet(selection.selectionName), bubbleChart, selection)
+            );
+        }
+        return bubbleData;
     }
 }

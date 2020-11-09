@@ -1,9 +1,9 @@
 package com.lojka.kurs.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lojka.kurs.model.Hero;
-import com.lojka.kurs.model.queries.BubbleData;
+import com.lojka.kurs.model.queriesV2.BubbleChart;
+import com.lojka.kurs.model.queriesV2.BubbleData;
+import com.lojka.kurs.model.queriesV2.Selection;
 import com.lojka.kurs.service.super_service.SuperService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.ui.Model;
@@ -17,21 +17,22 @@ import java.util.List;
 @RequestMapping("/analytic")
 @RestController
 public class AnalyticController {
-    @GetMapping("/chartSettings")
+    @GetMapping("/CreateSelection")
     ModelAndView getChartSettingsWindow(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/ChartSetting");
+        mov.setViewName("Analytic/CreateSelection");
         mov.addObject("heroes", SuperService.getHeroes());
         return mov;
     }
-    @PostMapping("/chart")
+    @PostMapping("/CreateSelection")
     ModelAndView postBuildChart(Model model,
+                                @RequestParam String selectionName,
                                 @RequestParam Integer durationMin,
                                 @RequestParam Integer durationMax,
                                 @RequestParam Integer patchMin,
                                 @RequestParam Integer patchMax,
-                                @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateMin,
-                                @RequestParam @DateTimeFormat(pattern = "dd.MM.yyyy") Date dateMax,
+                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateMin,
+                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateMax,
                                 @RequestParam String yAxis,
                                 @RequestParam String xAxis,
                                 @RequestParam String allies,
@@ -39,14 +40,13 @@ public class AnalyticController {
                                 @RequestParam String hero
                                 ){
         ModelAndView mov = new ModelAndView();
-
+        Hero heroHero = SuperService.getHeroes().get(Integer.parseInt(hero));
         List<Hero> alliesHeroes = new ArrayList<>();
         for(String heroId : allies.split(",")){
             if (heroId=="")
                 break;
             alliesHeroes.add(SuperService.getHeroes().get(Integer.parseInt(heroId)));
         }
-
         List<Hero> enemiesHeroes = new ArrayList<>();
         for(String heroId : enemies.split(",")){
             if (heroId=="")
@@ -54,29 +54,35 @@ public class AnalyticController {
             enemiesHeroes.add(SuperService.getHeroes().get(Integer.parseInt(heroId)));
         }
 
-        BubbleData data = SuperService.GetChart(
+        Selection selection = new Selection(
+                selectionName,
                 durationMin,
                 durationMax,
                 patchMin,
                 patchMax,
                 dateMin,
                 dateMax,
-                yAxis,
-                xAxis,
                 alliesHeroes,
                 enemiesHeroes,
-                SuperService.getHeroes().get(Integer.parseInt(hero))
+                heroHero
         );
-        ObjectMapper mapper = new ObjectMapper();
+
+        mov.setViewName("Analytic/Chart");
+        return mov;
+    }
+    @GetMapping("/BuildChart")
+    ModelAndView getBuildBubbleChart(Model model){
+        BubbleChart chart =(BubbleChart) model.getAttribute("chart");
+        ModelAndView mov = new ModelAndView();
+        BubbleData data = null;
         try {
-            String json = mapper.writeValueAsString(data);
-            mov.addObject("chartData", json );
-        } catch (JsonProcessingException e) {
+            data = SuperService.getBubbleData(chart);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-        if (data!=null){
-        }
-
+        mov.addObject("chartData", data);
+        mov.addObject("yAxis", chart.yAxis);
+        mov.addObject("xAxis", chart.xAxis);
         mov.setViewName("Analytic/Chart");
         return mov;
     }
