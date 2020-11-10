@@ -1,9 +1,9 @@
 
 var colorIndex = 0;
 var COLORS = [
-    '#4dc9f6',
-    '#f67019',
-    '#f53794',
+    '#4dc9f6ff',
+    '#f6701900',
+    '#f5379488',
     '#537bc4',
     '#acc236',
     '#166a8f',
@@ -26,7 +26,7 @@ var MONTHS = [
     'December'
 ];
 GetNextColor = function(){
-    return COLORS[colorIndex++];
+    return COLORS[(colorIndex++)%COLORS.length];
 }
 function getRandomInt(min, max) {
     return Math.random() * (max - min) + min;

@@ -7,18 +7,18 @@
     <script>
         var colorIndex = 0;
         var COLORS = [
-            '#4dc9f6',
-            '#f67019',
-            '#f53794',
-            '#537bc4',
-            '#acc236',
-            '#166a8f',
-            '#00a950',
-            '#58595b',
-            '#8549ba'
+            '#4dc9f644',
+            '#f6701944',
+            '#f5379444',
+            '#537bc444',
+            '#acc23644',
+            '#166a8f44',
+            '#00a95044',
+            '#58595b44',
+            '#8549ba44'
         ];
         GetNextColor = function(){
-            return COLORS[colorIndex++];
+            return COLORS[(colorIndex++)%COLORS.length];
         }
     </script>
 </head>

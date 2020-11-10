@@ -97,7 +97,7 @@ CREATE TABLE PlayersMatches (
   last_xpm_sum NUMBER,
 	constraint PLAYERSMATCHES_PK PRIMARY KEY (player_match_id));
 /
-/
+
 CREATE TABLE Heroes (
 	id INT,
 	name VARCHAR2(30),
@@ -143,6 +143,10 @@ CREATE TABLE MatchTimeStat (
 
 /
 ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk1 FOREIGN KEY (hero_id) REFERENCES Heroes(id);
+
+create index playersMatches_match_index on PlayersMatches (match_id);
+create index playersMatches_hero_index on PlayersMatches (hero_id);
+
 alter table PlayersMatches drop constraint PlayersMatches_fk1;
 
 

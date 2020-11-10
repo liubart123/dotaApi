@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
@@ -206,107 +207,7 @@ public class SuperService {
         return roles;
     }
 
-    public static BubbleData GetChart(
-            Integer durationMin,
-            Integer durationMax,
-            Integer patchMin,
-            Integer patchMax,
-            Date dateMin,
-            Date dateMax,
-            String yAxis,
-            String xAxis,
-            List<Hero> allies,
-            List<Hero> enemies,
-            Hero investigatedHero
-    ){
-        Float scale = 3f;
-        log.debug("getting chart");
-        //selection
-        String query = "select floor(my.";
-        query += xAxis + "/" + scale.toString() + ")*" + scale.toString() + " as xAxis, ";
-        switch (yAxis){
-            case "kda":{
-                query += "sum(my.kills+my.assists)/(sum(my.deaths)+1) as yAxis, ";
-            }
-            default:{
-                query += "avg(my." + yAxis + ") as yAxis, ";
-            }
-        }
-        query += " count(*) as selection ";
-
-
-        //from
-        query += "from pdb_kurs_dwh_admin.playersmatches my ";
-        if (allies.size()!=0){
-            query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id ";
-        }
-        if (enemies.size()!=0){
-            query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id ";
-        }
-
-
-        //conditions
-        query += " where my.hero_id=" + investigatedHero.getId().toString() + " ";
-
-        Integer index = 0;
-        if (allies.size() != 0){
-            query+="and (";
-            for(Hero ally : allies){
-                if (index != 0){
-                    query+=" or ";
-                }
-                query += " allies.hero_id = " + ally.getId();
-                index++;
-            }
-            query+=")";
-        }
-
-
-        index = 0;
-        if (enemies.size() != 0){
-            query+=" and (";
-            for(Hero enemy : enemies){
-                if (index != 0){
-                    query+=" or ";
-                }
-                query += " enemies.hero_id = " + enemy.getId();
-                index++;
-            }
-            query+=")";
-        }
-
-        //grouping
-        query += "group by floor(my.";
-        query += xAxis + "/" + scale.toString() + ")*" + scale.toString();
-        query += " order by xAxis";
-
-        try {
-            ResultSet rs = rep.executeQuery(query);
-            BubbleData result = new BubbleData();
-            result.datasets.add(new BubbleDataSet());
-            Float maxBubbleSize = 10f;
-            Integer maxSelection = 50;
-            while(rs.next()){
-                result.datasets.get(0).data.add(new BubbleCoord(
-                        rs.getInt(1),
-                        rs.getFloat(2),
-                        Math.min(rs.getInt(3),maxSelection)/maxSelection.floatValue()*maxBubbleSize
-                ));
-            }
-
-            return result;
-        } catch (DbAccessException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-        } catch (DbConnectionClosedException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-        } catch (SQLException e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-        }
-        return null;
-    }
+    //bubble chart
     public static BubbleDataSet setBubbleDataSet(BubbleDataSet dataset, BubbleChart chart, Selection selection) throws DbAccessException, Exception{
         Float scale = chart.xScale;
         log.debug("setBubbleData");
@@ -335,6 +236,7 @@ public class SuperService {
         //conditions
         query += " where my.hero_id=" + selection.hero.getId().toString() + " ";
 
+        //enemies and allies
         Integer index = 0;
         if (selection.allies.size() != 0){
             query+="and (";
@@ -347,8 +249,6 @@ public class SuperService {
             }
             query+=")";
         }
-
-
         index = 0;
         if (selection.enemies.size() != 0){
             query+=" and (";
@@ -361,10 +261,16 @@ public class SuperService {
             }
             query+=")";
         }
+        //selections conditions
+        query += " and  my.durationmin between " + selection.durationMin + " and " + selection.durationMax + " ";
+        query += " and  my.version between " + selection.patchMin + " and " + selection.patchMax + " ";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        query += " and my.START_DATE between '" + dateFormat.format(selection.dateMin)  + "' and  '" + dateFormat.format(selection.dateMax) + "' ";
 
         //grouping
-        query += "group by floor(my.";
+        query += " group by floor(my.";
         query += chart.xAxis + "/" + scale.toString() + ")*" + scale.toString();
+        query += " having count(*) > " + chart.minCountOfMatches;
         query += " order by xAxis";
 
 
@@ -374,7 +280,7 @@ public class SuperService {
         Integer maxSelection = 50;
         while(rs.next()){
             dataset.data.add(new BubbleCoord(
-                    rs.getInt(1),
+                    rs.getFloat(1),
                     rs.getFloat(2),
                     Math.min(rs.getInt(3),maxSelection)/maxSelection.floatValue()*(maxBubbleSize-minBubbleSize)+minBubbleSize
             ));
@@ -407,7 +313,7 @@ public class SuperService {
             }
         }
         query += " count(*) as selection ";
-        //from
+        //join for hero_id of enemies and allies
         query += "from pdb_kurs_dwh_admin.playersmatches my ";
         if (selection.allies.size()!=0 || chart.xAxis=="allies"){
             query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id and allies.win = my.win ";
@@ -416,6 +322,7 @@ public class SuperService {
             query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
         }
 
+        //join for getting names of heroes of enemies and allies
         if (chart.xAxis == "enemies"){
             query += "join pdb_kurs_dwh_admin.heroes xAxis on enemies.hero_id = xAxis.id ";
         }else if (chart.xAxis == "allies"){
@@ -424,6 +331,7 @@ public class SuperService {
 
         //conditions
         query += " where my.hero_id=" + selection.hero.getId().toString() + " ";
+
 
         Integer index = 0;
         if (selection.allies.size() != 0){
@@ -437,8 +345,6 @@ public class SuperService {
             }
             query+=")";
         }
-
-
         index = 0;
         if (selection.enemies.size() != 0){
             query+=" and (";
@@ -452,6 +358,12 @@ public class SuperService {
             query+=")";
         }
 
+        //selections conditions
+        query += " and  my.durationmin between " + selection.durationMin + " and " + selection.durationMax + " ";
+        query += " and  my.version between " + selection.patchMin + " and " + selection.patchMax + " ";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        query += " and  my.START_DATE between '" + dateFormat.format(selection.dateMin)  + "' and  '" + dateFormat.format(selection.dateMax) + "' ";
+
         query += " and(";
         index = 0;
         for(String filterLabel : chart.xLabels){
@@ -463,6 +375,8 @@ public class SuperService {
 
         //grouping
         query += "group by xAxis.name";
+        query += " having count(*) > " + chart.minCountOfMatches;
+
 
 
         ResultSet rs = rep.executeQuery(query);

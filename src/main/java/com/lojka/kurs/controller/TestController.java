@@ -13,25 +13,33 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 @Slf4j
 @Controller
 public class TestController {
     @GetMapping(value = "/GetTest")
-    public ModelAndView getTest(){
+    public ModelAndView getTest() throws ParseException {
         ModelAndView mov = new ModelAndView();
         BubbleChart chart = new BubbleChart();
         chart.name="testing chart";
-        chart.xAxis = "DURATIONMIN";
-        chart.yAxis = "win";
-        chart.xScale = 3f;
+        chart.xAxis = "CREEP_KILLS";
+        chart.yAxis = "LAST_GPM_SUM";
+        chart.xScale = 10f;
+        chart.minCountOfMatches = 5;
         Selection s1 = new Selection();
         s1.hero = SuperService.getHeroes().get(1);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+        s1.dateMax = formatter.parse("31.12.2020");
+        s1.dateMin = formatter.parse("01.06.2020");
         s1.selectionName = "first selection";
-        s1.allies.add(SuperService.getHeroes().get(2));
 
         Selection s2 = new Selection();
         s2.hero = SuperService.getHeroes().get(1);
         s2.selectionName = "second selection";
+        s2.dateMax = formatter.parse("01.6.2020");
 
         chart.selections.add(s1);
         chart.selections.add(s2);
@@ -53,7 +61,7 @@ public class TestController {
 
         mov.addObject("yAxis", chart.yAxis);
         mov.addObject("xAxis", chart.xAxis);
-        mov.setViewName("BubbleChart");
+        mov.setViewName("Analytic/BubbleChart");
         return mov;
     }
 
@@ -62,24 +70,25 @@ public class TestController {
     public ModelAndView getTestBar(){
         ModelAndView mov = new ModelAndView();
         BarChart chart = new BarChart();
-        chart.xLabels.add("Lycan");
-        chart.xLabels.add("Meepo");
-        chart.xLabels.add("Night Stalker");
-        chart.xLabels.add("Vengeful Spirit");
-        chart.xAxis = "enemies";
-        chart.yAxis = "win";
+        chart.xLabels.add("Ember Spirit");
+        chart.xLabels.add("Tiny");
+        chart.xLabels.add("Earthshaker");
+        chart.xLabels.add("Grimstroke");
+        chart.xAxis = "allies";
+        chart.yAxis = "LAST_GPM_PROPORTION";
         chart.name = "test bar";
 
         Selection s1 = new Selection();
-        s1.hero = SuperService.getHeroes().get(1);
-        s1.selectionName = "antimage with venga";
-        s1.allies.add(SuperService.getHeroes().get(19));
-        s1.allies.add(SuperService.getHeroes().get(2));
-        s1.allies.add(SuperService.getHeroes().get(45));
+        s1.hero = SuperService.getHeroes().get(86);
+        s1.selectionName = "rubick and puck, void spirit";
+//        s1.allies.add(SuperService.getHeroes().get(19));
+//        s1.allies.add(SuperService.getHeroes().get(126));
+        s1.enemies.add(SuperService.getHeroes().get(19));
+        s1.enemies.add(SuperService.getHeroes().get(126));
 
         Selection s2 = new Selection();
-        s2.hero = SuperService.getHeroes().get(1);
-        s2.selectionName = "antimage";
+        s2.hero = SuperService.getHeroes().get(86);
+        s2.selectionName = "rubick";
 
         chart.selections.add(s1);
         chart.selections.add(s2);
