@@ -5,6 +5,13 @@ import com.lojka.kurs.exception.DbConnectionClosedException;
 import com.lojka.kurs.exception.DotaDataAccessException;
 import com.lojka.kurs.model.*;
 import com.lojka.kurs.model.queriesV2.*;
+import com.lojka.kurs.model.queriesV2.bar.BarChart;
+import com.lojka.kurs.model.queriesV2.bar.BarData;
+import com.lojka.kurs.model.queriesV2.bar.BarDataSet;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleChart;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleCoord;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleData;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleDataSet;
 import com.lojka.kurs.repository.IDbConnector;
 import com.lojka.kurs.repository.IDbRepository;
 import com.lojka.kurs.repository.oracle.OracleDbConnector;
@@ -300,7 +307,7 @@ public class SuperService {
         }
         return null;
     }
-    public static BubbleDataSet setBubbleData(BubbleDataSet dataset, BubbleChart chart, Selection selection) throws DbAccessException, Exception{
+    public static BubbleDataSet setBubbleDataSet(BubbleDataSet dataset, BubbleChart chart, Selection selection) throws DbAccessException, Exception{
         Float scale = chart.xScale;
         log.debug("setBubbleData");
         //selection
@@ -318,10 +325,10 @@ public class SuperService {
         //from
         query += "from pdb_kurs_dwh_admin.playersmatches my ";
         if (selection.allies.size()!=0){
-            query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id ";
+            query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id and allies.win = my.win ";
         }
         if (selection.enemies.size()!=0){
-            query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id ";
+            query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
         }
 
 
@@ -379,9 +386,108 @@ public class SuperService {
         BubbleData bubbleData = new BubbleData();
         for(Selection selection : bubbleChart.selections){
             bubbleData.datasets.add(
-                    setBubbleData(new BubbleDataSet(selection.selectionName), bubbleChart, selection)
+                    setBubbleDataSet(new BubbleDataSet(selection.selectionName), bubbleChart, selection)
             );
         }
         return bubbleData;
+    }
+
+    //bars
+    public static BarDataSet setBarDataSet(BarDataSet dataset, BarChart chart, Selection selection)throws Exception{
+        log.debug("setBarData");
+        //selection
+        String query = "select ";
+        query += "xAxis.name, ";
+        switch (chart.yAxis){
+            case "kda":{
+                query += "sum(my.kills+my.assists)/(sum(my.deaths)+1) as yAxis, ";
+            }
+            default:{
+                query += "avg(my." + chart.yAxis + ") as yAxis, ";
+            }
+        }
+        query += " count(*) as selection ";
+        //from
+        query += "from pdb_kurs_dwh_admin.playersmatches my ";
+        if (selection.allies.size()!=0 || chart.xAxis=="allies"){
+            query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id and allies.win = my.win ";
+        }
+        if (selection.enemies.size()!=0 || chart.xAxis=="enemies"){
+            query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
+        }
+
+        if (chart.xAxis == "enemies"){
+            query += "join pdb_kurs_dwh_admin.heroes xAxis on enemies.hero_id = xAxis.id ";
+        }else if (chart.xAxis == "allies"){
+            query += "join pdb_kurs_dwh_admin.heroes xAxis on allies.hero_id = xAxis.id ";
+        }
+
+        //conditions
+        query += " where my.hero_id=" + selection.hero.getId().toString() + " ";
+
+        Integer index = 0;
+        if (selection.allies.size() != 0){
+            query+="and (";
+            for(Hero ally : selection.allies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " allies.hero_id = " + ally.getId();
+                index++;
+            }
+            query+=")";
+        }
+
+
+        index = 0;
+        if (selection.enemies.size() != 0){
+            query+=" and (";
+            for(Hero enemy : selection.enemies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " enemies.hero_id = " + enemy.getId();
+                index++;
+            }
+            query+=")";
+        }
+
+        query += " and(";
+        index = 0;
+        for(String filterLabel : chart.xLabels){
+            if (index++!=0)
+                query+=" or " ;
+            query+="xAxis.name = '" + filterLabel +"'";
+        }
+        query += ") ";
+
+        //grouping
+        query += "group by xAxis.name";
+
+
+        ResultSet rs = rep.executeQuery(query);
+        Float maxBubbleSize = 15f;
+        Float minBubbleSize = 2f;
+        Integer maxSelection = 50;
+        while(rs.next()){
+            dataset.mapData.put(
+                    rs.getString(1),
+                    rs.getFloat(2)
+            );
+        }
+        dataset.createDataFromMap(chart.xLabels);
+        return dataset;
+    }
+
+    public static BarData getBarData(BarChart chart) throws Exception{
+        BarData barData = new BarData();
+        for(Selection selection : chart.selections){
+            barData.datasets.add(
+                    setBarDataSet(new BarDataSet(selection.selectionName), chart, selection)
+            );
+        }
+        barData.labels = chart.xLabels;
+        barData.name = chart.name;
+        return barData;
     }
 }

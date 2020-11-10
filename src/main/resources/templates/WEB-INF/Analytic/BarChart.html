@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bar Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        var colorIndex = 0;
+        var COLORS = [
+            '#4dc9f6',
+            '#f67019',
+            '#f53794',
+            '#537bc4',
+            '#acc236',
+            '#166a8f',
+            '#00a950',
+            '#58595b',
+            '#8549ba'
+        ];
+        GetNextColor = function(){
+            return COLORS[colorIndex++];
+        }
+    </script>
+</head>
+<body>
+<div  class="chart-container" style="position: relative; height:90%; width:90%">
+    <canvas id="myChart"></canvas>
+</div>
+<div id ="json"></div>
+<div id ="json2"></div>
+<script>
+    dataJson = JSON.parse("[[${chartData}]]".replace(/(&quot\;)/g,"\""));
+    for(let i = 0;i<dataJson.datasets.length;i++){
+        dataJson.datasets[i].backgroundColor = GetNextColor();
+    }
+    var config = {
+        type: 'bar',
+        data:dataJson,
+        options: {
+            tooltips:{
+                mode:"index",
+                intersect:false
+            },
+            title: {
+                display: true,
+                text:dataJson.name
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel:{
+                        display:true,
+                        labelString:"[[${yAxis}]]"
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel:{
+                        display:true,
+                        labelString:"[[${xAxis}]]"
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    };
+    window.onload = function() {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        window.myLine = new Chart(ctx, config);
+    };
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-package com.lojka.kurs.model.queriesV2;
+package com.lojka.kurs.model.queriesV2.bubble;
 
 public class BubbleCoord {
     public float x, y, r;

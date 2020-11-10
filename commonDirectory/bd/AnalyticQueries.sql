@@ -47,11 +47,70 @@ select * from heroes;
 select distinct version from playersmatches;
 select DURATIONMIN as xaxis from pdb_kurs_dwh_admin.playersmatches group by xaxis;
 
-SELECT my.DURATIONMIN AS xAxis,
+SELECT floor(my.DURATIONMIN/3)*3 AS xAxis,
     AVG(my.win)         AS yAxis,
     COUNT(*)            AS selection
   FROM pdb_kurs_dwh_admin.playersmatches my
   WHERE my.hero_id      = 4
-GROUP BY my.DURATIONMIN;
+GROUP BY floor(my.DURATIONMIN/3)*3 order by xaxis;
 
-select my.DURATIONMIN as xAxis, avg(my.win) as yAxis,  count(*) as selection from pdb_kurs_dwh_admin.playersmatches my  where my.hero_id=1  group by my.DURATIONMIN;
+
+SELECT floor(my.DURATIONMIN/4)*4 AS xAxis,
+  AVG(my.win)                        AS yAxis,
+  COUNT(*)                           AS selection
+FROM pdb_kurs_dwh_admin.playersmatches my
+WHERE my.hero_id=1
+GROUP BY floor(my.DURATIONMIN/4)*4
+ORDER BY xAxis;
+
+select distinct version from pdb_kurs_dwh_admin.playersmatches;
+select min(start_date) from pdb_kurs_dwh_admin.playersmatches;
+select count (*) from playersmatches;
+select count (*) from pdb_kurs_dwh_admin.playersmatches;
+
+SELECT hers.name,
+  COUNT(*)                           AS selection
+FROM pdb_kurs_dwh_admin.playersmatches my join pdb_kurs_dwh_admin.heroes hers on 
+  my.hero_id = hers.id
+group by hers.name
+order by count(*) desc;
+
+select * from heroes where name like '%St%';
+
+--charts
+select * from (
+  select hers.name, avg(my.win) winrate, count(*) from
+    pdb_kurs_dwh_admin.playersmatches my join
+    pdb_kurs_dwh_admin.playersmatches enemies 
+      on my.match_id = enemies.match_id and my.win <> enemies.win
+    join pdb_kurs_dwh_admin.playersmatches allies 
+      on my.match_id = allies.match_id and my.win = allies.win
+    join
+    pdb_kurs_dwh_admin.heroes hers 
+      on hers.id = allies.hero_id
+    where my.hero_id=1 and enemies.hero_id = 60
+    group by hers.name, enemies.hero_id
+    order by  count(*) desc,winrate desc
+    )
+  where rownum <=5;
+--bars
+select alliesHeroes.name,alliesHeroes.id, avg(my.win) winrate, count(*) selection from
+  pdb_kurs_dwh_admin.playersmatches my join
+  pdb_kurs_dwh_admin.playersmatches enemies 
+    on my.match_id = enemies.match_id and my.win <> enemies.win
+  join
+  pdb_kurs_dwh_admin.heroes hers 
+    on hers.id = enemies.hero_id
+  join pdb_kurs_dwh_admin.playersmatches allies
+    on my.match_id = allies.match_id and my.hero_id <> allies.hero_id and my.win = allies.win
+  join pdb_kurs_dwh_admin.heroes alliesHeroes 
+    on allies.hero_id = alliesHeroes.id
+  where my.hero_id=1 and (
+    hers.name = 'Lycan' or 
+    hers.name = 'Meepo' or 
+    hers.name = 'Night Stalker' or 
+    hers.name = 'Vengeful Spirit')
+  group by alliesHeroes.name,alliesHeroes.id
+  order by selection desc;
+    
+    

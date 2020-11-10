@@ -321,7 +321,11 @@ public class OracleDbRepository implements IDbRepository {
                 cs.setInt(7, pim.getHero_damage());
                 cs.setInt(8, pim.getHero_healing());
                 cs.setInt(9, pim.getTower_damage());
-                cs.setFloat(10, pim.getTeamfight_participation());
+                if (pim.getTeamfight_participation()==null){
+                    cs.setNull(10, OracleTypes.FLOAT);
+                }else {
+                    cs.setFloat(10, pim.getTeamfight_participation());
+                }
                 cs.registerOutParameter(11, OracleTypes.NUMBER);
                 cs.setInt(12, pim.getTowers_killed());
                 cs.setInt(13, pim.getCourier_kills());
@@ -329,7 +333,11 @@ public class OracleDbRepository implements IDbRepository {
                 cs.setInt(15, pim.getSentry_uses());
                 cs.setInt(16, pim.getObserver_kills());
                 cs.setInt(17, pim.getObserver_uses());
-                cs.setInt(18, pim.getCamps_stacked());
+                if (pim.getCamps_stacked()!=null){
+                    cs.setInt(18, pim.getCamps_stacked());
+                }else {
+                    cs.setNull(18, OracleTypes.INTEGER);
+                }
                 cs.setInt(19, pim.getLast_hits());
                 cs.setInt(20, pim.getDenies());
                 cs.setFloat(21, pim.getStuns());
@@ -385,6 +393,7 @@ public class OracleDbRepository implements IDbRepository {
             }
             throw new DbAccessException("error during inserting match into db: " + e.getMessage());
         }catch ( Exception e){
+            e.printStackTrace();
             try {
                 connection.rollback();
             } catch (SQLException ex) {

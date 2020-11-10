@@ -1,0 +1,86 @@
+<html><head>
+	<title>chart test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="utils.js"></script>
+    <script src="chartFuncs.js"></script>
+	<style>
+	canvas {
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+	}
+	</style>
+<body>
+    <div style="width:75%"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+		<canvas id="canvas" style="display: block; width: 578px; height: 289px;" width="578" height="289" class="chartjs-render-monitor"></canvas>
+	</div>
+    
+	<button id="randomizeData">Randomize Data</button>
+	<script>
+		var color = Chart.helpers.color;
+		function generateData() {
+			var data = [];
+			for (var i = 0; i < 12; i++) {
+				data.push(getRandomInt(1,10));
+			}
+			return data;
+		}
+		function generateData2() {
+			var data = [];
+			for (var i = 0; i < 12; i++) {
+				data.push(getRandomInt(10,100));
+			}
+			return data;
+		}
+
+		var scatterChartData = {
+			labels: MONTHS,
+			datasets: [{
+				yAxisID:"y-axis-1",
+				label: 'My First dataset',
+				borderColor: GetNextColor(),
+				data: generateData()
+			},{
+				yAxisID:"y-axis-2",
+				label: 'My Second dataset',
+				borderColor: GetNextColor(),
+				// backgroundColor: GetNextColor(),
+				data: generateData2()
+			}]
+		};
+
+		window.onload = function() {
+			var ctx = document.getElementById('canvas').getContext('2d');
+			window.myScatter = new Chart(ctx, {
+                type:'line',
+				data: scatterChartData,
+				options: {
+					title: {
+						display: true,
+						text: ' bar Chart'
+					},
+					scales:{
+						yAxes:[
+							{
+								type:"linear",
+								id:"y-axis-1",
+								position: 'left'
+							},
+							{
+								type:"linear",
+								id:"y-axis-2",
+                				position: 'right',	
+								gridLines:{
+									drawOnChartArea:false
+								}
+							}
+						]
+					}
+				}
+			});
+		};
+	</script>
+
+
+
+</body></html>

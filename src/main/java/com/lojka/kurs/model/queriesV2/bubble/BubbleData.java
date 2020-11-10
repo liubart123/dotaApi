@@ -1,4 +1,4 @@
-package com.lojka.kurs.model.queriesV2;
+package com.lojka.kurs.model.queriesV2.bubble;
 
 import java.util.ArrayList;
 import java.util.List;

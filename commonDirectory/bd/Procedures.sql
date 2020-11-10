@@ -138,4 +138,28 @@ end;
 
 
 /
+create or replace procedure ClearAllDb
+is begin
+  execute immediate 'truncate table boughtItems';
+  execute immediate 'truncate table playermatchtimestat';
+  execute immediate 'ALTER TABLE BOUGHTITEMS DISABLE CONSTRAINT BOUGHTITEMS_FK1';
+  execute immediate 'ALTER TABLE PLAYERMATCHTIMESTAT DISABLE CONSTRAINT PLAYERMATCHTIMESTAT_FK0';
+  execute immediate 'truncate table playersmatches';
+  execute immediate 'ALTER TABLE BOUGHTITEMS enable CONSTRAINT BOUGHTITEMS_FK1';
+  execute immediate 'ALTER TABLE PLAYERMATCHTIMESTAT enable CONSTRAINT PLAYERMATCHTIMESTAT_FK0';
+  execute immediate 'ALTER TABLE PLAYERSMATCHES DISABLE CONSTRAINT PLAYERSMATCHES_FK1';
+  execute immediate 'truncate table matches';
+  execute immediate 'ALTER TABLE PLAYERSMATCHES enable CONSTRAINT PLAYERSMATCHES_FK1';
+end;
+/
 
+begin
+  ClearAllDb;
+end;
+/
+
+--каб знайсці ўсе спасылкі на пк табліцы
+SELECT * FROM USER_CONSTRAINTS WHERE TABLE_NAME = 'PLAYERSMATCHES';
+select 'ALTER TABLE '||TABLE_NAME||' DISABLE CONSTRAINT '||CONSTRAINT_NAME||';'
+from user_constraints
+where R_CONSTRAINT_NAME='MATCHES_PK';

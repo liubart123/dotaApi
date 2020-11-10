@@ -1,8 +1,8 @@
 package com.lojka.kurs.controller;
 
 import com.lojka.kurs.model.Hero;
-import com.lojka.kurs.model.queriesV2.BubbleChart;
-import com.lojka.kurs.model.queriesV2.BubbleData;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleChart;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleData;
 import com.lojka.kurs.model.queriesV2.Selection;
 import com.lojka.kurs.service.super_service.SuperService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -67,7 +67,7 @@ public class AnalyticController {
                 heroHero
         );
 
-        mov.setViewName("Analytic/Chart");
+        mov.setViewName("BubbleChart");
         return mov;
     }
     @GetMapping("/BuildChart")
@@ -83,7 +83,7 @@ public class AnalyticController {
         mov.addObject("chartData", data);
         mov.addObject("yAxis", chart.yAxis);
         mov.addObject("xAxis", chart.xAxis);
-        mov.setViewName("Analytic/Chart");
+        mov.setViewName("BubbleChart");
         return mov;
     }
 }

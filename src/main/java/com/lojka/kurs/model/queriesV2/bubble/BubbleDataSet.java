@@ -1,6 +1,4 @@
-package com.lojka.kurs.model.queriesV2;
-
-import com.lojka.kurs.model.queriesV2.BubbleCoord;
+package com.lojka.kurs.model.queriesV2.bubble;
 
 import java.util.ArrayList;
 import java.util.List;

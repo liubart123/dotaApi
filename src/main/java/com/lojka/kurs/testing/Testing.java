@@ -31,6 +31,7 @@ public class Testing {
 //            Boolean cycle = true;
 //            while (cycle){
 //                try{
+//                    SuperService.insertMatch(2526759078l);
 //                    SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
 //                }catch (HttpClientErrorException e){
 //                    try {
