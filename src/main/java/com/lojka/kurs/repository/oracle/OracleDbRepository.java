@@ -16,7 +16,7 @@ import java.util.Random;
 
 @Slf4j
 public class OracleDbRepository implements IDbRepository {
-    static String sqlInsertItems =  "begin INSERT_ITEM(?, ?, ?, ?); end;";
+    static String sqlInsertItems =  "begin INSERT_ITEM(?, ?, ?, ?, ?); end;";
     static String sqlInsertHeroRoles =  "begin INSERT_HERO_ROLE(?, ?); end;";
     static String sqlInsertHeroes =  "begin INSERT_HERO(?, ?, ?, ?); end;";
     static String sqlInsertHeroesRoles =  "begin INSERT_HEROES_ROLES(?, ?); end;";
@@ -126,6 +126,7 @@ public class OracleDbRepository implements IDbRepository {
                 tempItem.setName(rs.getString(2));
                 tempItem.setDescription(rs.getString(3));
                 tempItem.setKeyName(rs.getString(4));
+                tempItem.setImg(rs.getString(5));
                 result.put(tempItem.getId(),tempItem);
             }
             return result;
@@ -182,6 +183,7 @@ public class OracleDbRepository implements IDbRepository {
                 }
                 ps.setString(3,items[i].getDescription());
                 ps.setString(4,items[i].getKeyName());
+                ps.setString(5,items[i].getImg());
                 ps.execute();
                 ps.close();
             }

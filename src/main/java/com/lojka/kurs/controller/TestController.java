@@ -7,6 +7,8 @@ import com.lojka.kurs.model.queriesV2.bar.BarData;
 import com.lojka.kurs.model.queriesV2.bubble.BubbleChart;
 import com.lojka.kurs.model.queriesV2.bubble.BubbleData;
 import com.lojka.kurs.model.queriesV2.Selection;
+import com.lojka.kurs.model.queriesV2.linee_chart.LineChart;
+import com.lojka.kurs.model.queriesV2.linee_chart.LineData;
 import com.lojka.kurs.service.super_service.SuperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -25,21 +27,17 @@ public class TestController {
         ModelAndView mov = new ModelAndView();
         BubbleChart chart = new BubbleChart();
         chart.name="testing chart";
-        chart.xAxis = "CREEP_KILLS";
-        chart.yAxis = "LAST_GPM_SUM";
-        chart.xScale = 10f;
+        chart.xAxis = "Durationmin";
+        chart.yAxis = "win";
+        chart.xScale = 2f;
         chart.minCountOfMatches = 5;
         Selection s1 = new Selection();
-        s1.hero = SuperService.getHeroes().get(1);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-        s1.dateMax = formatter.parse("31.12.2020");
-        s1.dateMin = formatter.parse("01.06.2020");
-        s1.selectionName = "first selection";
-
+        s1.selectionName = "rubick and dagger";
+        s1.hero=SuperService.getHeroes().get(86);
+        s1.items.add(SuperService.getItems().get(1));
         Selection s2 = new Selection();
-        s2.hero = SuperService.getHeroes().get(1);
-        s2.selectionName = "second selection";
-        s2.dateMax = formatter.parse("01.6.2020");
+        s2.selectionName = "rubick";
+        s2.hero=SuperService.getHeroes().get(86);
 
         chart.selections.add(s1);
         chart.selections.add(s2);
@@ -80,11 +78,12 @@ public class TestController {
 
         Selection s1 = new Selection();
         s1.hero = SuperService.getHeroes().get(86);
-        s1.selectionName = "rubick and puck, void spirit";
+        s1.selectionName = "rubick and blink";
+        s1.items.add(SuperService.getItems().get(1));
 //        s1.allies.add(SuperService.getHeroes().get(19));
 //        s1.allies.add(SuperService.getHeroes().get(126));
-        s1.enemies.add(SuperService.getHeroes().get(19));
-        s1.enemies.add(SuperService.getHeroes().get(126));
+//        s1.enemies.add(SuperService.getHeroes().get(19));
+//        s1.enemies.add(SuperService.getHeroes().get(126));
 
         Selection s2 = new Selection();
         s2.hero = SuperService.getHeroes().get(86);
@@ -111,6 +110,47 @@ public class TestController {
         mov.addObject("yAxis", chart.yAxis);
         mov.addObject("xAxis", chart.xAxis);
         mov.setViewName("Analytic/BarChart");
+        return mov;
+    }
+
+
+    @GetMapping(value = "/GetTestLine")
+    public ModelAndView getTestLine(){
+        ModelAndView mov = new ModelAndView();
+        LineChart chart = new LineChart();
+        chart.xAxis = "enemies";
+        chart.yAxis = "win";
+        chart.name = "test line";
+        chart.countOfLabels=10;
+        chart.minCountOfMatches = 50;
+        chart.isDeasc=true;
+        Selection s1 = new Selection();
+        s1.hero = SuperService.getHeroes().get(86);
+        s1.selectionName = "rubick";
+//        s1.allies.add(SuperService.getHeroes().get(19));
+//        s1.allies.add(SuperService.getHeroes().get(126));
+        s1.items.add(SuperService.getItems().get(1));
+        chart.selection = s1;
+
+
+        LineData data = null;
+        try {
+            data = SuperService.getLineData(chart);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String json = mapper.writeValueAsString(data);
+            mov.addObject("chartData", json );
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        mov.addObject("yAxis", chart.yAxis);
+        mov.addObject("y2Axis", "count of matches");
+        mov.addObject("xAxis", chart.xAxis);
+        mov.setViewName("Analytic/LineChart");
         return mov;
     }
 }

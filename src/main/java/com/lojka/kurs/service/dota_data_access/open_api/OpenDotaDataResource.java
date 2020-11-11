@@ -271,6 +271,7 @@ public class OpenDotaDataResource implements IDotaDataResource {
                 item.setId((Integer)itemAttributes.get("id"));
                 item.setName((String)itemAttributes.get("dname"));
                 item.setKeyName((String)keys[i]);
+                item.setImg("https://api.opendota.com"  + (String)itemAttributes.get("img"));
                 String desc = "";
                 ArrayList<String> hints = (ArrayList<String>)itemAttributes.get("hint");
                 if (hints!=null){

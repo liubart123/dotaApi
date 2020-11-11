@@ -12,6 +12,7 @@ import com.lojka.kurs.model.queriesV2.bubble.BubbleChart;
 import com.lojka.kurs.model.queriesV2.bubble.BubbleCoord;
 import com.lojka.kurs.model.queriesV2.bubble.BubbleData;
 import com.lojka.kurs.model.queriesV2.bubble.BubbleDataSet;
+import com.lojka.kurs.model.queriesV2.linee_chart.*;
 import com.lojka.kurs.repository.IDbConnector;
 import com.lojka.kurs.repository.IDbRepository;
 import com.lojka.kurs.repository.oracle.OracleDbConnector;
@@ -231,6 +232,9 @@ public class SuperService {
         if (selection.enemies.size()!=0){
             query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
         }
+        if (selection.items.size()!=0){
+            query += "join pdb_kurs_dwh_admin.boughtitems bItems on my.player_match_id = bItems.player_match_id ";
+        }
 
 
         //conditions
@@ -257,6 +261,18 @@ public class SuperService {
                     query+=" or ";
                 }
                 query += " enemies.hero_id = " + enemy.getId();
+                index++;
+            }
+            query+=")";
+        }
+        index = 0;
+        if (selection.items.size() != 0){
+            query+=" and (";
+            for(Item item : selection.items){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " bItems.item_id = " + item.getId();
                 index++;
             }
             query+=")";
@@ -321,12 +337,17 @@ public class SuperService {
         if (selection.enemies.size()!=0 || chart.xAxis=="enemies"){
             query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
         }
+        if (selection.items.size()!=0 || chart.xAxis=="items"){
+            query += "join pdb_kurs_dwh_admin.boughtitems bItems on my.player_match_id = bItems.player_match_id ";
+        }
 
         //join for getting names of heroes of enemies and allies
         if (chart.xAxis == "enemies"){
             query += "join pdb_kurs_dwh_admin.heroes xAxis on enemies.hero_id = xAxis.id ";
         }else if (chart.xAxis == "allies"){
             query += "join pdb_kurs_dwh_admin.heroes xAxis on allies.hero_id = xAxis.id ";
+        }else if (chart.xAxis == "items"){
+            query += "join pdb_kurs_dwh_admin.items xAxis on bItems.item_id = xAxis.id ";
         }
 
         //conditions
@@ -353,6 +374,18 @@ public class SuperService {
                     query+=" or ";
                 }
                 query += " enemies.hero_id = " + enemy.getId();
+                index++;
+            }
+            query+=")";
+        }
+        index = 0;
+        if (selection.items.size() != 0){
+            query+=" and (";
+            for(Item item : selection.items){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " bItems.item_id = " + item.getId();
                 index++;
             }
             query+=")";
@@ -403,5 +436,134 @@ public class SuperService {
         barData.labels = chart.xLabels;
         barData.name = chart.name;
         return barData;
+    }
+
+
+    //line chart
+    public static void setLineDataSet(LineData lineData, LineDataSet dataset, LineDataSet selectionDataSet, LineChart chart, Selection selection)throws Exception{
+        log.debug("setLineData");
+        //selection
+        String query = "select * from (select ";
+        query += "xAxis.name, ";
+        switch (chart.yAxis){
+            case "kda":{
+                query += "sum(my.kills+my.assists)/(sum(my.deaths)+1) as yAxis, ";
+            }
+            default:{
+                query += "avg(my." + chart.yAxis + ") as yAxis, ";
+            }
+        }
+        query += " count(*) as selection ";
+        //join for hero_id of enemies and allies
+        query += "from pdb_kurs_dwh_admin.playersmatches my ";
+        if (selection.allies.size()!=0 || chart.xAxis=="allies"){
+            query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id and allies.win = my.win ";
+        }
+        if (selection.enemies.size()!=0 || chart.xAxis=="enemies"){
+            query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
+        }
+        if (selection.items.size()!=0 || chart.xAxis=="items"){
+            query += "join pdb_kurs_dwh_admin.boughtitems bItems on my.player_match_id = bItems.player_match_id ";
+        }
+
+        //join for getting names of heroes of enemies and allies
+        if (chart.xAxis == "enemies"){
+            query += "join pdb_kurs_dwh_admin.heroes xAxis on enemies.hero_id = xAxis.id ";
+        }else if (chart.xAxis == "allies"){
+            query += "join pdb_kurs_dwh_admin.heroes xAxis on allies.hero_id = xAxis.id ";
+        }else if (chart.xAxis == "items"){
+            query += "join pdb_kurs_dwh_admin.items xAxis on bItems.item_id = xAxis.id ";
+        }
+
+        //conditions
+        query += " where my.hero_id=" + selection.hero.getId().toString() + " ";
+
+
+        Integer index = 0;
+        if (selection.allies.size() != 0){
+            query+="and (";
+            for(Hero ally : selection.allies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " allies.hero_id = " + ally.getId();
+                index++;
+            }
+            query+=")";
+        }
+        index = 0;
+        if (selection.enemies.size() != 0){
+            query+=" and (";
+            for(Hero enemy : selection.enemies){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " enemies.hero_id = " + enemy.getId();
+                index++;
+            }
+            query+=")";
+        }
+        index = 0;
+        if (selection.items.size() != 0){
+            query+=" and (";
+            for(Item item : selection.items){
+                if (index != 0){
+                    query+=" or ";
+                }
+                query += " bItems.item_id = " + item.getId();
+                index++;
+            }
+            query+=")";
+        }
+
+        //selections conditions
+        query += " and  my.durationmin between " + selection.durationMin + " and " + selection.durationMax + " ";
+        query += " and  my.version between " + selection.patchMin + " and " + selection.patchMax + " ";
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        query += " and  my.START_DATE between '" + dateFormat.format(selection.dateMin)  + "' and  '" + dateFormat.format(selection.dateMax) + "' ";
+
+
+        //grouping
+        query += "group by xAxis.name";
+        query += " having count(*) > " + chart.minCountOfMatches;
+
+        query += " order by yAxis ";
+        if (chart.isDeasc)
+            query+="desc " ;
+
+        query += " ) where rownum <= " + chart.countOfLabels;
+
+        ResultSet rs = rep.executeQuery(query);
+        Float maxBubbleSize = 15f;
+        Float minBubbleSize = 2f;
+        Integer maxSelection = 50;
+        while(rs.next()){
+            lineData.labels.add(rs.getString(1));
+            dataset.mapData.put(
+                    rs.getString(1),
+                    rs.getFloat(2)
+            );
+            selectionDataSet.mapData.put(
+                    rs.getString(1),
+                    rs.getFloat(3)
+            );
+        }
+        dataset.createDataFromMap(lineData.labels);
+        selectionDataSet.createDataFromMap(lineData.labels);
+    }
+
+    public static LineData getLineData(LineChart chart) throws Exception{
+        LineData lineData = new LineData();
+        LineDataSet dataSet =new LineDataSet(chart.selection.selectionName);
+        LineDataSet selectionDataSet = new LineDataSet(chart.selection.selectionName + " count of matches");
+        lineData.datasets.add(dataSet);
+        lineData.datasets.add(selectionDataSet);
+        setLineDataSet(
+                lineData,
+                dataSet,
+                selectionDataSet,
+                chart, chart.selection);
+        lineData.name = chart.name;
+        return lineData;
     }
 }

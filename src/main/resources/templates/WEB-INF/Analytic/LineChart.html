@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Line Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script>
+        var colorIndex = 0;
+        var COLORS = [
+            '#4dc9f644',
+            '#f6701944',
+            '#f5379444',
+            '#537bc444',
+            '#acc23644',
+            '#166a8f44',
+            '#00a95044',
+            '#58595b44',
+            '#8549ba44'
+        ];
+        GetNextColor = function(){
+            return COLORS[(colorIndex++)%COLORS.length];
+        }
+    </script>
+</head>
+<body>
+<div  class="chart-container" style="position: relative; height:90%; width:90%">
+    <canvas id="myChart"></canvas>
+</div>
+<div id ="json"></div>
+<div id ="json2"></div>
+<script>
+    dataJson = JSON.parse("[[${chartData}]]".replace(/(&quot\;)/g,"\""));
+    for(let i = 0;i<dataJson.datasets.length;i++){
+        if (i==0){
+            dataJson.datasets[i].yAxisID="y-axis-1";
+        }else {
+            dataJson.datasets[i].yAxisID="y-axis-2";
+        }
+        dataJson.datasets[i].borderColor = GetNextColor();
+    }
+    var config = {
+        type: 'line',
+        data:dataJson,
+        options: {
+            tooltips:{
+                mode:"index",
+                intersect:false
+            },
+            title: {
+                display: true,
+                text:dataJson.name
+            },
+            scales: {
+                yAxes: [{
+                    scaleLabel:{
+                        display:true,
+                        labelString:"[[${yAxis}]]"
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+                xAxes: [{
+                    scaleLabel:{
+                        display:true,
+                        labelString:"[[${xAxis}]]"
+                    },
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }],
+
+                yAxes:[
+                    {
+                        scaleLabel:{
+                            display:true,
+                            labelString:"[[${yAxis}]]"
+                        },
+                        type:"linear",
+                        id:"y-axis-1",
+                        position: 'left'
+                    },
+                    {
+                        scaleLabel:{
+                            display:true,
+                            labelString:"[[${y2Axis}]]"
+                        },
+                        type:"linear",
+                        id:"y-axis-2",
+                        position: 'right',
+                        gridLines:{
+                            drawOnChartArea:false
+                        }
+                    }
+                ]
+            }
+        }
+    };
+    window.onload = function() {
+        var ctx = document.getElementById('myChart').getContext('2d');
+        window.myLine = new Chart(ctx, config);
+    };
+</script>
+</body>
+</html>

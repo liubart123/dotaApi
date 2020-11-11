@@ -68,12 +68,28 @@ select min(start_date) from pdb_kurs_dwh_admin.playersmatches;
 select count (*) from playersmatches;
 select count (*) from pdb_kurs_dwh_admin.playersmatches;
 
-SELECT hers.name,
-  COUNT(*)                           AS selection
-FROM pdb_kurs_dwh_admin.playersmatches my join pdb_kurs_dwh_admin.heroes hers on 
-  my.hero_id = hers.id
-group by hers.name
-order by count(*) desc;
+select * from boughtitems;
+SELECT items.name, avg(my.win) as winrate,
+  COUNT(*) AS selection
+FROM pdb_kurs_dwh_admin.playersmatches my join pdb_kurs_dwh_admin.boughtitems bItems on 
+  my.player_match_id = bItems.player_match_id
+  join items on bItems.item_id = items.id
+  where my.hero_id = 86
+group by items.name
+having count(*) > 50
+order by winrate desc;
+
+select * from items order by id;
+select * from boughtitems ;
+SELECT items.name, avg(my.win) as winrate,
+  COUNT(*) AS selection
+FROM pdb_kurs_dwh_admin.playersmatches my join pdb_kurs_dwh_admin.boughtitems bItems on 
+  my.player_match_id = bItems.player_match_id
+  join items on bItems.item_id = items.id
+  where my.hero_id = 86 and bItems.item_id between 23 and 50
+group by items.name
+having count(*) > 50
+order by winrate desc;
 
 select * from heroes where name like '%St%';
 

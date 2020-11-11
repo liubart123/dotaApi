@@ -1,6 +1,7 @@
 package com.lojka.kurs.controller;
 
 import com.lojka.kurs.model.Hero;
+import com.lojka.kurs.model.Item;
 import com.lojka.kurs.model.queriesV2.bubble.BubbleChart;
 import com.lojka.kurs.model.queriesV2.bubble.BubbleData;
 import com.lojka.kurs.model.queriesV2.Selection;
@@ -18,56 +19,12 @@ import java.util.List;
 @RestController
 public class AnalyticController {
     @GetMapping("/CreateSelection")
-    ModelAndView getChartSettingsWindow(Model model){
+    ModelAndView getCreateSelection(Model model){
         ModelAndView mov = new ModelAndView();
         mov.setViewName("Analytic/CreateSelection");
         mov.addObject("heroes", SuperService.getHeroes());
-        return mov;
-    }
-    @PostMapping("/CreateSelection")
-    ModelAndView postBuildChart(Model model,
-                                @RequestParam String selectionName,
-                                @RequestParam Integer durationMin,
-                                @RequestParam Integer durationMax,
-                                @RequestParam Integer patchMin,
-                                @RequestParam Integer patchMax,
-                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateMin,
-                                @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date dateMax,
-                                @RequestParam String yAxis,
-                                @RequestParam String xAxis,
-                                @RequestParam String allies,
-                                @RequestParam String enemies,
-                                @RequestParam String hero
-                                ){
-        ModelAndView mov = new ModelAndView();
-        Hero heroHero = SuperService.getHeroes().get(Integer.parseInt(hero));
-        List<Hero> alliesHeroes = new ArrayList<>();
-        for(String heroId : allies.split(",")){
-            if (heroId=="")
-                break;
-            alliesHeroes.add(SuperService.getHeroes().get(Integer.parseInt(heroId)));
-        }
-        List<Hero> enemiesHeroes = new ArrayList<>();
-        for(String heroId : enemies.split(",")){
-            if (heroId=="")
-                break;
-            enemiesHeroes.add(SuperService.getHeroes().get(Integer.parseInt(heroId)));
-        }
-
-        Selection selection = new Selection(
-                selectionName,
-                durationMin,
-                durationMax,
-                patchMin,
-                patchMax,
-                dateMin,
-                dateMax,
-                alliesHeroes,
-                enemiesHeroes,
-                heroHero
-        );
-
-        mov.setViewName("BubbleChart");
+        mov.addObject("items", SuperService.getItems());
+        mov.addObject("selection", new Selection());
         return mov;
     }
     @GetMapping("/BuildChart")
@@ -84,6 +41,44 @@ public class AnalyticController {
         mov.addObject("yAxis", chart.yAxis);
         mov.addObject("xAxis", chart.xAxis);
         mov.setViewName("BubbleChart");
+        return mov;
+    }
+
+    @PostMapping("/CreateSelection")
+    ModelAndView postCreateSelection(Model model, Selection selection,
+                                     @RequestParam String alliesString,
+                                     @RequestParam String enemiesString,
+                                     @RequestParam String heroString,
+                                     @RequestParam String itemsString
+                                     ){
+        ModelAndView mov = new ModelAndView();
+
+        Hero heroHero = SuperService.getHeroes().get(Integer.parseInt(heroString));
+        List<Hero> alliesHeroes = new ArrayList<>();
+        for(String heroId : alliesString.split(",")){
+            if (heroId=="")
+                break;
+            alliesHeroes.add(SuperService.getHeroes().get(Integer.parseInt(heroId)));
+        }
+        List<Hero> enemiesHeroes = new ArrayList<>();
+        for(String heroId : enemiesString.split(",")){
+            if (heroId=="")
+                break;
+            enemiesHeroes.add(SuperService.getHeroes().get(Integer.parseInt(heroId)));
+        }
+        List<Item> boughtItems = new ArrayList<>();
+        for(String itemId : itemsString.split(",")){
+            if (itemId=="")
+                break;
+            boughtItems.add(SuperService.getItems().get(Integer.parseInt(itemId)));
+        }
+
+        selection.hero = heroHero;
+        selection.allies = alliesHeroes;
+        selection.enemies = enemiesHeroes;
+        selection.items = boughtItems;
+
+        mov.setViewName("Analytic/CreateSelection");
         return mov;
     }
 }

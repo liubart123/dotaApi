@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->  
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Верхние 3 мета-тега *должны* быть указаны в первую очередь в head; любой другой контент в head должен быть указан *после* этих тегов -->  
+    <title>Bootstrap 101 Template</title>
+
+    <style>
+        .flank_table{
+            border-radius: 8px; background-color: rgb(240, 240, 240); 
+                    padding:0% 2% 2% 2%; ;
+        }
+    </style>
+  </head>
+  <body>
+
+    <nav class="navbar navbar-inverse">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Project name</a>
+          </div>
+          <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+
+    <nav class="navbar navbar-inverse navbar-bottom">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Project name</a>
+          </div>
+          <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-4">
+                <div class = "bg-light flank_table">
+                    <div class = "row col-lg-12 col-md-12 text-center">
+                        <div class="row">
+                            <div id="investigated_hero_icon" class="col-lg-4">
+                            </div>
+                            <div  id="ally_team_icons" class="col-lg-4">
+                            </div>
+                            <div id="enemy_team_icons" class="col-lg-4"></div>
+                        </div>
+                        <p class="h2 ">
+                            Heroes
+                        </p>
+                    </div>
+                    <div class=" d-flex justify-content-center">
+                        <table class="table table-striped table-bordered table-hover" id="heroes_table">
+                            <thead class="thead-inverse">
+                                <tr>
+                                    <th colspan="2">heroes</th>
+                                    <th >investigated hero</th>
+                                    <th >allies hero</th>
+                                    <th >enemies hero</th>
+                                </tr>
+                                <tr th:each="hero : ${heroes}">
+                                    <td>
+                                        <img th:src="${hero.value.icon}" height="20" width="20"/>
+                                    </td>
+                                    <td >
+                                        <span th:utext="${hero.value.name}"></span>
+                                    </td>
+                                    <td>
+                                        <input type="radio"
+                                            th:id="'investigated_hero'+${hero.value.id}"
+                                            name="myHero" th:value="${hero.value.id}"
+                                            class="investigated_checkbox" onchange="addHeroToTeam('my')"
+                                            th:hero_id="${hero.value.id}" th:hero_icon="${hero.value.icon}"
+                                        >
+                                    </td>
+                                    <td>
+                                        <input type="checkbox" class="ally_checkbox" onchange="addHeroToTeam('ally')" th:hero_id="${hero.value.id}" th:hero_icon="${hero.value.icon}">
+                                    </td>
+                                    <td>
+    
+                                        <input type="checkbox" class="enemy_checkbox" onchange="addHeroToTeam('enemy')" th:hero_id="${hero.value.id}" th:hero_icon="${hero.value.icon}">
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-4 ">
+                <form class="text-center border border-light p-5" 
+                    th:action="@{/analytic/CreateSelection}" th:object="${selection}" th:method="POST" autocomplete="off">
+                    <p class="h4 lg-4">Sign up</p>
+                    <div class="form-row">
+                        <div class="col-lg-12 form-group">
+                            <label>Selection name</label>
+                            <input type="text" name="selectionName" th:field="*{selectionName}" placeholder="selection name">
+                        </div>
+                        <div class="col-6 col-lg-6 form-group">
+                            <label>Min duration</label>
+                            <input type="text" name="durationMin" th:field="*{durationMin}" placeholder="duration min">
+                        </div>
+                        <div class="col-6 col-lg-6 form-group">
+                            <label>Max duration</label>
+                            <input type="text" name="durationMax" th:field="*{durationMax}" placeholder="duration max">
+                        </div>
+                        <div class="col-6 col-lg-6 form-group">
+                            <label>Min patch</label>
+                            <input type="text" name="patchMin"  th:field="*{patchMin}" placeholder="patch min">
+                        </div>
+                        <div class="col-6 col-lg-6 form-group">
+                            <label>Max patch</label>
+                            <input type="text" name="patchMax"  th:field="*{patchMax}" placeholder="patch max">
+                        </div>
+                        <div class="col-6 col-lg-6 form-group">
+                            <label>Min date</label>
+                            <input type="date"  th:field="*{dateMin}" name="dateMin"><br/>
+                        </div>
+                        <div class="col-6 col-lg-6 form-group">
+                            <label>Max date</label>
+                            <input type="date"  th:field="*{dateMax}" name="dateMax"><br/>
+                        </div>
+                        
+                        <Input name="alliesString" id="allyTeamHeroesInput" value="" type="hidden">
+                        <Input name="enemiesString" id="enemyTeamHeroesInput" value="" type="hidden">
+                        <Input name="heroString" id="investigatedHeroInput" value="" type="hidden">
+
+                        <button type="submit" class="btn btn-primary">Create selection</button>
+                    </div>   
+                </form>
+            </div>
+            <div class="col-lg-3 col-md-4">
+                <div style="width: 100%; height: 3000px;" class="flank_table">
+                    <div class = "row col-lg-12 col-md-12 text-center">
+                        <p class="h2 ">
+                            Items
+                        </p>
+                    </div>
+                    <div class=" d-flex justify-content-center">
+                        <table class="table table-striped table-bordered table-hover" >
+                            <thead class="thead-inverse">
+                            <tr>
+                                <th>#</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Username</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th scope="row">1</th>
+                                <td>Mark</td>
+                                <td>Otto</td>
+                                <td>@mdo</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">2</th>
+                                <td>Jacob</td>
+                                <td>Thornton</td>
+                                <td>@fat</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">3</th>
+                                <td>Larry</td>
+                                <td>the Bird</td>
+                                <td>@twitter</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- на jQuery (необходим для Bootstrap - х JavaScript плагины) -->  
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Включают все скомпилированные плагины (ниже), или включать отдельные файлы по мере необходимости -->  
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>

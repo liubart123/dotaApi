@@ -24,25 +24,25 @@ public class Testing {
     static {
         SuperService sp = new SuperService();
 //        try {
-//            if (!SuperService.updateDotaInfoFromApi()){
-//                SuperService.updateDotaInfoFromApi();
-//            }
+////            if (!SuperService.updateDotaInfoFromApi()){
+////                SuperService.updateDotaInfoFromApi();
+////            }
 ////            SuperService.insertMatch(5661553712l);
-//            Boolean cycle = true;
-//            while (cycle){
-//                try{
-//                    SuperService.insertMatch(2526759078l);
-//                    SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
-//                }catch (HttpClientErrorException e){
-//                    try {
-//                        log.error("429\nsleeping for a minute");
-//                        Thread.sleep(60000);
-//                    } catch (InterruptedException ex) {
-//                        cycle=false;
-//                        ex.printStackTrace();
-//                    }
-//                }
-//            }
+////            Boolean cycle = true;
+////            while (cycle){
+////                try{
+////                    SuperService.insertMatch(2526759078l);
+////                    SuperService.insertMatches(EFilterForMatchInserting.professionalsEarlier);
+////                }catch (HttpClientErrorException e){
+////                    try {
+////                        log.error("429\nsleeping for a minute");
+////                        Thread.sleep(60000);
+////                    } catch (InterruptedException ex) {
+////                        cycle=false;
+////                        ex.printStackTrace();
+////                    }
+////                }
+////            }
 //        } catch (DbAccessException e) {
 //            log.error("DbAccessException: "  + e.getMessage());
 //            e.printStackTrace();

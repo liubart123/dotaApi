@@ -5,6 +5,7 @@ public class Item {
     String description;
     String name;
     String keyName;
+    String img;
 
     public String getKeyName() {
         return keyName;
@@ -42,4 +43,11 @@ public class Item {
         this.description = description;
     }
 
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
 }

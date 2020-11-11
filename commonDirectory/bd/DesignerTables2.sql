@@ -70,11 +70,13 @@ CREATE TABLE Items (
 	name VARCHAR2(40) ,
 	description VARCHAR2(1000) ,
   key_name varchar(50),
+  img varchar(500),
 	constraint ITEMS_PK PRIMARY KEY (id));
 
 --alter table Items add key_name varchar(50);
 --alter table Items modify description VARCHAR2(1000);
-
+/
+alter table Items add img varchar(500);
 /
 --alter table BoughtItems modify player_match_id NUMBER;
 CREATE TABLE BoughtItems (

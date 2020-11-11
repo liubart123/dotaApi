@@ -1,7 +1,7 @@
 ---------------------------------ITEMS
 
 create or replace procedure INSERT_ITEM 
-  (item_id in INT, item_name in varchar2, item_description in varchar2, item_key_name in varchar2) IS
+  (item_id in INT, item_name in varchar2, item_description in varchar2, item_key_name in varchar2, item_img in varchar2) IS
   exist PLS_INTEGER;
   begin
     SELECT COUNT(1)
@@ -10,11 +10,11 @@ create or replace procedure INSERT_ITEM
      WHERE id = item_id
        AND ROWNUM = 1;
     if exist = 1 then
-      update ITEMS set  name = item_name,description = item_description, key_name = item_key_name where id=item_id;
+      update ITEMS set  name = item_name,description = item_description, key_name = item_key_name, img = item_img where id=item_id;
     else 
-        insert into ITEMS (id, name, description, key_name)
+        insert into ITEMS (id, name, description, key_name, img)
       values 
-        (item_id, item_name, item_description, item_key_name);
+        (item_id, item_name, item_description, item_key_name, item_img);
     end if;
   end;
 /

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Selection Test</title>
+</head>
+<body >
+<div style="display:flex;">
+    <form th:action="@{/analytic/CreateSelection}" th:object="${selection}" th:method="POST" autocomplete="off" style="padding: 25px;">
+        <input type="text" name="selectionName" th:field="*{selectionName}" placeholder="selection name">
+        <input type="text" name="selectionName" th:field="*{durationMin}" placeholder="duration min">
+        <input type="text" name="durationMax" th:field="*{durationMax}"placeholder="duration max">
+        <br/>
+        <input type="text" name="patchMin" placeholder="patch min">
+        <input type="text" name="patchMax" placeholder="patch max">
+        <br/>
+        minimal date
+        <input type="date" name="dateMin"><br/>
+        maximal date
+        <input type="date" name="dateMax"><br/>
+        y axis:
+        <select name="yAxis">
+            <option value="win">winrate</option>
+            <option value="kda">kda</option>
+            <option value="damage">damage</option>
+            <option value="LAST_GPM_PROPORTION">gpm</option>
+        </select> <br/>
+        x axis:
+        <select name="xAxis">
+            <option value="DURATIONMIN">duration</option>
+            <option value="kda">kda</option>
+            <option value="damage">damage</option>
+            <option value="LAST_GPM_PROPORTION">gpm</option>
+        </select>
+        <Input name="allies" id="allyTeamHeroesInput" value="" type="hidden">
+        <Input name="enemies" id="enemyTeamHeroesInput" value="" type="hidden">
+        <Input name="hero" id="investigatedHeroInput" value="" type="hidden">
+        <input type="submit" value="Get chart"></form>
+    </form>
+</div>
+
+</body>
+</html>

@@ -146,12 +146,15 @@ ALTER TABLE PlayersMatches ADD CONSTRAINT PlayersMatches_fk1 FOREIGN KEY (hero_i
 
 create index playersMatches_match_index on PlayersMatches (match_id);
 create index playersMatches_hero_index on PlayersMatches (hero_id);
+create index boughtItems_hero_pim_index on BoughtItems (player_match_id);
+create index boughtItems_hero_item_index on BoughtItems (item_id);
 
-alter table PlayersMatches drop constraint PlayersMatches_fk1;
+--alter table PlayersMatches drop constraint PlayersMatches_fk1;
 
 
 ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk0 FOREIGN KEY (item_id) REFERENCES Items(id);
 ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_fk1 FOREIGN KEY (player_match_id) REFERENCES PlayersMatches(player_match_id);
+ALTER TABLE BoughtItems ADD CONSTRAINT BoughtItems_unique unique (player_match_id, item_id, timing);
 
 
 ALTER TABLE HeroesRoles ADD CONSTRAINT HeroesRoles_fk0 FOREIGN KEY (hero_id) REFERENCES Heroes(id);
@@ -160,7 +163,7 @@ ALTER TABLE HeroesRoles ADD CONSTRAINT HeroesRoles_fk1 FOREIGN KEY (role_id) REF
 ALTER TABLE HeroesRoles ADD CONSTRAINT HeroesRoles_pk0 primary KEY (role_id, hero_id) ;
 
 
-
+select * from user_indexes;
 
 /
 select * from Heroes;

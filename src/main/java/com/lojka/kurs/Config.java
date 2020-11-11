@@ -39,16 +39,16 @@ public class Config implements WebMvcConfigurer {
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/").setViewName("main");
     }
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(
-                "/assets/**",
-                "/js/**"
-                ).addResourceLocations(
-                    "classpath:/assets/",
-                    "classpath:/templates/WEB-INF/assets/",
-                    "classpath:/templates/WEB-INF/assets/js/"
-                );
-
-    }
+//    @Override
+//    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//        registry.addResourceHandler(
+//                "/assets/**",
+//                "/js/**"
+//                ).addResourceLocations(
+//                    "classpath:/assets/",
+//                    "classpath:/templates/WEB-INF/assets/",
+//                    "classpath:/templates/WEB-INF/assets/js/"
+//                );
+//
+//    }
 }
