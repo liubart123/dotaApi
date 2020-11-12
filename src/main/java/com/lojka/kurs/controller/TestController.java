@@ -29,7 +29,7 @@ public class TestController {
         chart.name="testing chart";
         chart.xAxis = "Durationmin";
         chart.yAxis = "win";
-        chart.xScale = 2f;
+        chart.xScale = 1f;
         chart.minCountOfMatches = 5;
         Selection s1 = new Selection();
         s1.selectionName = "rubick and dagger";
