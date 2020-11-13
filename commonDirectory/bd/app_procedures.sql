@@ -18,23 +18,29 @@ begin
     end if;
 end;
 /
-create or replace procedure get_user(nameP varchar, hash_passwordP varchar, resultId out integer, resultRole out varchar)
+create or replace procedure get_user(curs out SYS_REFCURSOR, login varchar) is
+  begin
+    open curs for select * from app_users where name=login and rownum = 1;
+  end;
+/
+create or replace procedure exist_user(nameP varchar, resultId out boolean)
 is
   exist PLS_INTEGER;
 begin
   SELECT COUNT(1)
       INTO exist
       FROM app_users 
-     WHERE name = nameP and hash_password = hash_passwordP
+     WHERE name = nameP 
        AND ROWNUM = 1;
     if exist = 1 then
-      select id into resultId from app_users where name = nameP AND ROWNUM = 1;
-      select user_role into resultRole from app_users where name = nameP AND ROWNUM = 1;
+      resultId:=true;
     else 
-      resultId := -1;
+      resultId := false;
     end if;
 end;
 /
+select * from app_users;
+
 --selections
 create or replace procedure insert_selection(
   nameP varchar,

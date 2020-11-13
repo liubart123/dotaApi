@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link th:href="@{css/bootstrap.min.css}" rel="stylesheet">
+    <title>Login</title>
+</head>
+<body>
+    <div th:replace="fragments/general.html :: header"></div>
+
+    <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+    <!-- Default form login -->
+    <form class="text-center border border-light p-5 col-lg-4 col-md-4 offset-lg-4 offset-md-4"
+        th:action="@{/login}"  th:method="post" >
+
+        <p class="h4  pb-2">Sign in</p>
+
+        <div th:if="${param.error}" class="alert alert-danger">
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-info">
+            You have been logged out.
+        </div>
+        <!-- Email -->
+        <input type="text" id="userLogin" name="username" class="form-control mb-2" placeholder="E-mail">
+
+        <!-- Password -->
+        <input type="password" id="userPassword"  name="password"class="form-control mb-2" placeholder="Password">
+
+
+        <!-- Sign in button -->
+        <button class="btn btn-info btn-block my-4" type="submit">Sign in</button>
+
+        <!-- Register -->
+        <p>Not a member?
+            <a th:href="@{/signUp}">Register</a>
+        </p>
+
+        <!-- Social login -->
+        <p>or sign in with:</p>
+
+        <a href="#" class="mx-2" role="button"><i class="fab fa-facebook-f light-blue-text"></i></a>
+        <a href="#" class="mx-2" role="button"><i class="fab fa-twitter light-blue-text"></i></a>
+        <a href="#" class="mx-2" role="button"><i class="fab fa-linkedin-in light-blue-text"></i></a>
+        <a href="#" class="mx-2" role="button"><i class="fab fa-github light-blue-text"></i></a>
+
+    </form>
+
+
+    <div th:replace="fragments/general.html :: footer"></div>
+</body>
+</html>

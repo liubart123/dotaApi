@@ -16,10 +16,9 @@ drop table app_users;
 create table app_users (
   id integer generated always as identity primary key,
   name varchar(30) unique,
-  hash_password varchar(30),
+  hash_password varchar(500),
   user_role varchar(30));
-  
-  
+/
 create table selections(
   id integer generated always as identity primary key,
   name varchar(30),

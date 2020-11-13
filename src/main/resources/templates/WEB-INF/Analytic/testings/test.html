@@ -1,10 +1,13 @@
-<!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="headerfiles">
-    <meta charset="UTF-8" />
-</head>
+<html lang="en"><head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <title>Sign up</title>
+<meta id="Reverso_extension___elForCheckedInstallExtension" name="Reverso extension" content="2.2.202"></head>
 <body>
-    <div th:fragment="header">
+    <div>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
             <a class="navbar-brand" href="#">Navbar</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -29,7 +32,35 @@
         </nav>
 
     </div>
-    <div th:fragment="footer">
+
+<!-- Default form login -->
+    <form class="text-center border border-light p-5 col-lg-4 col-md-4 offset-lg-4 offset-md-4" action="/signUp" method="post"><input type="hidden" name="_csrf" value="52b45d83-daf6-4e26-8572-2466f2dd0c41">
+
+        <p class="h4  pb-2">Sign in</p>
+
+        
+        
+        <!-- Email -->
+        <input type="text" id="userLogin" name="login" class="form-control mb-2" placeholder="E-mail" value="">
+
+        <!-- Password -->
+        <input type="password" id="userPassword" name="password" class="form-control mb-2" placeholder="Password" value="">
+
+        <!-- Sign in button -->
+        <button class="btn btn-info btn-block my-4" type="submit">Sign up</button>
+
+        <!-- Social login -->
+        <p>or sign in with:</p>
+
+        <a href="#" class="mx-2" role="button"><i class="fab fa-facebook-f light-blue-text"></i></a>
+        <a href="#" class="mx-2" role="button"><i class="fab fa-twitter light-blue-text"></i></a>
+        <a href="#" class="mx-2" role="button"><i class="fab fa-linkedin-in light-blue-text"></i></a>
+        <a href="#" class="mx-2" role="button"><i class="fab fa-github light-blue-text"></i></a>
+
+    </form>
+
+
+    <div>
 
         <div class="border bg-info" style="position:absolute; bottom:10px; width: 100%; height: 40px;">
             .position-absolute (bottom:10px; right:15px;)
@@ -37,14 +68,14 @@
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
             <a class="navbar-brand" href="#">Navbar</a>
-            <div th:if="${errorMessage}">
-                <div class="alert alert-danger  m-0" th:text="${errorMessage}"></div>
+            <div>
+                <div class="alert alert-danger m-0">error with db query</div>
             </div>
         </nav>
         <!-- на jQuery (необходим для Bootstrap - х JavaScript плагины) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- Включают все скомпилированные плагины (ниже), или включать отдельные файлы по мере необходимости -->
-        <script th:src="@{js/bootstrap.min.js}"></script>
+        <script src="js/bootstrap.min.js"></script>
     </div>
-</body>
-</html>
+
+</body></html>
