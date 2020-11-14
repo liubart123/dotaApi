@@ -1,5 +1,6 @@
 package com.lojka.kurs;
 
+import com.lojka.kurs.model.user.EUserRoles;
 import com.lojka.kurs.service.app.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/", "/main","/css/**", "/js/**", "/webjars/**", "/signUp").permitAll()
+                    .antMatchers("/admin/**").hasAnyAuthority(EUserRoles.ADMIN.name())
+                    .antMatchers("/user/**").hasAnyAuthority(EUserRoles.USER.name(),EUserRoles.ADMIN.name())
                     .anyRequest().authenticated()
                     .and()
                 .formLogin()
@@ -36,17 +39,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                     .and()
                 .logout()
-                    .permitAll();
-        http.logout()
-                // разрешаем делать логаут всем
-                .permitAll()
-                // указываем URL логаута
-                .logoutUrl("/logout")
-                // указываем URL при удачном логауте
-                .logoutSuccessUrl("/login?logout")
-                // делаем не валидной текущую сессию
-                .invalidateHttpSession(true);
+                    .permitAll()
+                    .logoutSuccessUrl("/login?logout")
+                    .invalidateHttpSession(true)
+                    .and()
+                ;
     }
+//    @Autowired
+//    public void configureGlobal(AuthenticationManagerBuilder auth)
+//            throws Exception {
+//        auth
+//                .inMemoryAuthentication()
+//                .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
+//                .and()
+//                .withUser("admin").password(passwordEncoder().encode("admin")).roles("ADMIN");
+//    }
     @Override
     public void configure(WebSecurity web) throws Exception {
         web

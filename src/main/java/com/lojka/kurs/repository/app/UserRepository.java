@@ -84,12 +84,12 @@ public class UserRepository {
             cs.setString(1,user.getLogin());
             cs.setString(2,user.getPassword());
             cs.setString(3,user.getRole().name());
-            cs.registerOutParameter("resultId", OracleTypes.INTEGER);
+            cs.registerOutParameter(4, OracleTypes.INTEGER);
             cs.executeQuery();
-            if (cs.getInt("resultId")<0){
+            if (cs.getInt(4)<0){
                 throw new DbAccessException("error with db query");
             }
-            user.setId(cs.getInt("resultId"));
+            user.setId(cs.getInt(4));
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DbAccessException("error with db query");

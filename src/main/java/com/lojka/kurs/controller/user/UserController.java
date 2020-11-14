@@ -11,11 +11,13 @@ import com.lojka.kurs.model.queriesV2.bubble.BubbleData;
 import com.lojka.kurs.model.queriesV2.Selection;
 import com.lojka.kurs.model.queriesV2.linee_chart.LineChart;
 import com.lojka.kurs.model.queriesV2.linee_chart.LineData;
+import com.lojka.kurs.model.user.EUserRoles;
 import com.lojka.kurs.model.user.User;
 import com.lojka.kurs.service.app.UserDetailsServiceImpl;
 import com.lojka.kurs.service.super_service.SuperService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -64,6 +66,7 @@ public class UserController {
         mov.addObject("user",new User());
         try {
             userService.signUpUser(user);
+            mov.addObject("infoMessage", "you have been signed up");
         } catch (DbAccessException | UserAuthoException e) {
             e.printStackTrace();
             mov.setViewName("signUp");
@@ -71,4 +74,5 @@ public class UserController {
         }
         return mov;
     }
+
 }

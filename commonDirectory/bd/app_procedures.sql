@@ -44,15 +44,15 @@ select * from app_users;
 --selections
 create or replace procedure insert_selection(
   nameP varchar,
-  durationMinP integer,
-  durationMaxP integer,
-  patchMinP integer,
-  patchMaxP integer,
+  durationMinP int,
+  durationMaxP int,
+  patchMinP int,
+  patchMaxP int,
   dateMinP date,
   dateMaxP date,
-  investigated_hero_idP integer,
-  user_idP integer,
-  resultId out integer)
+  investigated_hero_idP int,
+  user_idP int,
+  resultId out int)
 is
   exist PLS_INTEGER;
 begin
@@ -63,6 +63,11 @@ begin
        AND ROWNUM = 1;
     if exist = 1 then
       resultId:=-1;
+--      SELECT id
+--      INTO resultId
+--      FROM selections 
+--        WHERE name = nameP and user_id = user_idP
+--       AND ROWNUM = 1;
     else 
       insert into selections (
           name,
@@ -88,6 +93,10 @@ begin
     end if;
 
 end;
+/
+select * from selections;
+select * from selections_heroes;
+select * from selections_items;
 /
 create or replace procedure insert_selection_heroes(
   selection_idp integer,
@@ -116,12 +125,11 @@ begin
 end;
 /
 create or replace procedure clear_selection_heroes(
-  selection_idp integer,
-  hero_roleP varchar
+  selection_idp integer
   )
   is
 begin
-  delete from selections_heroes where selection_id = selection_idp and hero_role = hero_roleP;
+  delete from selections_heroes where selection_id = selection_idp;
 end;
 /
 create or replace procedure insert_selection_items(
@@ -151,12 +159,11 @@ begin
 end;
 /
 create or replace procedure clear_selection_items(
-  selection_idp integer,
-  item_roleP varchar
+  selection_idp integer
   )
   is
 begin
-  delete from selections_items where selection_id = selection_idp and item_role = item_roleP;
+  delete from selections_items where selection_id = selection_idp;
 end;
 /
 create or replace procedure update_selection(
@@ -217,6 +224,21 @@ end;
 create or replace procedure SELECT_selections(curs out SYS_REFCURSOR, user_idp integer) is
   begin
     open curs for select * from selections where user_id=user_Idp order by name;
+  end;
+/
+create or replace procedure get_selection(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from selections where id=Idp;
+  end;
+/
+create or replace procedure SELECT_selections_items(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from selections_items where selection_id=idp;
+  end;
+/
+create or replace procedure SELECT_selections_heroes(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from selections_heroes where selection_id=idp;
   end;
 /
 --BubbleChart

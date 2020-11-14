@@ -153,4 +153,13 @@ public class TestController {
         mov.setViewName("Analytic/LineChart");
         return mov;
     }
+
+    @GetMapping(value = "/user/role")
+    public String getUserTest(){
+        return "fragments/general";
+    }
+    @GetMapping(value = "/admin/role")
+    public String getAdminTest(){
+        return "fragments/general";
+    }
 }

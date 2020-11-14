@@ -13,6 +13,7 @@ import java.util.List;
 @Component
 //параметры выбаркі для будучага графіка ці дыяграмы
 public class Selection {
+    public Integer id;
     public String selectionName = "some selection";
     public Integer durationMin = 0;
     public Integer durationMax = 999;
@@ -130,5 +131,23 @@ public class Selection {
 
     public void setHero(Hero hero) {
         this.hero = hero;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String parametersToString() {
+        return
+                "durationMin=" + durationMin +
+                ", durationMax=" + durationMax +
+                ", patchMin=" + patchMin +
+                ", patchMax=" + patchMax +
+                ", dateMin=" + dateMin +
+                ", dateMax=" + dateMax;
     }
 }

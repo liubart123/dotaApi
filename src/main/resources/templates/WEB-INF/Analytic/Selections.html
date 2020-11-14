@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link th:href="@{../css/bootstrap.min.css}" rel="stylesheet">
+    <title>Selections</title>
+    <style>
+        .small_icon{
+            width: 30px;
+            height: 30px;
+        }
+    </style>
+</head>
+    <body>
+
+        <div th:insert="fragments/general.html :: header"></div>
+
+        <div>
+            <a role="button" class="btn btn-primary p-1 m-1" th:href="@{/analytic/CreateSelection}">Create new Selection</a>
+            <div class="offset-1  d-flex justify-content-center">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th>Name</th>
+                        <th>Parameters</th>
+                        <th>Allies</th>
+                        <th>Enemies</th>
+                        <th>Items</th>
+                    </tr>
+                    <tr th:each="selection : ${selections}">
+                        <td >
+                            <div class="d-flex flex-column">
+                                <div th:text="${selection.getSelectionName()}"></div>
+                                <a role="button" class="btn btn-primary p-1 m-1" th:href="@{/analytic/UpdateSelection/} + ${selection.getId()}">Edit</a>
+                                <a role="button" class="btn btn-danger p-1 m-1" th:href="@{/analytic/DeleteSelection} + ${selection.getId()}">Delete</a>
+                            </div>
+                        </td>
+                        <td th:text="${selection.parametersToString()}"></td>
+                        <td>
+                           <th:block th:each="hero : ${selection.getAllies()}">
+                               <div th:text="${hero.getName()}"></div>
+                               <img class="small_icon" th:src="${hero.getIcon()}"/>,
+                           </th:block>
+                        </td>
+                        <td>
+                            <th:block th:each="hero : ${selection.getEnemies()}">
+                                <div th:text="${hero.getName()}"></div>
+                                <img class="small_icon" th:src="${hero.getIcon()}"/>,
+                            </th:block>
+                        </td>
+                        <td>
+                            <th:block th:each="item : ${selection.getItems()}">
+                                <div th:text="${item.getName()}"></div>
+                                <img class="small_icon" th:src="${item.getImg()}"/>,
+                            </th:block>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div th:insert="fragments/general.html :: footer"></div>
+        <script th:src="@{../js/bootstrap.min.js}"></script>
+
+    </body>
+</html>
