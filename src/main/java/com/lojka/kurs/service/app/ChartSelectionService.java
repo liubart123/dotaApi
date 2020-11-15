@@ -3,6 +3,7 @@ package com.lojka.kurs.service.app;
 
 import com.lojka.kurs.exception.DbAccessException;
 import com.lojka.kurs.model.queriesV2.*;
+import com.lojka.kurs.model.queriesV2.bar.BarChart;
 import com.lojka.kurs.model.user.User;
 import com.lojka.kurs.repository.app.ChartSelectionRepository;
 import com.lojka.kurs.repository.app.UserRepository;
@@ -38,5 +39,25 @@ public class ChartSelectionService {
     }
     public Selection getSelection(Integer id)throws SQLException, DbAccessException{
         return repository.getSelection(id);
+    }
+
+    public void createBarChart(User user, BarChart chart)throws SQLException, DbAccessException{
+        repository.insertBarChart(chart,user);
+        repository.insertBarChartLabels(chart);
+        repository.insertBarChartSelections(chart);
+    }
+    public ArrayList<BarChart> getBarCharts(User user)throws SQLException, DbAccessException{
+        return repository.getBarCharts(user);
+    }
+    public BarChart getBarChart(Integer id)throws SQLException, DbAccessException{
+        return repository.getBarChart(id);
+    }
+    public void updateBarChart(BarChart chart) throws SQLException, DbAccessException {
+        repository.updateBarChart(chart);
+        repository.insertBarChartLabels(chart);
+        repository.insertBarChartSelections(chart);
+    }
+    public void deleteBarChart(Integer id)throws SQLException, DbAccessException{
+        repository.deleteBarChart(id);
     }
 }

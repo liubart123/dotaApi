@@ -4,114 +4,69 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <title>Selections</title>
-    <style>
-        .small_icon{
-            width: 30px;
-            height: 30px;
-        }
-    </style>
+    <title>Main Page</title>
 <meta id="Reverso_extension___elForCheckedInstallExtension" name="Reverso extension" content="2.2.202"></head>
-    <body>
+<body>
+    <script>
+    </script>
 
-        <div><div>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-            <a class="navbar-brand" href="/">Dota Analytic!!</a>
-            
-            
-            <div>
-                <a role="button" class="btn btn-dark" href="javascript: document.logoutForm.submit()">Log out</a>
-                <form name="logoutForm" action="/logout" method="post" hidden="hidden"><input type="hidden" name="_csrf" value="f7182445-b0f4-4612-8dd6-5d3f913899a9">
-                    <input hidden="" type="submit" value="Sign Out">
-                </form>
-            </div>
-            <div>
-                <a role="button" class="btn btn-dark" href="/analytic/Selections">Selections</a>
-            </div>
-<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
-<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
-<!--            </div>-->
-<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
-<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
-<!--            </div>-->
-        </nav>
-
-    </div></div>
-
+    <div><div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+        <a class="navbar-brand" href="/">Dota Analytic!!</a>
+        
+        
         <div>
-            <div class="offset-2  d-flex justify-content-center">
-                <table class="table table-striped table-bordered table-hover">
-                    <thead class="thead-inverse">
-                    <tr>
-                        <th>Name</th>
-                        <th>Parameters</th>
-                        <th>Allies</th>
-                        <th>Enemies</th>
-                        <th>Items</th>
-                    </tr>
-                    <tr>
-                        <td>some selection
-                            <div class="d-flex flex-column">
-                                <a role="button" class="btn btn-dark p-1 m-1">Sign up</a>
-                                <a role="button" class="btn btn-dark p-1 m-1">Sign up</a>
-                                <a role="button" class="btn btn-dark p-1 m-1">Sign up</a>
-                            </div>
-                        </td>
-                        <td>durationMin=0, durationMax=999, patchMin=0, patchMax=999, dateMin=2019-05-24, dateMax=2021-05-24</td>
-                        <td>
-                           
-                               <div>Crystal Maiden</div>
-                               <img class="small_icon" src="https://api.opendota.com/apps/dota2/images/heroes/crystal_maiden_icon.png">,
-                           
-                               <div>Drow Ranger</div>
-                               <img class="small_icon" src="https://api.opendota.com/apps/dota2/images/heroes/drow_ranger_icon.png">,
-                           
-                        </td>
-                        <td>
-                            
-                                <div>Bane</div>
-                                <img class="small_icon" src="https://api.opendota.com/apps/dota2/images/heroes/bane_icon.png">,
-                            
-                                <div>Bloodseeker</div>
-                                <img class="small_icon" src="https://api.opendota.com/apps/dota2/images/heroes/bloodseeker_icon.png">,
-                            
-                        </td>
-                        <td>
-                            
-                                <div>Blink Dagger</div>
-                                <img class="small_icon" src="https://api.opendota.com/apps/dota2/images/items/blink_lg.png?t=1593393829403">,
-                            
-                                <div>Blades of Attack</div>
-                                <img class="small_icon" src="https://api.opendota.com/apps/dota2/images/items/blades_of_attack_lg.png?t=1593393829403">,
-                            
-                                <div>Broadsword</div>
-                                <img class="small_icon" src="https://api.opendota.com/apps/dota2/images/items/broadsword_lg.png?t=1593393829403">,
-                            
-                        </td>
-                    </tr>
-                    
-                </thead></table>
+            <a role="button" class="btn btn-dark" href="javascript: document.logoutForm.submit()">Log out</a>
+            <form name="logoutForm" action="/logout" method="post" hidden="hidden"><input type="hidden" name="_csrf" value="8f2f83ec-4f16-4b11-8e65-424de734e180">
+                <input hidden="" type="submit" value="Sign Out">
+            </form>
+        </div>
+        <div>
+            <a role="button" class="btn btn-dark" href="/analytic/Selections">Selections</a>
+        </div>
+        <div class="show">
+            
+        <div class="dropdown show">
+            <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Dropdown link
+            </a>
+          
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a class="dropdown-item btn-dark" href="#">Action</a>
+              <a class="dropdown-item" href="#">Another action</a>
+              <a class="dropdown-item" href="#">Something else here</a>
             </div>
+          </div>
         </div>
+<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
+<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
+<!--            </div>-->
+<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
+<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
+<!--            </div>-->
+    </nav>
 
-        <div><div>
+</div></div>
 
-        <div class="border bg-info" style="width: 100%; height: 100px; visibility: hidden">
-        </div>
+    <div>0</div>
+<!--        <div th:if="${#request.getUserPrincipal()!=null && #request.getUserPrincipal().principal!=null}" th:text="${ #request.getUserPrincipal().principal.user.role.name()}"></div>-->
 
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
-            <a class="navbar-brand" href="#">Navbar</a>
-            
-            
+    <div><div>
 
-            <h1>Hello asd!</h1>
-        </nav>
-        <!-- на jQuery (необходим для Bootstrap - х JavaScript плагины) -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <!-- Включают все скомпилированные плагины (ниже), или включать отдельные файлы по мере необходимости -->
-        <script src="js/bootstrap.min.js"></script>
-    </div></div>
+    <div class="border bg-info" style="width: 100%; height: 100px; visibility: hidden">
+    </div>
 
-        <script src="js/bootstrap.min.js"></script>
-    
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+        <a class="navbar-brand" href="#">Navbar</a>
+        
+        
+
+        <h1>Hello asd!</h1>
+    </nav>
+    <!-- на jQuery (необходим для Bootstrap - х JavaScript плагины) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Включают все скомпилированные плагины (ниже), или включать отдельные файлы по мере необходимости -->
+    <script src="js/bootstrap.min.js"></script>
+</div></div>
+
 </body></html>

@@ -4,6 +4,7 @@ import com.lojka.kurs.exception.DbAccessException;
 import com.lojka.kurs.model.Hero;
 import com.lojka.kurs.model.Item;
 import com.lojka.kurs.model.queriesV2.*;
+import com.lojka.kurs.model.queriesV2.bar.BarChart;
 import com.lojka.kurs.model.user.User;
 import com.lojka.kurs.service.super_service.SuperService;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class ChartSelectionRepository {
     String sqlSelectSelection = "begin get_selection(?,?); end;";
     String sqlSelectSelectionsHeroes = "begin SELECT_selections_heroes(?,?); end;";
     String sqlSelectSelectionsItems = "begin SELECT_selections_items(?,?); end;";
+
 
     public Connection getConnection() throws SQLException, DbAccessException {
         if (connection==null || connection.isClosed()){
@@ -260,5 +262,147 @@ public class ChartSelectionRepository {
         }
         rs2.close();
         cs2.close();
+    }
+
+
+    //bar charts
+    String sqlInsertBarChart = "begin insert_barchart(?,?,?,?,?,?); end;";
+    String sqlInsertBarChartSelections = "begin insert_selections_barchart(?,?); end;";
+    String sqlClearBarChartSelections = "begin clear_selections_barchart(?); end;";
+    String sqlInsertBarChartLabels = "begin insert_barchart_labels(?,?); end;";
+    String sqlClearBarChartLabels = "begin clear_barchart_labels(?); end;";
+
+    String sqlSelectBarCharts = "begin SELECT_barcharts(?,?); end;";
+    String sqlSelectBarChart = "begin SELECT_barchart(?,?); end;";
+    String sqlSelectBarChartsSelections = "begin SELECT_barcharts_selections(?,?); end;";
+    String sqlSelectBarChartsLabels = "begin SELECT_barcharts_labels(?,?); end;";
+
+    String sqlUpdateBarChart = "begin update_barchart(?,?,?,?,?); end;";
+    String sqlDeleteBarChart = "begin delete_barchart(?); end;";
+
+    public void insertBarChart(BarChart chart, User user)throws SQLException, DbAccessException{
+        CallableStatement cs = getConnection().prepareCall(sqlInsertBarChart);
+        cs.setInt(1, chart.getMinCountOfMatches());
+        cs.setString(2, chart.getName());
+        cs.setString(3, chart.getxAxis());
+        cs.setString(4, chart.getyAxis());
+        cs.setInt(5, user.getId());
+        cs.registerOutParameter(6,OracleTypes.INTEGER);
+        cs.executeQuery();
+        if (cs.getInt(6)<0){
+            throw new DbAccessException("chart with this name exist");
+        }else{
+            chart.setId(cs.getInt(6));
+        }
+    }
+    public void insertBarChartSelections(BarChart chart)throws SQLException, DbAccessException{
+        CallableStatement clear = getConnection().prepareCall(sqlClearBarChartSelections);
+        clear.setInt(1,chart.getId());
+        clear.executeQuery();
+        clear.close();
+        for(Selection selection : chart.getSelections()){
+            CallableStatement cs = getConnection().prepareCall(sqlInsertBarChartSelections);
+            cs.setInt(1,selection.getId());
+            cs.setInt(2,chart.getId());
+            cs.executeQuery();
+            cs.close();
+        }
+    }
+    public void insertBarChartLabels(BarChart chart)throws SQLException, DbAccessException{
+        CallableStatement clear = getConnection().prepareCall(sqlClearBarChartLabels);
+        clear.setInt(1,chart.getId());
+        clear.executeQuery();
+        clear.close();
+        for(String label : chart.getxLabels()){
+            CallableStatement cs = getConnection().prepareCall(sqlInsertBarChartLabels);
+            cs.setString(2,label);
+            cs.setInt(1,chart.getId());
+            cs.executeQuery();
+            cs.close();
+        }
+    }
+
+    public ArrayList<BarChart> getBarCharts(User user)throws SQLException, DbAccessException{
+        ArrayList<BarChart> result = new ArrayList<>();
+
+        CallableStatement cs = getConnection().prepareCall(sqlSelectBarCharts);
+        cs.setInt(2,user.getId());
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1, ResultSet.class);
+        while (rs.next()){
+            BarChart chart = new BarChart();
+            chart.setId(rs.getInt(1));
+            chart.setName(rs.getString(3));
+            chart.setMinCountOfMatches(rs.getInt(2));
+            chart.setxAxis(rs.getString(4));
+            chart.setyAxis(rs.getString(5));
+
+            addLabelsAndSelectionsToBarChart(chart);
+            result.add(chart);
+        }
+        return result;
+    }
+    public BarChart getBarChart(Integer id)throws SQLException, DbAccessException{
+        ArrayList<BarChart> result = new ArrayList<>();
+
+        CallableStatement cs = getConnection().prepareCall(sqlSelectBarChart);
+        cs.setInt(2,id);
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1, ResultSet.class);
+        if (rs.next()){
+            BarChart chart = new BarChart();
+            chart.setId(rs.getInt(1));
+            chart.setName(rs.getString(3));
+            chart.setMinCountOfMatches(rs.getInt(2));
+            chart.setxAxis(rs.getString(4));
+            chart.setyAxis(rs.getString(5));
+
+            addLabelsAndSelectionsToBarChart(chart);
+            return chart;
+        }else {
+            throw new DbAccessException("there is no such chart...");
+        }
+    }
+    void addLabelsAndSelectionsToBarChart(BarChart chart)throws SQLException, DbAccessException{
+        CallableStatement cs = getConnection().prepareCall(sqlSelectBarChartsLabels);
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.setInt(2,chart.getId());
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1,ResultSet.class);
+        while (rs.next()){
+            chart.getxLabels().add(rs.getString(2));
+        }
+        cs.close();
+
+        cs = getConnection().prepareCall(sqlSelectBarChartsSelections);
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.setInt(2,chart.getId());
+        cs.executeQuery();
+        rs = cs.getObject(1,ResultSet.class);
+        while (rs.next()){
+            chart.getSelections().add(getSelection(rs.getInt(1)));
+        }
+        cs.close();
+    }
+
+    public void updateBarChart(BarChart chart)throws SQLException, DbAccessException{
+        CallableStatement cs = getConnection().prepareCall(sqlUpdateBarChart);
+        cs.setInt(1, chart.getMinCountOfMatches());
+        cs.setString(2, chart.getName());
+        cs.setString(3, chart.getxAxis());
+        cs.setString(4, chart.getyAxis());
+        cs.setInt(5, chart.getId());
+        cs.executeQuery();
+    }
+    public void deleteBarChart(Integer id)throws SQLException, DbAccessException{
+        log.debug("delete barchart by " + id);
+        CallableStatement cs = getConnection().prepareCall(sqlDeleteBarChart);
+        cs.setInt(1,id);
+        if (cs.executeQuery()!=null){
+        }else {
+            throw new DbAccessException("error with query");
+        }
     }
 }

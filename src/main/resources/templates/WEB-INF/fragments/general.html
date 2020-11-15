@@ -22,6 +22,18 @@
             <div th:if="${#request.getUserPrincipal()!=null}">
                 <a role="button" class="btn btn-dark" th:href="@{/analytic/Selections}">Selections</a>
             </div>
+            <div th:if="${#request.getUserPrincipal()!=null}">
+                <div class="dropdown show">
+                    <a class="btn btn-dark dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Charts
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" th:href="@{/analytic/BarCharts}">Bar</a>
+                        <a class="dropdown-item" th:href="@{/analytic/BarCharts}">Line</a>
+                        <a class="dropdown-item" th:href="@{/analytic/BarCharts}">Bubble</a>
+                    </div>
+                </div>
+            </div>
 <!--            <div th:if="${#request.getUserPrincipal()==null}">-->
 <!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
 <!--            </div>-->

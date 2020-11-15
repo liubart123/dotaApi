@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 //параметры выбаркі для будучага графіка ці дыяграмы
@@ -149,5 +150,18 @@ public class Selection {
                 ", patchMax=" + patchMax +
                 ", dateMin=" + dateMin +
                 ", dateMax=" + dateMax;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Selection)) return false;
+        Selection selection = (Selection) o;
+        return Objects.equals(getId(), selection.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

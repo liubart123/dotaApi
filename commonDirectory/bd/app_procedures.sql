@@ -234,17 +234,10 @@ end;
 create or replace procedure delete_selection(
   idP integer)
 is
-  exist PLS_INTEGER;
 begin
-  SELECT COUNT(1)
-      INTO exist
-      FROM selections 
-     WHERE id = idP
-       AND ROWNUM = 1;
-    if exist = 1 then
       delete from selections where id=idp;
-    end if;
-
+      delete from SELECTIONS_HEROES where SELECTION_ID=idp;
+      delete from SELECTIONS_ITEMS where SELECTION_ID=idp;
 end;
 /
 create or replace procedure SELECT_selections(curs out SYS_REFCURSOR, user_idp integer) is
@@ -371,7 +364,10 @@ create or replace procedure SELECT_bubblecharts(curs out SYS_REFCURSOR, user_idp
 /
 
 --BarChart
-
+select * from barchart;
+select * from selections_barchart;
+select * from BarChart_labels;
+/
 create or replace procedure insert_barchart(
   minCountOfMatchesP integer,
   nameP varchar,
@@ -402,7 +398,7 @@ begin
           xAxisP,
           yAxisP,
           user_idP);  
-      select id into resultId from BubbleChart where name=nameP and user_id=user_idP;
+      select id into resultId from barChart where name=nameP and user_id=user_idP;
     end if;
 
 end;
@@ -417,7 +413,7 @@ begin
   values (selection_idP,barchart_idp);
 end;
 /
-create or replace procedure clear_selections_bubblechart(
+create or replace procedure clear_selections_barchart(
   barchart_idP integer
   )
   is
@@ -465,6 +461,16 @@ end;
 create or replace procedure SELECT_barcharts(curs out SYS_REFCURSOR, user_idp integer) is
   begin
     open curs for select * from barchart where user_id=user_Idp order by name;
+  end;
+  /
+create or replace procedure SELECT_barcharts_selections(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from selections_barchart where barchart_id=idp;
+  end;
+  /
+create or replace procedure SELECT_barcharts_labels(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from BarChart_labels where barchart_id=idp;
   end;
   /
 
