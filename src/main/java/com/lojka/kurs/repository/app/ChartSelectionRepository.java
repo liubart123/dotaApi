@@ -27,6 +27,8 @@ public class ChartSelectionRepository {
     Connection connection;
 
     String sqlInsertSelection = "begin insert_selection(?,?,?,?,?,?,?,?,?,?); end;";
+    String sqlUpdateSelection = "begin update_selection(?,?,?,?,?,?,?,?,?,?); end;";
+    String sqlDeleteSelection = "begin delete_selection(?); end;";
     String sqlInsertSelectionHeroes = "begin insert_selection_heroes(?,?,?); end;";
     String sqlClearSelectionHeroes = "begin clear_selection_heroes(?); end;";
     String sqlInsertSelectionItems = "begin insert_selection_items(?,?,?); end;";
@@ -56,7 +58,7 @@ public class ChartSelectionRepository {
     }
 
     public void insertSelection(Selection selection, User user)throws SQLException, DbAccessException{
-        log.debug("insert selection by " + user.getLogin());
+        log.debug("insert selection by " + user.getLogin() + " selection: " + selection.getSelectionName());
         CallableStatement cs = getConnection().prepareCall(sqlInsertSelection);
         cs.setString(1, selection.getSelectionName());
         cs.setInt(2, selection.getDurationMin());
@@ -133,6 +135,36 @@ public class ChartSelectionRepository {
             }
         }
     }
+
+    public void updateSelection(Selection selection, User user)throws SQLException, DbAccessException{
+        log.debug("update selection by " + user.getLogin() + " selection: " + selection.getSelectionName());
+        CallableStatement cs = getConnection().prepareCall(sqlUpdateSelection);
+        cs.setString(1, selection.getSelectionName());
+        cs.setInt(2, selection.getDurationMin());
+        cs.setInt(3, selection.getDurationMax());
+        cs.setInt(4, selection.getPatchMin());
+        cs.setInt(5, selection.getPatchMax());
+        cs.setDate(6, new Date(selection.getDateMin().getTime()));
+        cs.setDate(7, new Date(selection.getDateMax().getTime()));
+        cs.setInt(8, selection.getHero().getId());
+        cs.setInt(9, user.getId());
+        cs.setInt(10, selection.getId());
+        if (cs.executeQuery()!=null){
+        }else {
+            throw new DbAccessException("error with query");
+        }
+    }
+
+    public void deleteSelection(Integer id)throws SQLException, DbAccessException{
+        log.debug("delete selection by " + id);
+        CallableStatement cs = getConnection().prepareCall(sqlDeleteSelection);
+        cs.setInt(1,id);
+        if (cs.executeQuery()!=null){
+        }else {
+            throw new DbAccessException("error with query");
+        }
+    }
+
 
     public ArrayList<Selection> getSelections(User user)throws SQLException, DbAccessException{
         Map<Integer, Selection> selections = new HashMap<>();

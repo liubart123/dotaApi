@@ -106,18 +106,12 @@ public class AnalyticController {
         try {
 
             Selection selection = service.getSelection(id);
-            //mov.addObject("selection", selection);
-            ObjectMapper mapper = new ObjectMapper();
-            String json = mapper.writeValueAsString(selection);
-//            mov.addObject("selectionJson", json );
+            mov.addObject("selection", selection);
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage","error with db");
 
         } catch (DbAccessException e) {
-            e.printStackTrace();
-            mov.addObject("errorMessage",e.getMessage());
-        } catch (JsonProcessingException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
         }
@@ -162,11 +156,11 @@ public class AnalyticController {
         mov.setViewName("/Analytic/CreateSelection");
         mov.addObject("heroes", SuperService.getHeroes());
         mov.addObject("items", SuperService.getItems());
-        mov.addObject("selection", new Selection());
+        mov.addObject("selection", selection);
         User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         try {
-            service.createSelection(user,selection);
-            mov.addObject("infoMessage","Selection has been created! ");
+            service.updateSelection(user,selection);
+            mov.addObject("infoMessage","Selection has been updated! ");
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
@@ -178,6 +172,24 @@ public class AnalyticController {
         return mov;
     }
 
+    @GetMapping("/DeleteSelection/{id}")
+    ModelAndView getDeleteSelection(Model model,
+                                    @PathVariable(value="id") Integer id){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("redirect:/analytic/Selections");
+        try {
+            service.deleteSelection(id);
+            mov.addObject("infoMessage","selection was deleted");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","error with db");
+
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
     @GetMapping("/Selections")
     ModelAndView getSelections(Model model){
         ModelAndView mov = new ModelAndView();

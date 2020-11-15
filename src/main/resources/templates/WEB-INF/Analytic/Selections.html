@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap -->
-    <link th:href="@{../css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
     <title>Selections</title>
     <style>
         .small_icon{
@@ -26,6 +26,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Parameters</th>
+                        <th>Hero</th>
                         <th>Allies</th>
                         <th>Enemies</th>
                         <th>Items</th>
@@ -35,10 +36,14 @@
                             <div class="d-flex flex-column">
                                 <div th:text="${selection.getSelectionName()}"></div>
                                 <a role="button" class="btn btn-primary p-1 m-1" th:href="@{/analytic/UpdateSelection/} + ${selection.getId()}">Edit</a>
-                                <a role="button" class="btn btn-danger p-1 m-1" th:href="@{/analytic/DeleteSelection} + ${selection.getId()}">Delete</a>
+                                <a role="button" class="btn btn-danger p-1 m-1" th:href="@{/analytic/DeleteSelection/} + ${selection.getId()}">Delete</a>
                             </div>
                         </td>
                         <td th:text="${selection.parametersToString()}"></td>
+                        <td>
+                            <div th:text="${selection.getHero().getName()}"></div>
+                            <img class="small_icon" th:src="${selection.getHero().getIcon()}"/>
+                        </td>
                         <td>
                            <th:block th:each="hero : ${selection.getAllies()}">
                                <div th:text="${hero.getName()}"></div>
@@ -64,7 +69,6 @@
         </div>
 
         <div th:insert="fragments/general.html :: footer"></div>
-        <script th:src="@{../js/bootstrap.min.js}"></script>
 
     </body>
 </html>

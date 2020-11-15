@@ -25,6 +25,13 @@ public class ChartSelectionService {
         repository.insertSelection(selection,user);
         repository.insertSelectionsHeroesAndItems(selection,user);
     }
+    public void updateSelection(User user, Selection selection) throws SQLException, DbAccessException {
+        repository.updateSelection(selection,user);
+        repository.insertSelectionsHeroesAndItems(selection,user);
+    }
+    public void deleteSelection(Integer id)throws SQLException, DbAccessException{
+        repository.deleteSelection(id);
+    }
 
     public ArrayList<Selection> getSelections(User user)throws SQLException, DbAccessException{
         return repository.getSelections(user);

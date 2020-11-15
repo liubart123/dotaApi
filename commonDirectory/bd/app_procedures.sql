@@ -94,6 +94,32 @@ begin
 
 end;
 /
+
+create or replace procedure update_selection(
+  nameP varchar,
+  durationMinP int,
+  durationMaxP int,
+  patchMinP int,
+  patchMaxP int,
+  dateMinP date,
+  dateMaxP date,
+  investigated_hero_idP int,
+  user_idP int,
+  idP int)
+is
+begin
+    update selections set
+        name = nameP,
+        durationMin=durationMinP,
+        durationMax=durationMaxP,
+        patchMin=patchMinP,
+        patchMax=patchMaxP,
+        dateMin=dateMinP,
+        dateMax=dateMaxP,
+        investigated_hero_id=investigated_hero_idP,
+        user_id=user_idP where id=idp;
+end;
+/
 select * from selections;
 select * from selections_heroes;
 select * from selections_items;
