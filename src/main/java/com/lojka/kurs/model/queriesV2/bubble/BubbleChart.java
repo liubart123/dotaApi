@@ -69,4 +69,13 @@ public class BubbleChart {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public String parametersToString() {
+        return
+                "minCountOfMatches=" + minCountOfMatches +
+                ", name='" + name + '\'' +
+                ", xAxis='" + xAxis + '\'' +
+                ", yAxis='" + yAxis + '\'' +
+                ", xScale=" + xScale;
+    }
 }

@@ -22,7 +22,6 @@ import com.lojka.kurs.service.factory.HeroRoleFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -528,7 +527,7 @@ public class SuperService {
         query += " having count(*) > " + chart.minCountOfMatches;
 
         query += " order by yAxis ";
-        if (chart.isDeasc)
+        if (chart.desc)
             query+="desc " ;
 
         query += " ) where rownum <= " + chart.countOfLabels;

@@ -324,28 +324,16 @@ create or replace procedure update_bubblechart(
   xAxisP varchar,
   yAxisP varchar,
   xScaleP float,
-  user_idP integer,
-  idp integer,
-  resultId out integer)
+  idp integer)
 is
   exist PLS_INTEGER;
 begin
-  SELECT COUNT(1)
-      INTO exist
-      FROM BubbleChart 
-     WHERE id=idp
-       AND ROWNUM = 1;
-    if exist = 1 then
       update BubbleChart set 
         minCountOfMatches = minCountOfMatchesp,
             name=nameP,
             xAxis=xAxisP,
             yAxis=yAxisP,
             xScale=xScaleP where id=idp;
-      resultId:=idp;
-    else 
-      resultId:=-1;
-    end if;
 
 end;
 /
@@ -362,6 +350,17 @@ create or replace procedure SELECT_bubblecharts(curs out SYS_REFCURSOR, user_idp
     open curs for select * from bubblechart where user_id=user_Idp order by name;
   end;
 /
+create or replace procedure SELECT_bubblechart(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from bubblechart where id=Idp;
+  end;
+/
+create or replace procedure SELECT_bubblecharts_selections(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from selections_bubblechart where bubblechart_id=Idp;
+  end;
+/
+select * from selections_bubblechart;
 
 --BarChart
 select * from barchart;
@@ -426,27 +425,15 @@ create or replace procedure update_barchart(
   nameP varchar,
   xAxisP varchar,
   yAxisP varchar,
-  user_idP integer,
-  idp integer,
-  resultId out integer)
+  idp integer)
 is
   exist PLS_INTEGER;
 begin
-  SELECT COUNT(1)
-      INTO exist
-      FROM barChart 
-     WHERE id=idp
-       AND ROWNUM = 1;
-    if exist = 1 then
       update barChart set 
         minCountOfMatches = minCountOfMatchesp,
             name=nameP,
             xAxis=xAxisP,
             yAxis=yAxisP where id=idp;
-      resultId:=idp;
-    else 
-      resultId:=-1;
-    end if;
 
 end;
 /
@@ -454,6 +441,8 @@ create or replace procedure delete_barchart(
   idP integer)
 is
 begin
+      delete from selections_barchart where barchart_id=idp;
+      delete from BarChart_labels where barchart_id=idp;
       delete from barchart where id=idp;
 
 end;
@@ -461,6 +450,11 @@ end;
 create or replace procedure SELECT_barcharts(curs out SYS_REFCURSOR, user_idp integer) is
   begin
     open curs for select * from barchart where user_id=user_Idp order by name;
+  end;
+  /
+create or replace procedure SELECT_barchart(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from barchart where id=Idp;
   end;
   /
 create or replace procedure SELECT_barcharts_selections(curs out SYS_REFCURSOR, idp integer) is
@@ -548,18 +542,10 @@ create or replace procedure update_linechart(
   countOfLabelsp integer,
 	isDescp NUMBER,
   selectionIdp integer,
-  user_idP integer,
-  idp integer,
-  resultId out integer)
+  idp integer)
 is
   exist PLS_INTEGER;
 begin
-  SELECT COUNT(1)
-      INTO exist
-      FROM linechart 
-     WHERE id=idp
-       AND ROWNUM = 1;
-    if exist = 1 then
       update linechart set 
         minCountOfMatches = minCountOfMatchesp,
             name=nameP,
@@ -569,10 +555,6 @@ begin
             isDesc=isDescp,
             selectionId=selectionIdp
             where id=idp;
-      resultId:=idp;
-    else 
-      resultId:=-1;
-    end if;
 
 end;
 /
@@ -589,3 +571,9 @@ create or replace procedure SELECT_linecharts(curs out SYS_REFCURSOR, user_idp i
     open curs for select * from linechart where user_id=user_Idp order by name;
   end;
 /
+create or replace procedure SELECT_linechart(curs out SYS_REFCURSOR, idp integer) is
+  begin
+    open curs for select * from linechart where id=idp;
+  end;
+/
+select * from linechart;

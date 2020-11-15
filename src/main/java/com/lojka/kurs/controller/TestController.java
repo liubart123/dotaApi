@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Slf4j
 @Controller
@@ -123,7 +121,7 @@ public class TestController {
         chart.name = "test line";
         chart.countOfLabels=10;
         chart.minCountOfMatches = 50;
-        chart.isDeasc=true;
+        chart.desc =true;
         Selection s1 = new Selection();
         s1.hero = SuperService.getHeroes().get(86);
         s1.selectionName = "rubick";

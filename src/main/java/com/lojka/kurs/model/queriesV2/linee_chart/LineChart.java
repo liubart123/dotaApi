@@ -2,17 +2,15 @@ package com.lojka.kurs.model.queriesV2.linee_chart;
 
 import com.lojka.kurs.model.queriesV2.Selection;
 
-import java.util.ArrayList;
-import java.util.List;
-
 //графік для атрымання мінімальных і максімальных паказчыкаў выбаркі
 public class LineChart {
     public Integer minCountOfMatches = 0;
     public String name;
     public String xAxis, yAxis;
     public Integer countOfLabels = 0;
-    public Boolean isDeasc = false;
+    public Boolean desc = false;
     public Selection selection;
+    public Integer selectionId;
     public Integer id;
 
     public Integer getMinCountOfMatches() {
@@ -56,11 +54,14 @@ public class LineChart {
     }
 
     public Boolean getDeasc() {
-        return isDeasc;
+        return desc;
+    }
+    public Boolean isDeasc() {
+        return desc;
     }
 
     public void setDeasc(Boolean deasc) {
-        isDeasc = deasc;
+        desc = deasc;
     }
 
     public Selection getSelection() {
@@ -69,6 +70,7 @@ public class LineChart {
 
     public void setSelection(Selection selection) {
         this.selection = selection;
+        setSelectionId(selection.getId());
     }
 
     public Integer getId() {
@@ -77,5 +79,22 @@ public class LineChart {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getSelectionId() {
+        return selectionId;
+    }
+
+    public void setSelectionId(Integer selectionId) {
+        this.selectionId = selectionId;
+    }
+
+    public String parametersToString() {
+        return
+                "minCountOfMatches=" + minCountOfMatches +
+                ", xAxis='" + xAxis + '\'' +
+                ", yAxis='" + yAxis + '\'' +
+                ", countOfLabels=" + countOfLabels +
+                ", isDeasc=" + desc;
     }
 }

@@ -116,6 +116,10 @@
                         <label>Chart name</label>
                         <input type="text" name="selectionName" th:field="*{name}" placeholder="chart name">
                     </div>
+                    <div class="col-12 col-lg-12 form-group">
+                        <label>Minimal count of matches </label>
+                        <input type="number" step="1" name="minCountOfMatches" th:field="*{minCountOfMatches}" placeholder="minCountOfMatches">
+                    </div>
                     <div class="col-6 col-lg-6 form-group">
                         <label>X Axis</label>
                         <select name="yAxis"  th:field="*{xAxis}">

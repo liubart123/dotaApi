@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <title>Create Line Chart</title>
+    <style>
+        .block-in-cell{
+            overflow-wrap: break-word;
+        }
+        .flank_table{
+            border-radius: 8px; background-color: rgb(240, 240, 240);
+            padding:0% 2% 2% 2%; ;
+        }
+        .small_icon{
+             width: 30px;
+             height: 30px;
+        }
+    </style>
+    <script type="text/javascript">
+        function setRadio() {
+            document.getElementsByClassName("selection_radio")[0].checked=true;
+        }
+        changeSelection = function () {
+            selectionString = "";
+            items = document.getElementsByClassName("selection_checkbox");
+            for(i in items){
+                if (items[i].checked){
+                    selectionString+=items[i].getAttribute('selection_id') + ",";
+                }
+            }
+            document.getElementById("selectionsIds").value=selectionString;
+        }
+    </script>
+</head>
+<body onload = 'setRadio()'>
+<div th:replace="fragments/general.html :: header"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-6 col-md-6 offset-3">
+            <form class="text-center border border-light p-5"
+                  th:action="@{/analytic/CreateLineChart}" th:object="${chart}" th:method="POST" autocomplete="off">
+                <p class="h4 lg-4">Create Line Chart</p>
+                <div class="form-row">
+                    <div class="col-12 col-lg-12 form-group">
+                        <label>Chart name</label>
+                        <input type="text" name="selectionName" th:field="*{name}" placeholder="chart name">
+                    </div>
+                    <div class="col-12 col-lg-12 form-group">
+                        <label>Minimal count of matches </label>
+                        <input type="number" step="1" name="minCountOfMatches" th:field="*{minCountOfMatches}" placeholder="minCountOfMatches">
+                    </div>
+                    <div class="col-12 col-lg-12 form-group">
+                        <label>Count of labels</label>
+                        <input type="number" step="1" name="countOfLabels" th:field="*{countOfLabels}" placeholder="countOfLabels">
+                    </div>
+                    <div class="col-12 col-lg-12 form-group">
+                        <label>Descending order</label>
+                        <input type="checkbox" name="isDeasc" th:value="*{isDeasc}">
+                    </div>
+                    <div class="col-6 col-lg-6 form-group">
+                        <label>X Axis</label>
+                        <select name="yAxis"  th:field="*{xAxis}">
+                            <option value="allies">allies</option>
+                            <option value="enemies">enemies</option>
+                            <option value="items">items</option>
+                        </select>
+<!--                        <input type="text" name="durationMin" th:field="*{xAxis}" placeholder="duration min">-->
+                    </div>
+                    <div class="col-6 col-lg-6 form-group">
+                        <label>Y Axis</label>
+                        <select name="yAxis" th:field="*{yAxis}">
+                            <option value="win">winrate</option>
+                            <option value="kda">kda</option>
+                            <option value="damage">damage</option>
+                            <option value="LAST_GPM_PROPORTION">gpm</option>
+                        </select>
+<!--                        <input type="text" name="durationMax" th:field="*{yAxis}" placeholder="duration max">-->
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Create chart</button>
+                </div>
+
+                <table class="table table-striped table-bordered table-hover">
+                    <thead class="thead-inverse">
+                    <tr>
+                        <th>Include</th>
+                        <th>Name</th>
+                        <th>Parameters</th>
+                        <th>Hero</th>
+                        <th>Allies</th>
+                        <th>Enemies</th>
+                        <th>Items</th>
+                    </tr>
+                    <tr th:each="selection : ${selections}">
+                        <td>
+                            <input type="radio" class="selection_radio" th:value="${selection.getId()}" th:field="${chart.selectionId}">
+                        </td>
+                        <td >
+                            <div class="d-flex flex-column">
+                                <div th:text="${selection.getSelectionName()}"></div>
+                            </div>
+                        </td>
+                        <td th:text="${selection.parametersToString()}"></td>
+                        <td>
+                            <div th:text="${selection.getHero().getName()}"></div>
+                            <img class="small_icon" th:src="${selection.getHero().getIcon()}"/>
+                        </td>
+                        <td>
+                            <th:block th:each="hero : ${selection.getAllies()}">
+                                <div th:text="${hero.getName()}"></div>
+                                <img class="small_icon" th:src="${hero.getIcon()}"/>,
+                            </th:block>
+                        </td>
+                        <td>
+                            <th:block th:each="hero : ${selection.getEnemies()}">
+                                <div th:text="${hero.getName()}"></div>
+                                <img class="small_icon" th:src="${hero.getIcon()}"/>,
+                            </th:block>
+                        </td>
+                        <td>
+                            <th:block th:each="item : ${selection.getItems()}">
+                                <div th:text="${item.getName()}"></div>
+                                <img class="small_icon" th:src="${item.getImg()}"/>,
+                            </th:block>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments/general.html :: footer"></div>
+</body>
+</html>

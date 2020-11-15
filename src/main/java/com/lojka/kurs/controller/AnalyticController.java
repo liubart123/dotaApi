@@ -5,6 +5,8 @@ import com.lojka.kurs.model.Hero;
 import com.lojka.kurs.model.Item;
 import com.lojka.kurs.model.queriesV2.bar.BarChart;
 import com.lojka.kurs.model.queriesV2.Selection;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleChart;
+import com.lojka.kurs.model.queriesV2.linee_chart.LineChart;
 import com.lojka.kurs.model.user.CustomUserDetails;
 import com.lojka.kurs.model.user.User;
 import com.lojka.kurs.service.app.ChartSelectionService;
@@ -204,11 +206,11 @@ public class AnalyticController {
     }
 
 
-
+        //bar chart
     @GetMapping("/CreateBarChart")
     ModelAndView getCreateBarChart(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/CreateSelection");
+        mov.setViewName("Analytic/CreateBarChart");
         mov.addObject("heroes", SuperService.getHeroes());
         mov.addObject("items", SuperService.getItems());
         mov.addObject("chart", new BarChart());
@@ -258,7 +260,7 @@ public class AnalyticController {
             service.createBarChart(user,chart);
 
 
-            mov.setViewName("Analytic/CreateSelection");
+            mov.setViewName("Analytic/Charts/CreateBarChart");
             mov.addObject("heroes", SuperService.getHeroes());
             mov.addObject("items", SuperService.getItems());
             mov.addObject("chart", chart);
@@ -275,7 +277,7 @@ public class AnalyticController {
         return mov;
     }
     @GetMapping("/BarCharts")
-    ModelAndView getCharts(Model model){
+    ModelAndView getBarCharts(Model model){
         ModelAndView mov = new ModelAndView();
         mov.setViewName("Analytic/Charts/BarCharts");
 
@@ -343,10 +345,11 @@ public class AnalyticController {
                 chart.selections.add(service.getSelection(Integer.parseInt(selection)));
             }
 
-            mov.setViewName("Analytic/CreateSelection");
+            mov.setViewName("Analytic/Charts/UpdateBarChart");
             mov.addObject("heroes", SuperService.getHeroes());
             mov.addObject("items", SuperService.getItems());
             mov.addObject("chart", chart);
+            mov.addObject("chartSelections",chart.getSelections());
 
             User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             service.updateBarChart(chart);
@@ -381,4 +384,272 @@ public class AnalyticController {
         }
         return mov;
     }
+
+    //Line chart
+    @GetMapping("/CreateLineChart")
+    ModelAndView getCreateLineChart(Model model){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("Analytic/CreateLineChart");
+        mov.addObject("chart", new LineChart());
+        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        try {
+            mov.addObject("selections",service.getSelections(user));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","Error with query");
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+
+        mov.setViewName("Analytic/Charts/CreateLineChart");
+        return mov;
+    }
+    @PostMapping("/CreateLineChart")
+    ModelAndView postCreateLineChart(Model model, LineChart chart){
+        ModelAndView mov = new ModelAndView();
+        try{
+            chart.setSelection(service.getSelection(chart.getSelectionId()));
+            mov.setViewName("Analytic/Charts/CreateLineChart");
+            mov.addObject("chart", chart);
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
+            service.createLineChart(user,chart);
+
+
+            mov.addObject("infoMessage","chart was created");
+            mov.setViewName("redirect:/analytic/LineCharts");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+    @GetMapping("/LineCharts")
+    ModelAndView getLineCharts(Model model){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("Analytic/Charts/LineCharts");
+
+        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        try {
+            mov.addObject("lineCharts",service.getLineCharts(user));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","Error with query");
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+
+    @GetMapping("/UpdateLineChart/{id}")
+    ModelAndView getUpdateLineChart(Model model,@PathVariable(value="id") Integer id){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("Analytic/Charts/UpdateLineChart");
+        try {
+            LineChart chart = service.getLineChart(id);
+            mov.addObject("chart", chart);
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","Error with query");
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+
+        return mov;
+    }
+    @PostMapping("/UpdateLineChart")
+    ModelAndView postUpdateLineChart(Model model, LineChart chart){
+        ModelAndView mov = new ModelAndView();
+        try{
+            mov.setViewName("Analytic/Charts/UpdateBarChart");
+            mov.addObject("chart", chart);
+
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
+
+            chart.setSelection(service.getSelection(chart.getSelectionId()));
+            service.updateLineChart(chart);
+
+
+            mov.addObject("infoMessage","chart was updated");
+            mov.setViewName("redirect:/analytic/LineCharts");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+
+    @GetMapping("/DeleteLineChart/{id}")
+    ModelAndView getDeleteLineChart(Model model,@PathVariable(value="id") Integer id){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("redirect:/analytic/LineCharts");
+        try {
+            service.deleteLineChart(id);
+            mov.addObject("infoMessage","chart was deleted");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","error with db");
+
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+
+
+
+    //bubble chart
+    @GetMapping("/CreateBubbleChart")
+    ModelAndView getCreateBubbleChart(Model model){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("Analytic/CreateBubbleChart");
+        mov.addObject("chart", new BubbleChart());
+        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+        try {
+            mov.addObject("selections",service.getSelections(user));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","Error with query");
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+
+        mov.setViewName("Analytic/Charts/CreateBubbleChart");
+        return mov;
+    }
+    @PostMapping("/CreateBubbleChart")
+    ModelAndView postCreateBubbleChart(Model model, BubbleChart chart,
+                                       @RequestParam String selectionsIds){
+        ModelAndView mov = new ModelAndView();
+        try{
+
+
+            for(String selection : selectionsIds.split(",")){
+                if (selection=="")
+                    break;
+                chart.selections.add(service.getSelection(Integer.parseInt(selection)));
+            }
+
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            service.createBubbleChart(user,chart);
+
+
+            mov.setViewName("Analytic/Charts/CreateBubbleChart");
+            mov.addObject("chart", chart);
+
+            mov.addObject("infoMessage","chart was created");
+            mov.setViewName("redirect:/analytic/BubbleCharts");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+    @GetMapping("/BubbleCharts")
+    ModelAndView getBubbleCharts(Model model){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("Analytic/Charts/BubbleCharts");
+
+        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+
+        try {
+            mov.addObject("bubbleCharts",service.getBubbleCharts(user));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","Error with query");
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+
+    @GetMapping("/UpdateBubbleChart/{id}")
+    ModelAndView getUpdateBubbleChart(Model model,@PathVariable(value="id") Integer id){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("Analytic/Charts/UpdateBubbleChart");
+        try {
+            BubbleChart chart = service.getBubbleChart(id);
+            mov.addObject("chart", chart);
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
+            mov.addObject("chartSelections",chart.getSelections());
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","Error with query");
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+
+        return mov;
+    }
+    @PostMapping("/UpdateBubbleChart")
+    ModelAndView postUpdateBubbleChart(Model model, BubbleChart chart,
+                                       @RequestParam String selectionsIds){
+        ModelAndView mov = new ModelAndView();
+        try{
+            for(String selection : selectionsIds.split(",")){
+                if (selection=="")
+                    break;
+                chart.selections.add(service.getSelection(Integer.parseInt(selection)));
+            }
+
+            mov.setViewName("Analytic/Charts/UpdateBubbleChart");
+            mov.addObject("chart", chart);
+            mov.addObject("chartSelections",chart.getSelections());
+
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            service.updateBubbleChart(chart);
+
+
+            mov.addObject("infoMessage","chart was updated");
+            mov.setViewName("redirect:/analytic/BubbleCharts");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+
+    @GetMapping("/DeleteBubbleChart/{id}")
+    ModelAndView getDeleteBubbleChart(Model model,@PathVariable(value="id") Integer id){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("redirect:/analytic/BubbleCharts");
+        try {
+            service.deleteBubbleChart(id);
+            mov.addObject("infoMessage","chart was deleted");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage","error with db");
+
+        } catch (DbAccessException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
+
 }

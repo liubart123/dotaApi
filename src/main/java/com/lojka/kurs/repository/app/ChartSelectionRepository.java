@@ -5,13 +5,14 @@ import com.lojka.kurs.model.Hero;
 import com.lojka.kurs.model.Item;
 import com.lojka.kurs.model.queriesV2.*;
 import com.lojka.kurs.model.queriesV2.bar.BarChart;
+import com.lojka.kurs.model.queriesV2.bubble.BubbleChart;
+import com.lojka.kurs.model.queriesV2.linee_chart.LineChart;
 import com.lojka.kurs.model.user.User;
 import com.lojka.kurs.service.super_service.SuperService;
 import lombok.extern.slf4j.Slf4j;
 import oracle.jdbc.OracleTypes;
 import org.springframework.stereotype.Repository;
 
-import java.nio.file.AccessDeniedException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -405,4 +406,220 @@ public class ChartSelectionRepository {
             throw new DbAccessException("error with query");
         }
     }
+
+    //line charts
+    String sqlInsertLineChart = "begin insert_linechart(?,?,?,?,?,?,?,?,?); end;";
+
+    String sqlSelectLineCharts = "begin SELECT_linecharts(?,?); end;";
+    String sqlSelectLineChart = "begin SELECT_linechart(?,?); end;";
+
+    String sqlUpdateLineChart = "begin update_linechart(?,?,?,?,?,?,?,?); end;";
+    String sqlDeleteLineChart = "begin delete_linechart(?); end;";
+
+    public void insertLineChart(LineChart chart, User user)throws SQLException, DbAccessException{
+        CallableStatement cs = getConnection().prepareCall(sqlInsertLineChart);
+        cs.setInt(1, chart.getMinCountOfMatches());
+        cs.setString(2, chart.getName());
+        cs.setString(3, chart.getxAxis());
+        cs.setString(4, chart.getyAxis());
+        cs.setInt(5, user.getId());
+        cs.setInt(6,chart.getCountOfLabels());
+        cs.setBoolean(7,chart.getDeasc());
+        cs.setInt(8,chart.getSelection().getId());
+        cs.registerOutParameter(9,OracleTypes.INTEGER);
+        cs.executeQuery();
+        if (cs.getInt(9)<0){
+            throw new DbAccessException("chart with this name exist");
+        }else{
+            chart.setId(cs.getInt(9));
+        }
+    }
+
+    public ArrayList<LineChart> getLineCharts(User user)throws SQLException, DbAccessException{
+        ArrayList<LineChart> result = new ArrayList<>();
+
+        CallableStatement cs = getConnection().prepareCall(sqlSelectLineCharts);
+        cs.setInt(2,user.getId());
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1, ResultSet.class);
+        while (rs.next()){
+            LineChart chart = new LineChart();
+            chart.setId(rs.getInt(1));
+            chart.setName(rs.getString(3));
+            chart.setMinCountOfMatches(rs.getInt(2));
+            chart.setxAxis(rs.getString(4));
+            chart.setyAxis(rs.getString(5));
+            chart.setCountOfLabels(rs.getInt(6));
+            chart.setDeasc(rs.getBoolean(7));
+            chart.setSelection(getSelection(rs.getInt(8)));
+            result.add(chart);
+        }
+        return result;
+    }
+    public LineChart getLineChart(Integer id)throws SQLException, DbAccessException{
+        ArrayList<LineChart> result = new ArrayList<>();
+
+        CallableStatement cs = getConnection().prepareCall(sqlSelectLineChart);
+        cs.setInt(2,id);
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1, ResultSet.class);
+        if (rs.next()){
+            LineChart chart = new LineChart();
+            chart.setId(rs.getInt(1));
+            chart.setName(rs.getString(3));
+            chart.setMinCountOfMatches(rs.getInt(2));
+            chart.setxAxis(rs.getString(4));
+            chart.setyAxis(rs.getString(5));
+            chart.setCountOfLabels(rs.getInt(6));
+            chart.setDeasc(rs.getBoolean(7));
+            chart.setSelection(getSelection(rs.getInt(8)));
+            return chart;
+        }else {
+            throw new DbAccessException("there is no such chart...");
+        }
+    }
+
+    public void updateLineChart(LineChart chart)throws SQLException, DbAccessException{
+        CallableStatement cs = getConnection().prepareCall(sqlUpdateLineChart);
+        cs.setInt(1, chart.getMinCountOfMatches());
+        cs.setString(2, chart.getName());
+        cs.setString(3, chart.getxAxis());
+        cs.setString(4, chart.getyAxis());
+        cs.setInt(5,chart.getCountOfLabels());
+        cs.setBoolean(6,chart.getDeasc());
+        cs.setInt(7,chart.getSelection().getId());
+        cs.setInt(8,chart.getId());
+        cs.executeQuery();
+    }
+    public void deleteLineChart(Integer id)throws SQLException, DbAccessException{
+        log.debug("delete Linechart by " + id);
+        CallableStatement cs = getConnection().prepareCall(sqlDeleteLineChart);
+        cs.setInt(1,id);
+        if (cs.executeQuery()!=null){
+        }else {
+            throw new DbAccessException("error with query");
+        }
+    }
+
+
+    //bubble charts
+    String sqlInsertBubbleChart = "begin insert_bubblechart(?,?,?,?,?,?,?); end;";
+    String sqlInsertBubbleChartSelections = "begin insert_selections_bubblechart(?,?); end;";
+    String sqlClearBubbleChartSelections = "begin clear_selections_bubblechart(?); end;";
+
+    String sqlSelectBubbleCharts = "begin SELECT_bubblecharts(?,?); end;";
+    String sqlSelectBubbleChart = "begin SELECT_bubblechart(?,?); end;";
+    String sqlSelectBubbleChartsSelections = "begin SELECT_bubblecharts_selections(?,?); end;";
+
+    String sqlUpdateBubbleChart = "begin update_bubblechart(?,?,?,?,?,?); end;";
+    String sqlDeleteBubbleChart = "begin delete_bubblechart(?); end;";
+
+    public void insertBubbleChart(BubbleChart chart, User user)throws SQLException, DbAccessException{
+        CallableStatement cs = getConnection().prepareCall(sqlInsertBubbleChart);
+        cs.setInt(1, chart.getMinCountOfMatches());
+        cs.setString(2, chart.getName());
+        cs.setString(3, chart.getxAxis());
+        cs.setString(4, chart.getyAxis());
+        cs.setFloat(5, chart.getxScale());
+        cs.setInt(6, user.getId());
+        cs.registerOutParameter(7,OracleTypes.INTEGER);
+        cs.executeQuery();
+        if (cs.getInt(7)<0){
+            throw new DbAccessException("chart with this name exist");
+        }else{
+            chart.setId(cs.getInt(7));
+        }
+    }
+    public void insertBubbleChartSelections(BubbleChart chart)throws SQLException, DbAccessException{
+        CallableStatement clear = getConnection().prepareCall(sqlClearBubbleChartSelections);
+        clear.setInt(1,chart.getId());
+        clear.executeQuery();
+        clear.close();
+        for(Selection selection : chart.getSelections()){
+            CallableStatement cs = getConnection().prepareCall(sqlInsertBubbleChartSelections);
+            cs.setInt(1,selection.getId());
+            cs.setInt(2,chart.getId());
+            cs.executeQuery();
+            cs.close();
+        }
+    }
+
+    public ArrayList<BubbleChart> getBubbleCharts(User user)throws SQLException, DbAccessException{
+        ArrayList<BubbleChart> result = new ArrayList<>();
+
+        CallableStatement cs = getConnection().prepareCall(sqlSelectBubbleCharts);
+        cs.setInt(2,user.getId());
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1, ResultSet.class);
+        while (rs.next()){
+            BubbleChart chart = new BubbleChart();
+            chart.setId(rs.getInt(1));
+            chart.setName(rs.getString(3));
+            chart.setMinCountOfMatches(rs.getInt(2));
+            chart.setxAxis(rs.getString(4));
+            chart.setyAxis(rs.getString(5));
+            chart.setxScale(rs.getFloat(6));
+            addSelectionsToBubbleChart(chart);
+            result.add(chart);
+        }
+        return result;
+    }
+    public BubbleChart getBubbleChart(Integer id)throws SQLException, DbAccessException{
+        ArrayList<BubbleChart> result = new ArrayList<>();
+
+        CallableStatement cs = getConnection().prepareCall(sqlSelectBubbleChart);
+        cs.setInt(2,id);
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1, ResultSet.class);
+        if (rs.next()){
+            BubbleChart chart = new BubbleChart();
+            chart.setId(rs.getInt(1));
+            chart.setName(rs.getString(3));
+            chart.setMinCountOfMatches(rs.getInt(2));
+            chart.setxAxis(rs.getString(4));
+            chart.setyAxis(rs.getString(5));
+            chart.setxScale(rs.getFloat(6));
+            addSelectionsToBubbleChart(chart);
+            return chart;
+        }else {
+            throw new DbAccessException("there is no such chart...");
+        }
+    }
+    void addSelectionsToBubbleChart(BubbleChart chart)throws SQLException, DbAccessException{
+
+        CallableStatement cs = getConnection().prepareCall(sqlSelectBubbleChartsSelections);
+        cs.registerOutParameter(1,OracleTypes.CURSOR);
+        cs.setInt(2,chart.getId());
+        cs.executeQuery();
+        ResultSet rs = cs.getObject(1,ResultSet.class);
+        while (rs.next()){
+            chart.getSelections().add(getSelection(rs.getInt(1)));
+        }
+        cs.close();
+    }
+
+    public void updateBubbleChart(BubbleChart chart)throws SQLException, DbAccessException{
+        CallableStatement cs = getConnection().prepareCall(sqlUpdateBubbleChart);
+        cs.setInt(1, chart.getMinCountOfMatches());
+        cs.setString(2, chart.getName());
+        cs.setString(3, chart.getxAxis());
+        cs.setString(4, chart.getyAxis());
+        cs.setFloat(5, chart.getxScale());
+        cs.setInt(6, chart.getId());
+        cs.executeQuery();
+    }
+    public void deleteBubbleChart(Integer id)throws SQLException, DbAccessException{
+        log.debug("delete bubblechart by " + id);
+        CallableStatement cs = getConnection().prepareCall(sqlDeleteBubbleChart);
+        cs.setInt(1,id);
+        if (cs.executeQuery()!=null){
+        }else {
+            throw new DbAccessException("error with query");
+        }
+    }
+
 }
