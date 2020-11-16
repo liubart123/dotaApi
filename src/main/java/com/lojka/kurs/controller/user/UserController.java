@@ -74,5 +74,19 @@ public class UserController {
         }
         return mov;
     }
-
+    @PostMapping("/admin/signUp")
+    public ModelAndView postAdminSignUp(Model model, Principal principal, User user){
+        ModelAndView mov = new ModelAndView();
+        mov.setViewName("adminSignUp");
+        mov.addObject("user", user);
+        user.setRole(EUserRoles.ADMIN);
+        try {
+            userService.signUpUser(user);
+            mov.addObject("infoMessage", "user have been signed up");
+        } catch (DbAccessException | UserAuthoException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        return mov;
+    }
 }

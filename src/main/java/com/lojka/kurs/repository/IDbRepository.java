@@ -30,5 +30,6 @@ public interface IDbRepository {
     void updateHeroes(Hero[] heroes) throws DbAccessException, DbConnectionClosedException;
     void insertMatch(Match match) throws DbAccessException, DbConnectionClosedException;
     Long getLowestMatchId() throws DbAccessException, DbConnectionClosedException;
+    void clearTables()throws DbAccessException, DbConnectionClosedException;
     ResultSet executeQuery(String sql) throws DbAccessException, DbConnectionClosedException;
 }

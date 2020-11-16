@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link th:href="@{../css/bootstrap.min.css}" rel="stylesheet">
+    <title>Admin functions</title>
+</head>
+<body>
+<script>
+</script>
+
+<div th:insert="fragments/general.html :: header"></div>
+
+    <div class="btn-group offset-3 col-6 mt-5" role="group">
+        <a role="button" class="btn btn-dark" th:href="@{/admin/loadMatches}">Load new matches</a>
+        <a role="button" class="btn btn-dark" th:href="@{/admin/updateDotaInfo}">Update Dota info</a>
+        <a role="button" class="btn btn-dark" th:href="@{/admin/createNewAdmin}">Create new user admin</a>
+        <a role="button" class="btn btn-dark" th:href="@{/admin/clearTables}">Clear tables from db</a>
+    </div>
+
+<div th:insert="fragments/general.html :: footer"></div>
+</body>
+</html>

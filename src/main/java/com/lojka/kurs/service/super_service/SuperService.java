@@ -207,6 +207,10 @@ public class SuperService {
         return roles;
     }
 
+    public static void clearTablesFromDb() throws DbAccessException, DbConnectionClosedException {
+        rep.clearTables();
+    }
+
     //bubble chart
     public static BubbleDataSet setBubbleDataSet(BubbleDataSet dataset, BubbleChart chart, Selection selection) throws DbAccessException, Exception{
         Float scale = chart.xScale;

@@ -32,6 +32,9 @@ public class OracleDbRepository implements IDbRepository {
     static String sqlGetItems = "begin SELECT_ITEMS(?); end;";
     static String sqlGetHeroRoles = "begin SELECT_HERO_ROLES(?); end;";
     static String sqlGetHeroesRoles = "begin SELECT_HEROES_ROLES(?); end;";
+    static String sqlClearTables = "begin\n" +
+            "  ClearAllDb;\n" +
+            "end;";
 
     static String sqlGetLowestMatchId = "begin GET_LOWEST_MATCH_ID(?); end;";
 
@@ -98,6 +101,7 @@ public class OracleDbRepository implements IDbRepository {
                 //hero.setDescription(rs.getString(3));
                 result.put(hero.getId(),hero);
             }
+            rs.close();
             return result;
         } catch (SQLException e) {
 
@@ -129,6 +133,7 @@ public class OracleDbRepository implements IDbRepository {
                 tempItem.setImg(rs.getString(5));
                 result.put(tempItem.getId(),tempItem);
             }
+            rs.close();
             return result;
         } catch (SQLException e) {
             try {
@@ -156,6 +161,7 @@ public class OracleDbRepository implements IDbRepository {
                 heroRole.setRoleName(rs.getString(1));
                 result.put(heroRole.getId(),heroRole);
             }
+            rs.close();
             return result;
         } catch (SQLException e) {
             try {
@@ -449,6 +455,17 @@ public class OracleDbRepository implements IDbRepository {
             }
         }
         return rs;
+    }
+
+    @Override
+    public void clearTables() throws DbAccessException, DbConnectionClosedException {
+        try {
+            CallableStatement cs = connection.prepareCall(sqlClearTables);
+            cs.executeQuery();
+            cs.close();
+        } catch (SQLException e) {
+            throw new DbAccessException(e.getMessage());
+        }
     }
 
     @Override
