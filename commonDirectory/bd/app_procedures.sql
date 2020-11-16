@@ -235,10 +235,18 @@ create or replace procedure delete_selection(
   idP integer)
 is
 begin
-      delete from selections where id=idp;
       delete from SELECTIONS_HEROES where SELECTION_ID=idp;
       delete from SELECTIONS_ITEMS where SELECTION_ID=idp;
+      delete from selections_bubblechart where SELECTION_ID=idp;
+      delete from selections_barchart where SELECTION_ID=idp;
+      delete from selections where id=idp;
 end;
+/
+begin
+  delete_selection(21);
+end;
+/
+select * from app_users;
 /
 create or replace procedure SELECT_selections(curs out SYS_REFCURSOR, user_idp integer) is
   begin
@@ -341,6 +349,7 @@ create or replace procedure delete_bubblechart(
   idP integer)
 is
 begin
+      delete from selections_bubblechart where BUBBLECHART_ID=idp;
       delete from bubblechart where id=idp;
 
 end;

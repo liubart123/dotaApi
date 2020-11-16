@@ -1,72 +1,128 @@
-<html lang="en" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5"><head>
+<html><head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
-    <title>Main Page</title>
-<meta id="Reverso_extension___elForCheckedInstallExtension" name="Reverso extension" content="2.2.202"></head>
-<body>
+    <title>Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <script>
+        var colorIndex = 0;
+        var COLORS = [
+            '#4dc9f644',
+            '#f6701944',
+            '#f5379444',
+            '#537bc444',
+            '#acc23644',
+            '#166a8f44',
+            '#00a95044',
+            '#58595b44',
+            '#8549ba44'
+        ];
+        GetNextColor = function(){
+            return COLORS[(colorIndex++)%COLORS.length];
+        }
+    </script>
+<meta id="Reverso_extension___elForCheckedInstallExtension" name="Reverso extension" content="2.2.202"><style type="text/css">/* Chart.js */
+@keyframes chartjs-render-animation{from{opacity:.99}to{opacity:1}}.chartjs-render-monitor{animation:chartjs-render-animation 1ms}.chartjs-size-monitor,.chartjs-size-monitor-expand,.chartjs-size-monitor-shrink{position:absolute;direction:ltr;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1}.chartjs-size-monitor-expand>div{position:absolute;width:1000000px;height:1000000px;left:0;top:0}.chartjs-size-monitor-shrink>div{position:absolute;width:200%;height:200%;left:0;top:0}</style></head>
+<body>
+
+<div><div>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+            <a class="navbar-brand" href="/">Dota Analytic!!</a>
+            
+            
+            <div>
+                <a role="button" class="btn btn-dark" href="javascript: document.logoutForm.submit()">Log out</a>
+                <form name="logoutForm" action="/logout" method="post" hidden="hidden"><input type="hidden" name="_csrf" value="cdd863e8-58d3-41de-805c-ada6dcd4591a">
+                    <input hidden="" type="submit" value="Sign Out">
+                </form>
+            </div>
+            <div>
+                <a role="button" class="btn btn-dark" href="/analytic/Selections">Selections</a>
+            </div>
+            <div>
+                <div class="dropdown show">
+                    <a class="btn btn-dark dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Charts
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <a class="dropdown-item" href="/analytic/BarCharts">Bar</a>
+                        <a class="dropdown-item" href="/analytic/LineCharts">Line</a>
+                        <a class="dropdown-item" href="/analytic/BubbleCharts">Bubble</a>
+                    </div>
+                </div>
+            </div>
+<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
+<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
+<!--            </div>-->
+<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
+<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
+<!--            </div>-->
+        </nav>
+
+    </div></div>
+    <div class="chart-container" style="position: relative;
+    height: 80vh;
+    width: 90vw;"><div class="chartjs-size-monitor"><div class="chartjs-size-monitor-expand"><div class=""></div></div><div class="chartjs-size-monitor-shrink"><div class=""></div></div></div>
+        <canvas id="myChart" style="display: block; width: 937px; height: 750px;" width="937" height="750" class="chartjs-render-monitor"></canvas>
+    </div>
+    <div id="json"></div>
+    <div id="json2"></div>
+    <script>
+        dataJson = JSON.parse("{&quot;datasets&quot;:[{&quot;label&quot;:&quot;rubick&quot;,&quot;data&quot;:[{&quot;x&quot;:10.0,&quot;y&quot;:0.42857143,&quot;r&quot;:3.8200002},{&quot;x&quot;:12.0,&quot;y&quot;:0.75,&quot;r&quot;:4.08},{&quot;x&quot;:13.0,&quot;y&quot;:0.7777778,&quot;r&quot;:4.34},{&quot;x&quot;:14.0,&quot;y&quot;:0.5625,&quot;r&quot;:6.16},{&quot;x&quot;:15.0,&quot;y&quot;:0.32,&quot;r&quot;:8.5},{&quot;x&quot;:16.0,&quot;y&quot;:0.6,&quot;r&quot;:13.7},{&quot;x&quot;:17.0,&quot;y&quot;:0.5555556,&quot;r&quot;:15.0},{&quot;x&quot;:18.0,&quot;y&quot;:0.5294118,&quot;r&quot;:15.0},{&quot;x&quot;:19.0,&quot;y&quot;:0.5809524,&quot;r&quot;:15.0},{&quot;x&quot;:20.0,&quot;y&quot;:0.44094488,&quot;r&quot;:15.0},{&quot;x&quot;:21.0,&quot;y&quot;:0.5405405,&quot;r&quot;:15.0},{&quot;x&quot;:22.0,&quot;y&quot;:0.5026178,&quot;r&quot;:15.0},{&quot;x&quot;:23.0,&quot;y&quot;:0.54587156,&quot;r&quot;:15.0},{&quot;x&quot;:24.0,&quot;y&quot;:0.45421246,&quot;r&quot;:15.0},{&quot;x&quot;:25.0,&quot;y&quot;:0.50666666,&quot;r&quot;:15.0},{&quot;x&quot;:26.0,&quot;y&quot;:0.5206612,&quot;r&quot;:15.0},{&quot;x&quot;:27.0,&quot;y&quot;:0.5107143,&quot;r&quot;:15.0},{&quot;x&quot;:28.0,&quot;y&quot;:0.4979757,&quot;r&quot;:15.0},{&quot;x&quot;:29.0,&quot;y&quot;:0.5131086,&quot;r&quot;:15.0},{&quot;x&quot;:30.0,&quot;y&quot;:0.488,&quot;r&quot;:15.0},{&quot;x&quot;:31.0,&quot;y&quot;:0.44781145,&quot;r&quot;:15.0},{&quot;x&quot;:32.0,&quot;y&quot;:0.4738676,&quot;r&quot;:15.0},{&quot;x&quot;:33.0,&quot;y&quot;:0.41666666,&quot;r&quot;:15.0},{&quot;x&quot;:34.0,&quot;y&quot;:0.44680852,&quot;r&quot;:15.0},{&quot;x&quot;:35.0,&quot;y&quot;:0.5151515,&quot;r&quot;:15.0},{&quot;x&quot;:36.0,&quot;y&quot;:0.4950495,&quot;r&quot;:15.0},{&quot;x&quot;:37.0,&quot;y&quot;:0.4848485,&quot;r&quot;:15.0},{&quot;x&quot;:38.0,&quot;y&quot;:0.45762712,&quot;r&quot;:15.0},{&quot;x&quot;:39.0,&quot;y&quot;:0.49382716,&quot;r&quot;:15.0},{&quot;x&quot;:40.0,&quot;y&quot;:0.4097222,&quot;r&quot;:15.0},{&quot;x&quot;:41.0,&quot;y&quot;:0.53846157,&quot;r&quot;:15.0},{&quot;x&quot;:42.0,&quot;y&quot;:0.5102041,&quot;r&quot;:15.0},{&quot;x&quot;:43.0,&quot;y&quot;:0.45794392,&quot;r&quot;:15.0},{&quot;x&quot;:44.0,&quot;y&quot;:0.5575221,&quot;r&quot;:15.0},{&quot;x&quot;:45.0,&quot;y&quot;:0.53424656,&quot;r&quot;:15.0},{&quot;x&quot;:46.0,&quot;y&quot;:0.421875,&quot;r&quot;:15.0},{&quot;x&quot;:47.0,&quot;y&quot;:0.5,&quot;r&quot;:15.0},{&quot;x&quot;:48.0,&quot;y&quot;:0.42105263,&quot;r&quot;:15.0},{&quot;x&quot;:49.0,&quot;y&quot;:0.46875,&quot;r&quot;:15.0},{&quot;x&quot;:50.0,&quot;y&quot;:0.35714287,&quot;r&quot;:12.92},{&quot;x&quot;:51.0,&quot;y&quot;:0.5116279,&quot;r&quot;:13.18},{&quot;x&quot;:52.0,&quot;y&quot;:0.35555556,&quot;r&quot;:13.7},{&quot;x&quot;:53.0,&quot;y&quot;:0.4848485,&quot;r&quot;:10.58},{&quot;x&quot;:54.0,&quot;y&quot;:0.46875,&quot;r&quot;:10.32},{&quot;x&quot;:55.0,&quot;y&quot;:0.39285713,&quot;r&quot;:9.280001},{&quot;x&quot;:56.0,&quot;y&quot;:0.4347826,&quot;r&quot;:7.98},{&quot;x&quot;:57.0,&quot;y&quot;:0.5714286,&quot;r&quot;:7.46},{&quot;x&quot;:58.0,&quot;y&quot;:0.53333336,&quot;r&quot;:5.9},{&quot;x&quot;:59.0,&quot;y&quot;:0.5,&quot;r&quot;:4.6000004},{&quot;x&quot;:60.0,&quot;y&quot;:0.5,&quot;r&quot;:5.12},{&quot;x&quot;:61.0,&quot;y&quot;:0.75,&quot;r&quot;:4.08},{&quot;x&quot;:62.0,&quot;y&quot;:0.5714286,&quot;r&quot;:3.8200002},{&quot;x&quot;:63.0,&quot;y&quot;:0.33333334,&quot;r&quot;:3.56},{&quot;x&quot;:64.0,&quot;y&quot;:0.375,&quot;r&quot;:4.08}]},{&quot;label&quot;:&quot;disruptor&quot;,&quot;data&quot;:[{&quot;x&quot;:13.0,&quot;y&quot;:0.125,&quot;r&quot;:4.08},{&quot;x&quot;:14.0,&quot;y&quot;:0.25,&quot;r&quot;:4.08},{&quot;x&quot;:15.0,&quot;y&quot;:0.5555556,&quot;r&quot;:4.34},{&quot;x&quot;:16.0,&quot;y&quot;:0.37037036,&quot;r&quot;:9.02},{&quot;x&quot;:17.0,&quot;y&quot;:0.4117647,&quot;r&quot;:6.42},{&quot;x&quot;:18.0,&quot;y&quot;:0.51724136,&quot;r&quot;:9.54},{&quot;x&quot;:19.0,&quot;y&quot;:0.44,&quot;r&quot;:15.0},{&quot;x&quot;:20.0,&quot;y&quot;:0.42553192,&quot;r&quot;:14.22},{&quot;x&quot;:21.0,&quot;y&quot;:0.46875,&quot;r&quot;:15.0},{&quot;x&quot;:22.0,&quot;y&quot;:0.37096775,&quot;r&quot;:15.0},{&quot;x&quot;:23.0,&quot;y&quot;:0.43373495,&quot;r&quot;:15.0},{&quot;x&quot;:24.0,&quot;y&quot;:0.5392157,&quot;r&quot;:15.0},{&quot;x&quot;:25.0,&quot;y&quot;:0.36144578,&quot;r&quot;:15.0},{&quot;x&quot;:26.0,&quot;y&quot;:0.43589744,&quot;r&quot;:15.0},{&quot;x&quot;:27.0,&quot;y&quot;:0.61764705,&quot;r&quot;:15.0},{&quot;x&quot;:28.0,&quot;y&quot;:0.41747573,&quot;r&quot;:15.0},{&quot;x&quot;:29.0,&quot;y&quot;:0.5339806,&quot;r&quot;:15.0},{&quot;x&quot;:30.0,&quot;y&quot;:0.4778761,&quot;r&quot;:15.0},{&quot;x&quot;:31.0,&quot;y&quot;:0.4587156,&quot;r&quot;:15.0},{&quot;x&quot;:32.0,&quot;y&quot;:0.40366971,&quot;r&quot;:15.0},{&quot;x&quot;:33.0,&quot;y&quot;:0.4375,&quot;r&quot;:15.0},{&quot;x&quot;:34.0,&quot;y&quot;:0.5,&quot;r&quot;:15.0},{&quot;x&quot;:35.0,&quot;y&quot;:0.525641,&quot;r&quot;:15.0},{&quot;x&quot;:36.0,&quot;y&quot;:0.46153846,&quot;r&quot;:15.0},{&quot;x&quot;:37.0,&quot;y&quot;:0.49315068,&quot;r&quot;:15.0},{&quot;x&quot;:38.0,&quot;y&quot;:0.41666666,&quot;r&quot;:15.0},{&quot;x&quot;:39.0,&quot;y&quot;:0.57377046,&quot;r&quot;:15.0},{&quot;x&quot;:40.0,&quot;y&quot;:0.52459013,&quot;r&quot;:15.0},{&quot;x&quot;:41.0,&quot;y&quot;:0.61538464,&quot;r&quot;:15.0},{&quot;x&quot;:42.0,&quot;y&quot;:0.46153846,&quot;r&quot;:15.0},{&quot;x&quot;:43.0,&quot;y&quot;:0.60465115,&quot;r&quot;:13.18},{&quot;x&quot;:44.0,&quot;y&quot;:0.5,&quot;r&quot;:11.88},{&quot;x&quot;:45.0,&quot;y&quot;:0.51724136,&quot;r&quot;:9.54},{&quot;x&quot;:46.0,&quot;y&quot;:0.51428574,&quot;r&quot;:11.099999},{&quot;x&quot;:47.0,&quot;y&quot;:0.5185185,&quot;r&quot;:9.02},{&quot;x&quot;:48.0,&quot;y&quot;:0.46666667,&quot;r&quot;:9.8},{&quot;x&quot;:49.0,&quot;y&quot;:0.34615386,&quot;r&quot;:8.76},{&quot;x&quot;:50.0,&quot;y&quot;:0.6111111,&quot;r&quot;:6.6800003},{&quot;x&quot;:51.0,&quot;y&quot;:0.5714286,&quot;r&quot;:7.46},{&quot;x&quot;:52.0,&quot;y&quot;:0.41666666,&quot;r&quot;:5.12},{&quot;x&quot;:53.0,&quot;y&quot;:0.46153846,&quot;r&quot;:5.38},{&quot;x&quot;:54.0,&quot;y&quot;:0.6666667,&quot;r&quot;:6.6800003},{&quot;x&quot;:55.0,&quot;y&quot;:0.4375,&quot;r&quot;:6.16},{&quot;x&quot;:56.0,&quot;y&quot;:0.125,&quot;r&quot;:4.08},{&quot;x&quot;:57.0,&quot;y&quot;:0.5714286,&quot;r&quot;:3.8200002},{&quot;x&quot;:58.0,&quot;y&quot;:0.6666667,&quot;r&quot;:3.56},{&quot;x&quot;:59.0,&quot;y&quot;:0.5714286,&quot;r&quot;:3.8200002},{&quot;x&quot;:60.0,&quot;y&quot;:0.22222222,&quot;r&quot;:4.34},{&quot;x&quot;:61.0,&quot;y&quot;:0.6666667,&quot;r&quot;:3.56}]},{&quot;label&quot;:&quot;lich&quot;,&quot;data&quot;:[{&quot;x&quot;:9.0,&quot;y&quot;:0.375,&quot;r&quot;:4.08},{&quot;x&quot;:12.0,&quot;y&quot;:0.3846154,&quot;r&quot;:5.38},{&quot;x&quot;:13.0,&quot;y&quot;:0.5,&quot;r&quot;:4.6000004},{&quot;x&quot;:14.0,&quot;y&quot;:0.5555556,&quot;r&quot;:4.34},{&quot;x&quot;:15.0,&quot;y&quot;:0.42105263,&quot;r&quot;:6.94},{&quot;x&quot;:16.0,&quot;y&quot;:0.33333334,&quot;r&quot;:8.24},{&quot;x&quot;:17.0,&quot;y&quot;:0.39130434,&quot;r&quot;:7.98},{&quot;x&quot;:18.0,&quot;y&quot;:0.5277778,&quot;r&quot;:11.360001},{&quot;x&quot;:19.0,&quot;y&quot;:0.42857143,&quot;r&quot;:14.74},{&quot;x&quot;:20.0,&quot;y&quot;:0.36486486,&quot;r&quot;:15.0},{&quot;x&quot;:21.0,&quot;y&quot;:0.425,&quot;r&quot;:15.0},{&quot;x&quot;:22.0,&quot;y&quot;:0.4526316,&quot;r&quot;:15.0},{&quot;x&quot;:23.0,&quot;y&quot;:0.47524753,&quot;r&quot;:15.0},{&quot;x&quot;:24.0,&quot;y&quot;:0.44360903,&quot;r&quot;:15.0},{&quot;x&quot;:25.0,&quot;y&quot;:0.5,&quot;r&quot;:15.0},{&quot;x&quot;:26.0,&quot;y&quot;:0.5045045,&quot;r&quot;:15.0},{&quot;x&quot;:27.0,&quot;y&quot;:0.47058824,&quot;r&quot;:15.0},{&quot;x&quot;:28.0,&quot;y&quot;:0.46153846,&quot;r&quot;:15.0},{&quot;x&quot;:29.0,&quot;y&quot;:0.46456692,&quot;r&quot;:15.0},{&quot;x&quot;:30.0,&quot;y&quot;:0.47580644,&quot;r&quot;:15.0},{&quot;x&quot;:31.0,&quot;y&quot;:0.52816904,&quot;r&quot;:15.0},{&quot;x&quot;:32.0,&quot;y&quot;:0.53636366,&quot;r&quot;:15.0},{&quot;x&quot;:33.0,&quot;y&quot;:0.4296875,&quot;r&quot;:15.0},{&quot;x&quot;:34.0,&quot;y&quot;:0.504,&quot;r&quot;:15.0},{&quot;x&quot;:35.0,&quot;y&quot;:0.5321101,&quot;r&quot;:15.0},{&quot;x&quot;:36.0,&quot;y&quot;:0.5048544,&quot;r&quot;:15.0},{&quot;x&quot;:37.0,&quot;y&quot;:0.4716981,&quot;r&quot;:15.0},{&quot;x&quot;:38.0,&quot;y&quot;:0.47191012,&quot;r&quot;:15.0},{&quot;x&quot;:39.0,&quot;y&quot;:0.5875,&quot;r&quot;:15.0},{&quot;x&quot;:40.0,&quot;y&quot;:0.5,&quot;r&quot;:15.0},{&quot;x&quot;:41.0,&quot;y&quot;:0.4025974,&quot;r&quot;:15.0},{&quot;x&quot;:42.0,&quot;y&quot;:0.47058824,&quot;r&quot;:15.0},{&quot;x&quot;:43.0,&quot;y&quot;:0.6458333,&quot;r&quot;:14.48},{&quot;x&quot;:44.0,&quot;y&quot;:0.4528302,&quot;r&quot;:15.0},{&quot;x&quot;:45.0,&quot;y&quot;:0.44,&quot;r&quot;:15.0},{&quot;x&quot;:46.0,&quot;y&quot;:0.55,&quot;r&quot;:12.400001},{&quot;x&quot;:47.0,&quot;y&quot;:0.59375,&quot;r&quot;:10.32},{&quot;x&quot;:48.0,&quot;y&quot;:0.67741936,&quot;r&quot;:10.06},{&quot;x&quot;:49.0,&quot;y&quot;:0.56,&quot;r&quot;:8.5},{&quot;x&quot;:50.0,&quot;y&quot;:0.41379312,&quot;r&quot;:9.54},{&quot;x&quot;:51.0,&quot;y&quot;:0.37037036,&quot;r&quot;:9.02},{&quot;x&quot;:52.0,&quot;y&quot;:0.41666666,&quot;r&quot;:8.24},{&quot;x&quot;:53.0,&quot;y&quot;:0.5,&quot;r&quot;:7.2000003},{&quot;x&quot;:54.0,&quot;y&quot;:0.6,&quot;r&quot;:5.9},{&quot;x&quot;:55.0,&quot;y&quot;:0.33333334,&quot;r&quot;:5.9},{&quot;x&quot;:56.0,&quot;y&quot;:0.625,&quot;r&quot;:4.08},{&quot;x&quot;:57.0,&quot;y&quot;:0.85714287,&quot;r&quot;:3.8200002},{&quot;x&quot;:59.0,&quot;y&quot;:0.41666666,&quot;r&quot;:5.12},{&quot;x&quot;:60.0,&quot;y&quot;:0.6363636,&quot;r&quot;:4.8599997},{&quot;x&quot;:62.0,&quot;y&quot;:0.16666667,&quot;r&quot;:3.56}]},{&quot;label&quot;:&quot;shadow demon&quot;,&quot;data&quot;:[{&quot;x&quot;:14.0,&quot;y&quot;:0.22222222,&quot;r&quot;:4.34},{&quot;x&quot;:15.0,&quot;y&quot;:0.6,&quot;r&quot;:5.9},{&quot;x&quot;:16.0,&quot;y&quot;:0.6666667,&quot;r&quot;:7.46},{&quot;x&quot;:17.0,&quot;y&quot;:0.3809524,&quot;r&quot;:7.46},{&quot;x&quot;:18.0,&quot;y&quot;:0.35714287,&quot;r&quot;:9.280001},{&quot;x&quot;:19.0,&quot;y&quot;:0.4722222,&quot;r&quot;:11.360001},{&quot;x&quot;:20.0,&quot;y&quot;:0.6545454,&quot;r&quot;:15.0},{&quot;x&quot;:21.0,&quot;y&quot;:0.40677965,&quot;r&quot;:15.0},{&quot;x&quot;:22.0,&quot;y&quot;:0.5841584,&quot;r&quot;:15.0},{&quot;x&quot;:23.0,&quot;y&quot;:0.50537634,&quot;r&quot;:15.0},{&quot;x&quot;:24.0,&quot;y&quot;:0.48421052,&quot;r&quot;:15.0},{&quot;x&quot;:25.0,&quot;y&quot;:0.6,&quot;r&quot;:15.0},{&quot;x&quot;:26.0,&quot;y&quot;:0.5192308,&quot;r&quot;:15.0},{&quot;x&quot;:27.0,&quot;y&quot;:0.57281554,&quot;r&quot;:15.0},{&quot;x&quot;:28.0,&quot;y&quot;:0.58536583,&quot;r&quot;:15.0},{&quot;x&quot;:29.0,&quot;y&quot;:0.5092593,&quot;r&quot;:15.0},{&quot;x&quot;:30.0,&quot;y&quot;:0.46376812,&quot;r&quot;:15.0},{&quot;x&quot;:31.0,&quot;y&quot;:0.50476193,&quot;r&quot;:15.0},{&quot;x&quot;:32.0,&quot;y&quot;:0.49367088,&quot;r&quot;:15.0},{&quot;x&quot;:33.0,&quot;y&quot;:0.4698795,&quot;r&quot;:15.0},{&quot;x&quot;:34.0,&quot;y&quot;:0.5106383,&quot;r&quot;:15.0},{&quot;x&quot;:35.0,&quot;y&quot;:0.5074627,&quot;r&quot;:15.0},{&quot;x&quot;:36.0,&quot;y&quot;:0.4516129,&quot;r&quot;:15.0},{&quot;x&quot;:37.0,&quot;y&quot;:0.55172414,&quot;r&quot;:15.0},{&quot;x&quot;:38.0,&quot;y&quot;:0.64705884,&quot;r&quot;:15.0},{&quot;x&quot;:39.0,&quot;y&quot;:0.5185185,&quot;r&quot;:15.0},{&quot;x&quot;:40.0,&quot;y&quot;:0.44827586,&quot;r&quot;:15.0},{&quot;x&quot;:41.0,&quot;y&quot;:0.47272727,&quot;r&quot;:15.0},{&quot;x&quot;:42.0,&quot;y&quot;:0.5588235,&quot;r&quot;:10.84},{&quot;x&quot;:43.0,&quot;y&quot;:0.3846154,&quot;r&quot;:12.139999},{&quot;x&quot;:44.0,&quot;y&quot;:0.5,&quot;r&quot;:9.8},{&quot;x&quot;:45.0,&quot;y&quot;:0.44444445,&quot;r&quot;:9.02},{&quot;x&quot;:46.0,&quot;y&quot;:0.65217394,&quot;r&quot;:7.98},{&quot;x&quot;:47.0,&quot;y&quot;:0.42857143,&quot;r&quot;:9.280001},{&quot;x&quot;:48.0,&quot;y&quot;:0.6666667,&quot;r&quot;:7.46},{&quot;x&quot;:49.0,&quot;y&quot;:0.4117647,&quot;r&quot;:6.42},{&quot;x&quot;:50.0,&quot;y&quot;:0.35714287,&quot;r&quot;:5.6400003},{&quot;x&quot;:51.0,&quot;y&quot;:0.47826087,&quot;r&quot;:7.98},{&quot;x&quot;:52.0,&quot;y&quot;:0.5294118,&quot;r&quot;:6.42},{&quot;x&quot;:53.0,&quot;y&quot;:0.2,&quot;r&quot;:4.6000004},{&quot;x&quot;:54.0,&quot;y&quot;:0.6666667,&quot;r&quot;:4.34},{&quot;x&quot;:55.0,&quot;y&quot;:0.5625,&quot;r&quot;:6.16},{&quot;x&quot;:56.0,&quot;y&quot;:0.5,&quot;r&quot;:4.08},{&quot;x&quot;:57.0,&quot;y&quot;:0.6666667,&quot;r&quot;:3.56},{&quot;x&quot;:64.0,&quot;y&quot;:0.6666667,&quot;r&quot;:3.56}]}]}".replace(/(&quot\;)/g,"\""));
+        for(let i = 0;i<dataJson.datasets.length;i++){
+            dataJson.datasets[i].backgroundColor = GetNextColor();
+        }
+        var config = {
+            type: 'bubble',
+            data:dataJson,
+            options: {
+                maintainAspectRatio: false,
+                scales: {
+                    yAxes: [{
+                        scaleLabel:{
+                            display:true,
+                            labelString:"win"
+                        },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }],
+                    xAxes: [{
+                        scaleLabel:{
+                            display:true,
+                            labelString:"DURATIONMIN"
+                        },
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        };
+        window.onload = function() {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            window.myLine = new Chart(ctx, config);
+        };
     </script>
 
     <div><div>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
-        <a class="navbar-brand" href="/">Dota Analytic!!</a>
-        
-        
-        <div>
-            <a role="button" class="btn btn-dark" href="javascript: document.logoutForm.submit()">Log out</a>
-            <form name="logoutForm" action="/logout" method="post" hidden="hidden"><input type="hidden" name="_csrf" value="8f2f83ec-4f16-4b11-8e65-424de734e180">
-                <input hidden="" type="submit" value="Sign Out">
-            </form>
+
+        <div class="border bg-info" style="width: 100%; height: 100px; visibility: hidden">
         </div>
-        <div>
-            <a role="button" class="btn btn-dark" href="/analytic/Selections">Selections</a>
-        </div>
-        <div class="show">
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+            <a class="navbar-brand" href="#">Navbar</a>
             
-        <div class="dropdown show">
-            <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Dropdown link
-            </a>
-          
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-              <a class="dropdown-item btn-dark" href="#">Action</a>
-              <a class="dropdown-item" href="#">Another action</a>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-          </div>
-        </div>
-<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
-<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
-<!--            </div>-->
-<!--            <div th:if="${#request.getUserPrincipal()==null}">-->
-<!--                <a role="button" class="btn btn-dark" th:href="@{/signUp}">Sign up</a>-->
-<!--            </div>-->
-    </nav>
+            
 
-</div></div>
-
-    <div>0</div>
-<!--        <div th:if="${#request.getUserPrincipal()!=null && #request.getUserPrincipal().principal!=null}" th:text="${ #request.getUserPrincipal().principal.user.role.name()}"></div>-->
-
-    <div><div>
-
-    <div class="border bg-info" style="width: 100%; height: 100px; visibility: hidden">
-    </div>
-
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
-        <a class="navbar-brand" href="#">Navbar</a>
-        
-        
-
-        <h1>Hello asd!</h1>
-    </nav>
-    <!-- на jQuery (необходим для Bootstrap - х JavaScript плагины) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <!-- Включают все скомпилированные плагины (ниже), или включать отдельные файлы по мере необходимости -->
-    <script src="js/bootstrap.min.js"></script>
-</div></div>
+            <h1>Hello asd!</h1>
+        </nav>
+        <!-- на jQuery (необходим для Bootstrap - х JavaScript плагины) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Включают все скомпилированные плагины (ниже), или включать отдельные файлы по мере необходимости -->
+        <script src="js/bootstrap.min.js"></script>
+    </div></div>
 
 </body></html>

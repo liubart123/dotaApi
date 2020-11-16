@@ -149,7 +149,7 @@ public class AnalyticController {
 
 
 //        mov.setViewName("redirect:/analytic/CreateSelection");
-        mov.setViewName("/Analytic/CreateSelection");
+        mov.setViewName("/Analytic/UpdateSelection");
         mov.addObject("heroes", SuperService.getHeroes());
         mov.addObject("items", SuperService.getItems());
         mov.addObject("selection", selection);
@@ -172,9 +172,12 @@ public class AnalyticController {
     ModelAndView getDeleteSelection(Model model,
                                     @PathVariable(value="id") Integer id){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("redirect:/analytic/Selections");
         try {
+            mov.setViewName("Analytic/Selections");
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
             service.deleteSelection(id);
+            mov.addObject("selections",service.getSelections(user));
             mov.addObject("infoMessage","selection was deleted");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -189,11 +192,10 @@ public class AnalyticController {
     @GetMapping("/Selections")
     ModelAndView getSelections(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/Selections");
-
-        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
         try {
+            mov.setViewName("Analytic/Selections");
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             mov.addObject("selections",service.getSelections(user));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -210,7 +212,7 @@ public class AnalyticController {
     @GetMapping("/CreateBarChart")
     ModelAndView getCreateBarChart(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/CreateBarChart");
+        mov.setViewName("Analytic/Charts/CreateBarChart");
         mov.addObject("heroes", SuperService.getHeroes());
         mov.addObject("items", SuperService.getItems());
         mov.addObject("chart", new BarChart());
@@ -266,7 +268,6 @@ public class AnalyticController {
             mov.addObject("chart", chart);
 
             mov.addObject("infoMessage","chart was created");
-            mov.setViewName("redirect:/analytic/BarCharts");
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
@@ -279,11 +280,11 @@ public class AnalyticController {
     @GetMapping("/BarCharts")
     ModelAndView getBarCharts(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/Charts/BarCharts");
 
-        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
         try {
+            mov.setViewName("Analytic/Charts/BarCharts");
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             mov.addObject("barCharts",service.getBarCharts(user));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -352,11 +353,11 @@ public class AnalyticController {
             mov.addObject("chartSelections",chart.getSelections());
 
             User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
             service.updateBarChart(chart);
 
 
             mov.addObject("infoMessage","chart was updated");
-            mov.setViewName("redirect:/analytic/BarCharts");
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
@@ -370,9 +371,12 @@ public class AnalyticController {
     @GetMapping("/DeleteBarChart/{id}")
     ModelAndView getDeleteBarChart(Model model,@PathVariable(value="id") Integer id){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("redirect:/analytic/BarCharts");
         try {
+            mov.setViewName("Analytic/Charts/BarCharts");
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("barCharts",service.getBarCharts(user));
             service.deleteBarChart(id);
+            mov.addObject("barCharts",service.getBarCharts(user));
             mov.addObject("infoMessage","chart was deleted");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -389,7 +393,7 @@ public class AnalyticController {
     @GetMapping("/CreateLineChart")
     ModelAndView getCreateLineChart(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/CreateLineChart");
+        mov.setViewName("Analytic/Charts/CreateLineChart");
         mov.addObject("chart", new LineChart());
         User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         try {
@@ -418,7 +422,6 @@ public class AnalyticController {
 
 
             mov.addObject("infoMessage","chart was created");
-            mov.setViewName("redirect:/analytic/LineCharts");
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
@@ -431,11 +434,10 @@ public class AnalyticController {
     @GetMapping("/LineCharts")
     ModelAndView getLineCharts(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/Charts/LineCharts");
-
-        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
         try {
+            mov.setViewName("Analytic/Charts/LineCharts");
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             mov.addObject("lineCharts",service.getLineCharts(user));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -471,7 +473,7 @@ public class AnalyticController {
     ModelAndView postUpdateLineChart(Model model, LineChart chart){
         ModelAndView mov = new ModelAndView();
         try{
-            mov.setViewName("Analytic/Charts/UpdateBarChart");
+            mov.setViewName("Analytic/Charts/UpdateLineChart");
             mov.addObject("chart", chart);
 
             User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
@@ -482,7 +484,6 @@ public class AnalyticController {
 
 
             mov.addObject("infoMessage","chart was updated");
-            mov.setViewName("redirect:/analytic/LineCharts");
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
@@ -496,9 +497,12 @@ public class AnalyticController {
     @GetMapping("/DeleteLineChart/{id}")
     ModelAndView getDeleteLineChart(Model model,@PathVariable(value="id") Integer id){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("redirect:/analytic/LineCharts");
         try {
+            mov.setViewName("Analytic/Charts/LineCharts");
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("lineCharts",service.getLineCharts(user));
             service.deleteLineChart(id);
+            mov.addObject("lineCharts",service.getLineCharts(user));
             mov.addObject("infoMessage","chart was deleted");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -517,10 +521,10 @@ public class AnalyticController {
     @GetMapping("/CreateBubbleChart")
     ModelAndView getCreateBubbleChart(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/CreateBubbleChart");
+        mov.setViewName("Analytic/Charts/CreateBubbleChart");
         mov.addObject("chart", new BubbleChart());
-        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
         try {
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             mov.addObject("selections",service.getSelections(user));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -530,7 +534,6 @@ public class AnalyticController {
             mov.addObject("errorMessage",e.getMessage());
         }
 
-        mov.setViewName("Analytic/Charts/CreateBubbleChart");
         return mov;
     }
     @PostMapping("/CreateBubbleChart")
@@ -546,15 +549,15 @@ public class AnalyticController {
                 chart.selections.add(service.getSelection(Integer.parseInt(selection)));
             }
 
+            mov.setViewName("Analytic/Charts/CreateBubbleChart");
+            mov.addObject("chart", chart);
             User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
             service.createBubbleChart(user,chart);
 
 
-            mov.setViewName("Analytic/Charts/CreateBubbleChart");
-            mov.addObject("chart", chart);
 
             mov.addObject("infoMessage","chart was created");
-            mov.setViewName("redirect:/analytic/BubbleCharts");
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
@@ -567,11 +570,11 @@ public class AnalyticController {
     @GetMapping("/BubbleCharts")
     ModelAndView getBubbleCharts(Model model){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("Analytic/Charts/BubbleCharts");
-
-        User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
 
         try {
+            mov.setViewName("Analytic/Charts/BubbleCharts");
+
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
             mov.addObject("bubbleCharts",service.getBubbleCharts(user));
         } catch (SQLException e) {
             e.printStackTrace();
@@ -617,13 +620,13 @@ public class AnalyticController {
             mov.setViewName("Analytic/Charts/UpdateBubbleChart");
             mov.addObject("chart", chart);
             mov.addObject("chartSelections",chart.getSelections());
-
             User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("selections",service.getSelections(user));
+
             service.updateBubbleChart(chart);
 
 
             mov.addObject("infoMessage","chart was updated");
-            mov.setViewName("redirect:/analytic/BubbleCharts");
         } catch (SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
@@ -637,9 +640,13 @@ public class AnalyticController {
     @GetMapping("/DeleteBubbleChart/{id}")
     ModelAndView getDeleteBubbleChart(Model model,@PathVariable(value="id") Integer id){
         ModelAndView mov = new ModelAndView();
-        mov.setViewName("redirect:/analytic/BubbleCharts");
         try {
+            mov.setViewName("Analytic/Charts/BubbleCharts");
+
+            User user  = ((CustomUserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUser();
+            mov.addObject("bubbleCharts",service.getBubbleCharts(user));
             service.deleteBubbleChart(id);
+            mov.addObject("bubbleCharts",service.getBubbleCharts(user));
             mov.addObject("infoMessage","chart was deleted");
         } catch (SQLException e) {
             e.printStackTrace();

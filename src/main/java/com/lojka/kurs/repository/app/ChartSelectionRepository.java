@@ -78,7 +78,9 @@ public class ChartSelectionRepository {
                 throw new DbAccessException("Selection with this name is already exist");
             }
             selection.setId(cs.getInt(10));
+            cs.close();
         }else {
+            cs.close();
             throw new DbAccessException("error with query");
         }
 
@@ -113,6 +115,7 @@ public class ChartSelectionRepository {
             if (cs.executeQuery()!=null){
                 cs.close();
             }else {
+                cs.close();
                 throw new DbAccessException("error with query");
             }
         }
@@ -123,6 +126,7 @@ public class ChartSelectionRepository {
         if (cs.executeQuery()!=null){
             cs.close();
         }else {
+            cs.close();
             throw new DbAccessException("error with query");
         }
         log.debug("inserting items...");
@@ -134,6 +138,7 @@ public class ChartSelectionRepository {
             if (cs.executeQuery()!=null){
                 cs.close();
             }else {
+                cs.close();
                 throw new DbAccessException("error with query");
             }
         }
@@ -153,7 +158,9 @@ public class ChartSelectionRepository {
         cs.setInt(9, user.getId());
         cs.setInt(10, selection.getId());
         if (cs.executeQuery()!=null){
+            cs.close();
         }else {
+            cs.close();
             throw new DbAccessException("error with query");
         }
     }
@@ -163,7 +170,9 @@ public class ChartSelectionRepository {
         CallableStatement cs = getConnection().prepareCall(sqlDeleteSelection);
         cs.setInt(1,id);
         if (cs.executeQuery()!=null){
+            cs.close();
         }else {
+            cs.close();
             throw new DbAccessException("error with query");
         }
     }
@@ -190,12 +199,9 @@ public class ChartSelectionRepository {
             selection.setHero(SuperService.getHeroes().get(rs.getInt(9)));
 
 
-            CallableStatement cs2 =getConnection().prepareCall(sqlSelectSelectionsHeroes);
-            cs2.registerOutParameter(1,OracleTypes.CURSOR);
-            cs2.setInt(2,selection.getId());
-            cs2.executeQuery();
             addHeroesAndItemsToSelection(selection);
             selections.put(selection.getId(),selection);
+
         }
         cs.close();
 
@@ -228,8 +234,10 @@ public class ChartSelectionRepository {
             selection.setHero(SuperService.getHeroes().get(rs.getInt(9)));
 
             addHeroesAndItemsToSelection(selection);
+            cs.close();
             return selection;
         }else {
+            cs.close();
             throw new DbAccessException("Error with query");
         }
     }
@@ -291,8 +299,10 @@ public class ChartSelectionRepository {
         cs.registerOutParameter(6,OracleTypes.INTEGER);
         cs.executeQuery();
         if (cs.getInt(6)<0){
+            cs.close();
             throw new DbAccessException("chart with this name exist");
         }else{
+            cs.close();
             chart.setId(cs.getInt(6));
         }
     }
@@ -342,6 +352,8 @@ public class ChartSelectionRepository {
             addLabelsAndSelectionsToBarChart(chart);
             result.add(chart);
         }
+        rs.close();
+        cs.close();
         return result;
     }
     public BarChart getBarChart(Integer id)throws SQLException, DbAccessException{
@@ -361,8 +373,12 @@ public class ChartSelectionRepository {
             chart.setyAxis(rs.getString(5));
 
             addLabelsAndSelectionsToBarChart(chart);
+            rs.close();
+            cs.close();
             return chart;
         }else {
+            rs.close();
+            cs.close();
             throw new DbAccessException("there is no such chart...");
         }
     }
@@ -385,6 +401,7 @@ public class ChartSelectionRepository {
         while (rs.next()){
             chart.getSelections().add(getSelection(rs.getInt(1)));
         }
+        rs.close();
         cs.close();
     }
 
@@ -396,13 +413,16 @@ public class ChartSelectionRepository {
         cs.setString(4, chart.getyAxis());
         cs.setInt(5, chart.getId());
         cs.executeQuery();
+        cs.close();
     }
     public void deleteBarChart(Integer id)throws SQLException, DbAccessException{
         log.debug("delete barchart by " + id);
         CallableStatement cs = getConnection().prepareCall(sqlDeleteBarChart);
         cs.setInt(1,id);
         if (cs.executeQuery()!=null){
+            cs.close();
         }else {
+            cs.close();
             throw new DbAccessException("error with query");
         }
     }
@@ -429,9 +449,11 @@ public class ChartSelectionRepository {
         cs.registerOutParameter(9,OracleTypes.INTEGER);
         cs.executeQuery();
         if (cs.getInt(9)<0){
+            cs.close();
             throw new DbAccessException("chart with this name exist");
         }else{
             chart.setId(cs.getInt(9));
+            cs.close();
         }
     }
 
@@ -455,6 +477,8 @@ public class ChartSelectionRepository {
             chart.setSelection(getSelection(rs.getInt(8)));
             result.add(chart);
         }
+        rs.close();
+        cs.close();
         return result;
     }
     public LineChart getLineChart(Integer id)throws SQLException, DbAccessException{
@@ -475,8 +499,12 @@ public class ChartSelectionRepository {
             chart.setCountOfLabels(rs.getInt(6));
             chart.setDeasc(rs.getBoolean(7));
             chart.setSelection(getSelection(rs.getInt(8)));
+            rs.close();
+            cs.close();
             return chart;
         }else {
+            rs.close();
+            cs.close();
             throw new DbAccessException("there is no such chart...");
         }
     }
@@ -492,13 +520,16 @@ public class ChartSelectionRepository {
         cs.setInt(7,chart.getSelection().getId());
         cs.setInt(8,chart.getId());
         cs.executeQuery();
+        cs.close();
     }
     public void deleteLineChart(Integer id)throws SQLException, DbAccessException{
         log.debug("delete Linechart by " + id);
         CallableStatement cs = getConnection().prepareCall(sqlDeleteLineChart);
         cs.setInt(1,id);
         if (cs.executeQuery()!=null){
+            cs.close();
         }else {
+            cs.close();
             throw new DbAccessException("error with query");
         }
     }
@@ -527,9 +558,11 @@ public class ChartSelectionRepository {
         cs.registerOutParameter(7,OracleTypes.INTEGER);
         cs.executeQuery();
         if (cs.getInt(7)<0){
+            cs.close();
             throw new DbAccessException("chart with this name exist");
         }else{
             chart.setId(cs.getInt(7));
+            cs.close();
         }
     }
     public void insertBubbleChartSelections(BubbleChart chart)throws SQLException, DbAccessException{
@@ -565,6 +598,8 @@ public class ChartSelectionRepository {
             addSelectionsToBubbleChart(chart);
             result.add(chart);
         }
+        rs.close();
+        cs.close();
         return result;
     }
     public BubbleChart getBubbleChart(Integer id)throws SQLException, DbAccessException{
@@ -584,8 +619,12 @@ public class ChartSelectionRepository {
             chart.setyAxis(rs.getString(5));
             chart.setxScale(rs.getFloat(6));
             addSelectionsToBubbleChart(chart);
+            rs.close();
+            cs.close();
             return chart;
         }else {
+            rs.close();
+            cs.close();
             throw new DbAccessException("there is no such chart...");
         }
     }
@@ -611,13 +650,16 @@ public class ChartSelectionRepository {
         cs.setFloat(5, chart.getxScale());
         cs.setInt(6, chart.getId());
         cs.executeQuery();
+        cs.close();
     }
     public void deleteBubbleChart(Integer id)throws SQLException, DbAccessException{
         log.debug("delete bubblechart by " + id);
         CallableStatement cs = getConnection().prepareCall(sqlDeleteBubbleChart);
         cs.setInt(1,id);
         if (cs.executeQuery()!=null){
+            cs.close();
         }else {
+            cs.close();
             throw new DbAccessException("error with query");
         }
     }

@@ -330,22 +330,22 @@ public class SuperService {
         query += " count(*) as selection ";
         //join for hero_id of enemies and allies
         query += "from pdb_kurs_dwh_admin.playersmatches my ";
-        if (selection.allies.size()!=0 || chart.xAxis=="allies"){
+        if (selection.allies.size()!=0 || chart.xAxis.equals("allies")){
             query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id and allies.win = my.win ";
         }
-        if (selection.enemies.size()!=0 || chart.xAxis=="enemies"){
+        if (selection.enemies.size()!=0 || chart.xAxis.equals("enemies")){
             query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
         }
-        if (selection.items.size()!=0 || chart.xAxis=="items"){
+        if (selection.items.size()!=0 || chart.xAxis.equals("items")){
             query += "join pdb_kurs_dwh_admin.boughtitems bItems on my.player_match_id = bItems.player_match_id ";
         }
 
         //join for getting names of heroes of enemies and allies
-        if (chart.xAxis == "enemies"){
+        if (chart.xAxis.equals("enemies")){
             query += "join pdb_kurs_dwh_admin.heroes xAxis on enemies.hero_id = xAxis.id ";
-        }else if (chart.xAxis == "allies"){
+        }else if (chart.xAxis.equals("allies")){
             query += "join pdb_kurs_dwh_admin.heroes xAxis on allies.hero_id = xAxis.id ";
-        }else if (chart.xAxis == "items"){
+        }else if (chart.xAxis.equals("items")){
             query += "join pdb_kurs_dwh_admin.items xAxis on bItems.item_id = xAxis.id ";
         }
 
@@ -455,22 +455,22 @@ public class SuperService {
         query += " count(*) as selection ";
         //join for hero_id of enemies and allies
         query += "from pdb_kurs_dwh_admin.playersmatches my ";
-        if (selection.allies.size()!=0 || chart.xAxis=="allies"){
+        if (selection.allies.size()!=0 || chart.xAxis.equals("allies")){
             query += "join pdb_kurs_dwh_admin.playersmatches allies on my.match_id = allies.match_id and allies.win = my.win ";
         }
-        if (selection.enemies.size()!=0 || chart.xAxis=="enemies"){
+        if (selection.enemies.size()!=0 || chart.xAxis.equals("enemies")){
             query += "join pdb_kurs_dwh_admin.playersmatches enemies on my.match_id = enemies.match_id and enemies.win <> my.win ";
         }
-        if (selection.items.size()!=0 || chart.xAxis=="items"){
+        if (selection.items.size()!=0 || chart.xAxis.equals("items")){
             query += "join pdb_kurs_dwh_admin.boughtitems bItems on my.player_match_id = bItems.player_match_id ";
         }
 
         //join for getting names of heroes of enemies and allies
-        if (chart.xAxis == "enemies"){
+        if (chart.xAxis.equals("enemies")){
             query += "join pdb_kurs_dwh_admin.heroes xAxis on enemies.hero_id = xAxis.id ";
-        }else if (chart.xAxis == "allies"){
+        }else if (chart.xAxis.equals("allies")){
             query += "join pdb_kurs_dwh_admin.heroes xAxis on allies.hero_id = xAxis.id ";
-        }else if (chart.xAxis == "items"){
+        }else if (chart.xAxis.equals("items")){
             query += "join pdb_kurs_dwh_admin.items xAxis on bItems.item_id = xAxis.id ";
         }
 

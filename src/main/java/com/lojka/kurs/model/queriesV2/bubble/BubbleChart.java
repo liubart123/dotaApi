@@ -10,7 +10,7 @@ public class BubbleChart {
     public Integer minCountOfMatches = 0;
     public String name;
     public String xAxis, yAxis;
-    public Float xScale;
+    public Float xScale=0f;
     public List<Selection> selections = new ArrayList<>();
     public Integer id;
 

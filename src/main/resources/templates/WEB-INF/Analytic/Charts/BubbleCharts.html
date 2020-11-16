@@ -34,6 +34,7 @@
                         <div th:text="${chart.getName()}"></div>
                         <a role="button" class="btn btn-primary p-1 m-1" th:href="@{/analytic/UpdateBubbleChart/} + ${chart.getId()}">Edit</a>
                         <a role="button" class="btn btn-danger p-1 m-1" th:href="@{/analytic/DeleteBubbleChart/} + ${chart.getId()}">Delete</a>
+                        <a role="button" class="btn btn-primary p-1 m-1" th:href="@{/analytic/BuildBubbleChart/} + ${chart.getId()}">Build</a>
                     </div>
                 </td>
                 <td th:text="${chart.parametersToString()}"></td>
