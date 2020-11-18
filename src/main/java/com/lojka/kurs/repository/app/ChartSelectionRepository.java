@@ -41,6 +41,9 @@ public class ChartSelectionRepository {
     String sqlSelectSelectionsHeroes = "begin SELECT_selections_heroes(?,?); end;";
     String sqlSelectSelectionsItems = "begin SELECT_selections_items(?,?); end;";
 
+    String sqlImport = "begin importapp(); end;";
+    String sqlExport = "begin exportapp(); end;";
+
 
     public Connection getConnection() throws SQLException, DbAccessException {
         if (connection==null || connection.isClosed()){
@@ -656,6 +659,28 @@ public class ChartSelectionRepository {
         log.debug("delete bubblechart by " + id);
         CallableStatement cs = getConnection().prepareCall(sqlDeleteBubbleChart);
         cs.setInt(1,id);
+        if (cs.executeQuery()!=null){
+            cs.close();
+        }else {
+            cs.close();
+            throw new DbAccessException("error with query");
+        }
+    }
+
+    //export import
+    public void importApp()throws SQLException, DbAccessException{
+        log.debug("importing...");
+        CallableStatement cs = getConnection().prepareCall(sqlImport);
+        if (cs.executeQuery()!=null){
+            cs.close();
+        }else {
+            cs.close();
+            throw new DbAccessException("error with query");
+        }
+    }
+    public void exportApp()throws SQLException, DbAccessException{
+        log.debug(" exporting...");
+        CallableStatement cs = getConnection().prepareCall(sqlExport);
         if (cs.executeQuery()!=null){
             cs.close();
         }else {

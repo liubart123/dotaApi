@@ -5,13 +5,17 @@ import com.lojka.kurs.exception.DbConnectionClosedException;
 import com.lojka.kurs.exception.DotaDataAccessException;
 import com.lojka.kurs.model.user.EUserRoles;
 import com.lojka.kurs.model.user.User;
+import com.lojka.kurs.service.app.ChartSelectionService;
 import com.lojka.kurs.service.super_service.EFilterForMatchInserting;
 import com.lojka.kurs.service.super_service.SuperService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.sql.SQLException;
 
 @RequestMapping("/admin")
 @RestController
@@ -64,6 +68,35 @@ public class AdminController {
             SuperService.clearTablesFromDb();
             mov.addObject("infoMessage","info updated");
         } catch (DbAccessException | DbConnectionClosedException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        mov.setViewName("/AdminFunctions");
+        return mov;
+    }
+
+    @Autowired
+    ChartSelectionService appService;
+    @GetMapping(value="/importDb")
+    ModelAndView importDb(){
+        ModelAndView mov = new ModelAndView();
+        try {
+            appService.importApp();
+            mov.addObject("infoMessage","db imported");
+        } catch (DbAccessException | SQLException e) {
+            e.printStackTrace();
+            mov.addObject("errorMessage",e.getMessage());
+        }
+        mov.setViewName("/AdminFunctions");
+        return mov;
+    }
+    @GetMapping(value="/exportDb")
+    ModelAndView exportDb(){
+        ModelAndView mov = new ModelAndView();
+        try {
+            appService.exportApp();
+            mov.addObject("infoMessage","db exported");
+        } catch (DbAccessException | SQLException e) {
             e.printStackTrace();
             mov.addObject("errorMessage",e.getMessage());
         }

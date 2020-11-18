@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -99,5 +100,14 @@ public class ChartSelectionService {
     }
     public void deleteBubbleChart(Integer id)throws SQLException, DbAccessException{
         repository.deleteBubbleChart(id);
+    }
+
+    //general
+
+    public void importApp()throws SQLException, DbAccessException{
+        repository.importApp();
+    }
+    public void exportApp()throws SQLException, DbAccessException{
+        repository.exportApp();
     }
 }
