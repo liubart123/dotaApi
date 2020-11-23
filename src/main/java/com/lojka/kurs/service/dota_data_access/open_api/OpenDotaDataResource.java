@@ -58,8 +58,6 @@ public class OpenDotaDataResource implements IDotaDataResource {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Match m = response.getBody();
-            //m.setStart_time(m.getStart_time());
-            //mathc data is invalid
             if (m.getPicks_bans()==null || m.getPlayers()[0].getGold_t()==null){
                 log.trace("getting match: match is null");
                 return null;

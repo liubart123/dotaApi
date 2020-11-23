@@ -14,9 +14,7 @@
     <!-- Default form login -->
     <form class="text-center border border-light p-5 col-lg-4 col-md-4 offset-lg-4 offset-md-4"
         th:action="@{/login}"  th:method="post" >
-
         <p class="h4  pb-2">Sign in</p>
-
         <div th:if="${param.error}" class="alert alert-danger">
             Invalid username and password.
         </div>
@@ -25,14 +23,10 @@
         </div>
         <!-- Email -->
         <input type="text" id="userLogin" name="username" class="form-control mb-2" placeholder="E-mail">
-
         <!-- Password -->
         <input type="password" id="userPassword"  name="password"class="form-control mb-2" placeholder="Password">
-
-
         <!-- Sign in button -->
         <button class="btn btn-info btn-block my-4" type="submit">Sign in</button>
-
         <!-- Register -->
         <p>Not a member?
             <a th:href="@{/signUp}">Register</a>

@@ -41,7 +41,6 @@ create or replace procedure INSERT_MATCH
     end if;
   end;
 /
---insert player in match info
 create or replace procedure INSERT_PLAYER_IN_MATCH
   ( 
     player_id_p NUMBER,
@@ -173,7 +172,6 @@ create or replace procedure INSERT_PLAYER_IN_MATCH
     was_new_insert := exist;
   end;
 /
---inserting banchmark (gpm,expm)
 create or replace procedure INSERT_PLAYER_MATCH_STAT(
   player_match_id_p NUMBER,
 	time_p INT,
@@ -211,14 +209,7 @@ create or replace procedure CLEAR_BOUGHT_ITEMS(player_match_id_p NUMBER) is
     delete from BoughtItems where player_match_id = player_match_id_p;
   end;
   /
- 
-select min(id) from matches;
-select * from PDB_KURS_DWH_ADMIN.PLAYERSMATCHES;
-select * from PDB_KURS_DWH_ADMIN.PLAYERSMATCHES;
-select * from dba_tables where owner = 'PDB_KURS_DWH_ADMIN';
-  select min(id) from matches;
-  select min(match_id) from PDB_KURS_DWH_ADMIN.PLAYERSMATCHES;
-/
+
 --getting lowest match id
 create or replace procedure GET_LOWEST_MATCH_ID(res out number)
 is
@@ -238,9 +229,3 @@ begin
   
 end;
 /
-declare 
-  res number;
-begin
-  GET_LOWEST_MATCH_ID(res);
-  dbms_output.put_line(res);
-end;

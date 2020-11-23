@@ -1,5 +1,5 @@
 --users
-CREATE OR REPLACE PROCEDURE insert_user(
+/ CREATE OR REPLACE PROCEDURE insert_user(
     nameP          VARCHAR,
     hash_passwordP VARCHAR,
     user_roleP     VARCHAR,
@@ -27,16 +27,14 @@ BEGIN
     SELECT id INTO resultId FROM app_users WHERE name = nameP AND ROWNUM = 1;
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE get_user(
+/ CREATE OR REPLACE PROCEDURE get_user(
     curs OUT SYS_REFCURSOR,
     login VARCHAR)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM app_users WHERE name=login AND rownum = 1;
 END;
-/
-CREATE OR REPLACE PROCEDURE exist_user(
+/ CREATE OR REPLACE PROCEDURE exist_user(
     nameP VARCHAR,
     resultId OUT BOOLEAN)
 IS
@@ -49,10 +47,8 @@ BEGIN
     resultId := false;
   END IF;
 END;
-/
-SELECT * FROM app_users;
 --selections
-CREATE OR REPLACE PROCEDURE insert_selection(
+/ CREATE OR REPLACE PROCEDURE insert_selection(
     nameP                 VARCHAR,
     durationMinP          INT,
     durationMaxP          INT,
@@ -108,8 +104,7 @@ BEGIN
     SELECT id INTO resultId FROM selections WHERE name=nameP AND user_id=user_idP;
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE update_selection(
+/ CREATE OR REPLACE PROCEDURE update_selection(
     nameP                 VARCHAR,
     durationMinP          INT,
     durationMaxP          INT,
@@ -134,12 +129,7 @@ BEGIN
     user_id             =user_idP
   WHERE id              =idp;
 END;
-/
-SELECT * FROM selections;
-SELECT * FROM selections_heroes;
-SELECT * FROM selections_items;
-/
-CREATE OR REPLACE PROCEDURE insert_selection_heroes(
+/ CREATE OR REPLACE PROCEDURE insert_selection_heroes(
     selection_idp INTEGER,
     hero_idP      INTEGER,
     hero_roleP    VARCHAR )
@@ -169,8 +159,7 @@ BEGIN
       );
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE clear_selection_heroes
+/ CREATE OR REPLACE PROCEDURE clear_selection_heroes
   (
     selection_idp INTEGER
   )
@@ -178,8 +167,7 @@ IS
 BEGIN
   DELETE FROM selections_heroes WHERE selection_id = selection_idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE insert_selection_items(
+/ CREATE OR REPLACE PROCEDURE insert_selection_items(
     selection_idp INTEGER,
     item_idP      INTEGER,
     item_roleP    VARCHAR )
@@ -209,8 +197,7 @@ BEGIN
       );
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE clear_selection_items
+/ CREATE OR REPLACE PROCEDURE clear_selection_items
   (
     selection_idp INTEGER
   )
@@ -218,8 +205,7 @@ IS
 BEGIN
   DELETE FROM selections_items WHERE selection_id = selection_idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE update_selection(
+/ CREATE OR REPLACE PROCEDURE update_selection(
     nameP                 VARCHAR,
     durationMinP          INTEGER,
     durationMaxP          INTEGER,
@@ -252,8 +238,7 @@ BEGIN
     resultId:=-1;
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE delete_selection(
+/ CREATE OR REPLACE PROCEDURE delete_selection(
     idP INTEGER)
 IS
 BEGIN
@@ -263,47 +248,36 @@ BEGIN
   DELETE FROM selections_barchart WHERE SELECTION_ID=idp;
   DELETE FROM selections WHERE id=idp;
 END;
-/
-BEGIN
-  delete_selection(21);
-END;
-/
-SELECT * FROM app_users;
-/
-CREATE OR REPLACE PROCEDURE SELECT_selections(
+/ CREATE OR REPLACE PROCEDURE SELECT_selections(
     curs OUT SYS_REFCURSOR,
     user_idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM selections WHERE user_id=user_Idp order by name;
 END;
-/
-CREATE OR REPLACE PROCEDURE get_selection(
+/ CREATE OR REPLACE PROCEDURE get_selection(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM selections WHERE id=Idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_selections_items(
+/ CREATE OR REPLACE PROCEDURE SELECT_selections_items(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM selections_items WHERE selection_id=idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_selections_heroes(
+/ CREATE OR REPLACE PROCEDURE SELECT_selections_heroes(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM selections_heroes WHERE selection_id=idp;
 END;
-/
 --BubbleChart
-CREATE OR REPLACE PROCEDURE insert_bubblechart(
+/ CREATE OR REPLACE PROCEDURE insert_bubblechart(
     minCountOfMatchesP INTEGER,
     nameP              VARCHAR,
     xAxisP             VARCHAR,
@@ -349,8 +323,7 @@ BEGIN
     AND user_id=user_idP;
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE insert_selections_bubblechart(
+/ CREATE OR REPLACE PROCEDURE insert_selections_bubblechart(
     selection_idP   INTEGER,
     bubblechart_idP INTEGER )
 IS
@@ -367,8 +340,7 @@ BEGIN
       bubblechart_idp
     );
 END;
-/
-CREATE OR REPLACE PROCEDURE clear_selections_bubblechart
+/ CREATE OR REPLACE PROCEDURE clear_selections_bubblechart
   (
     bubblechart_idP INTEGER
   )
@@ -376,8 +348,7 @@ IS
 BEGIN
   DELETE FROM selections_bubblechart WHERE bubblechart_id = bubblechart_idP;
 END;
-/
-CREATE OR REPLACE PROCEDURE update_bubblechart(
+/ CREATE OR REPLACE PROCEDURE update_bubblechart(
     minCountOfMatchesP INTEGER,
     nameP              VARCHAR,
     xAxisP             VARCHAR,
@@ -395,46 +366,36 @@ BEGIN
     xScale              =xScaleP
   WHERE id              =idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE delete_bubblechart(
+/ CREATE OR REPLACE PROCEDURE delete_bubblechart(
     idP INTEGER)
 IS
 BEGIN
   DELETE FROM selections_bubblechart WHERE BUBBLECHART_ID=idp;
   DELETE FROM bubblechart WHERE id=idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_bubblecharts(
+/ CREATE OR REPLACE PROCEDURE SELECT_bubblecharts(
     curs OUT SYS_REFCURSOR,
     user_idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM bubblechart WHERE user_id=user_Idp order by name;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_bubblechart(
+/ CREATE OR REPLACE PROCEDURE SELECT_bubblechart(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM bubblechart WHERE id=Idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_bubblecharts_selections(
+/ CREATE OR REPLACE PROCEDURE SELECT_bubblecharts_selections(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM selections_bubblechart WHERE bubblechart_id=Idp;
 END;
-/
-SELECT * FROM selections_bubblechart;
 --BarChart
-SELECT * FROM barchart;
-SELECT * FROM selections_barchart;
-SELECT * FROM BarChart_labels;
-/
-CREATE OR REPLACE PROCEDURE insert_barchart(
+/ CREATE OR REPLACE PROCEDURE insert_barchart(
     minCountOfMatchesP INTEGER,
     nameP              VARCHAR,
     xAxisP             VARCHAR,
@@ -473,8 +434,7 @@ BEGIN
     SELECT id INTO resultId FROM barChart WHERE name=nameP AND user_id=user_idP;
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE insert_selections_barchart(
+/ CREATE OR REPLACE PROCEDURE insert_selections_barchart(
     selection_idP INTEGER,
     barchart_idP  INTEGER )
 IS
@@ -491,8 +451,7 @@ BEGIN
       barchart_idp
     );
 END;
-/
-CREATE OR REPLACE PROCEDURE clear_selections_barchart
+/ CREATE OR REPLACE PROCEDURE clear_selections_barchart
   (
     barchart_idP INTEGER
   )
@@ -500,8 +459,7 @@ IS
 BEGIN
   DELETE FROM selections_barchart WHERE barchart_id = barchart_idP;
 END;
-/
-CREATE OR REPLACE PROCEDURE update_barchart(
+/ CREATE OR REPLACE PROCEDURE update_barchart(
     minCountOfMatchesP INTEGER,
     nameP              VARCHAR,
     xAxisP             VARCHAR,
@@ -517,8 +475,7 @@ BEGIN
     yAxis               =yAxisP
   WHERE id              =idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE delete_barchart(
+/ CREATE OR REPLACE PROCEDURE delete_barchart(
     idP INTEGER)
 IS
 BEGIN
@@ -526,40 +483,35 @@ BEGIN
   DELETE FROM BarChart_labels WHERE barchart_id=idp;
   DELETE FROM barchart WHERE id=idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_barcharts(
+/ CREATE OR REPLACE PROCEDURE SELECT_barcharts(
     curs OUT SYS_REFCURSOR,
     user_idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM barchart WHERE user_id=user_Idp order by name;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_barchart(
+/ CREATE OR REPLACE PROCEDURE SELECT_barchart(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM barchart WHERE id=Idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_barcharts_selections(
+/ CREATE OR REPLACE PROCEDURE SELECT_barcharts_selections(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM selections_barchart WHERE barchart_id=idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_barcharts_labels(
+/ CREATE OR REPLACE PROCEDURE SELECT_barcharts_labels(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM BarChart_labels WHERE barchart_id=idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE insert_barchart_labels(
+/ CREATE OR REPLACE PROCEDURE insert_barchart_labels(
     BarChart_idp INTEGER,
     labelp       VARCHAR )
 IS
@@ -576,8 +528,7 @@ BEGIN
       labelp
     );
 END;
-/
-CREATE OR REPLACE PROCEDURE clear_barchart_labels
+/ CREATE OR REPLACE PROCEDURE clear_barchart_labels
   (
     barchart_idP INTEGER
   )
@@ -585,9 +536,8 @@ IS
 BEGIN
   DELETE FROM BarChart_labels WHERE barchart_id = barchart_idP;
 END;
-/
 --LineChart
-CREATE OR REPLACE PROCEDURE insert_linechart(
+/ CREATE OR REPLACE PROCEDURE insert_linechart(
     minCountOfMatchesP INTEGER,
     nameP              VARCHAR,
     xAxisP             VARCHAR,
@@ -635,8 +585,7 @@ BEGIN
     SELECT id INTO resultId FROM linechart WHERE name=nameP AND user_id=user_idP;
   END IF;
 END;
-/
-CREATE OR REPLACE PROCEDURE update_linechart(
+/ CREATE OR REPLACE PROCEDURE update_linechart(
     minCountOfMatchesP INTEGER,
     nameP              VARCHAR,
     xAxisP             VARCHAR,
@@ -658,51 +607,51 @@ BEGIN
     selectionId         =selectionIdp
   WHERE id              =idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE delete_linechart(
+/ CREATE OR REPLACE PROCEDURE delete_linechart(
     idP INTEGER)
 IS
 BEGIN
   DELETE FROM linechart WHERE id=idp;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_linecharts(
+/ CREATE OR REPLACE PROCEDURE SELECT_linecharts(
     curs OUT SYS_REFCURSOR,
     user_idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM linechart WHERE user_id=user_Idp order by name;
 END;
-/
-CREATE OR REPLACE PROCEDURE SELECT_linechart(
+/ CREATE OR REPLACE PROCEDURE SELECT_linechart(
     curs OUT SYS_REFCURSOR,
     idp INTEGER)
 IS
 BEGIN
   OPEN curs FOR SELECT * FROM linechart WHERE id=idp;
 END;
-/
-SELECT * FROM linechart;
---xml
+
+--XML
 --usesrs
-/
-CREATE OR REPLACE DIRECTORY EXPORTFILE
+/ CREATE OR REPLACE DIRECTORY EXPORTFILE
 AS
   'C:/xmlFiles';
-CREATE OR REPLACE PROCEDURE export_users
+/ CREATE OR REPLACE PROCEDURE export_users
 IS
   file1 utl_file.file_type;
   xrow CLOB;
 BEGIN
   file1 := UTL_FILE.FOPEN('EXPORTFILE','users.txt','w');
-  SELECT XMLELEMENT(root,XMLAGG(XMLELEMENT(appuser, XMLATTRIBUTES(e.id, e.name, e.user_role,e.hash_password)))).getCLOBVal() AS xmlsads
-  INTO xrow
-  FROM app_users e;
+  SELECT XMLELEMENT(root,XMLAGG(XMLELEMENT(appuser, 
+      XMLATTRIBUTES(
+          e.id,
+          e.name,
+          e.user_role,
+          e.hash_password)
+        ))).getCLOBVal() AS xmlsads
+    INTO xrow
+    FROM app_users e;
   utl_file.put(file1,xrow);
   utl_file.fclose(file1);
 END;
-/
-CREATE OR REPLACE PROCEDURE import_users
+/ CREATE OR REPLACE PROCEDURE import_users
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -733,10 +682,8 @@ WHEN NOT matched THEN
     );
   utl_file.fclose(file1);
 END;
-/
 --selections
-SELECT * FROM selections;
-CREATE OR REPLACE PROCEDURE export_selections
+/ CREATE OR REPLACE PROCEDURE export_selections
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -746,8 +693,7 @@ BEGIN
   FROM selections e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'selections.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_selections
+/ CREATE OR REPLACE PROCEDURE import_selections
 IS
   xrow CLOB;
 BEGIN
@@ -793,10 +739,8 @@ WHEN NOT matched THEN
       imp_t. USER_ID
     );
 END;
-/
 --selections_heroes
-SELECT * FROM selections_heroes;
-CREATE OR REPLACE PROCEDURE export_selections_heroes
+/ CREATE OR REPLACE PROCEDURE export_selections_heroes
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -806,8 +750,7 @@ BEGIN
   FROM selections_heroes e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'selections_heroes.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_selections_heroes
+/ CREATE OR REPLACE PROCEDURE import_selections_heroes
 IS
   xrow CLOB;
 BEGIN
@@ -832,15 +775,8 @@ WHEN NOT matched THEN
       imp_t. HERO_ROLE
     );
 END;
-/
-BEGIN
-  export_selections_heroes();
-  import_selections_heroes();
-END;
-/
 --selections_items
-SELECT * FROM selections_items;
-CREATE OR REPLACE PROCEDURE export_selections_items
+/ CREATE OR REPLACE PROCEDURE export_selections_items
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -850,8 +786,7 @@ BEGIN
   FROM selections_items e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'selections_items.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_selections_items
+/ CREATE OR REPLACE PROCEDURE import_selections_items
 IS
   xrow CLOB;
 BEGIN
@@ -876,15 +811,8 @@ WHEN NOT matched THEN
       imp_t. ITEM_ROLE
     );
 END;
-/
-BEGIN
-  export_selections_items();
-  import_selections_items();
-END;
-/
 --selections_barchart
-SELECT * FROM selections_barchart;
-CREATE OR REPLACE PROCEDURE export_selections_barchart
+/ CREATE OR REPLACE PROCEDURE export_selections_barchart
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -894,8 +822,7 @@ BEGIN
   FROM selections_barchart e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'selections_barchart.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_selections_barchart
+/ CREATE OR REPLACE PROCEDURE import_selections_barchart
 IS
   xrow CLOB;
 BEGIN
@@ -917,15 +844,8 @@ WHEN NOT matched THEN
       imp_t. BARCHART_ID
     );
 END;
-/
-BEGIN
-  --export_selections_barchart();
-  import_selections_barchart();
-END;
 --selections_bubblechart
-SELECT * FROM selections_bubblechart;
-/
-CREATE OR REPLACE PROCEDURE export_selections_bubblechart
+/ CREATE OR REPLACE PROCEDURE export_selections_bubblechart
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -935,8 +855,7 @@ BEGIN
   FROM selections_bubblechart e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'selections_bubblechart.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_selections_bubblechart
+/ CREATE OR REPLACE PROCEDURE import_selections_bubblechart
 IS
   xrow CLOB;
 BEGIN
@@ -958,16 +877,7 @@ WHEN NOT matched THEN
       imp_t. BUBBLECHART_ID
     );
 END;
-/
-BEGIN
-  export_selections_bubblechart();
-  import_selections_bubblechart();
-END;
---barchart_labels
-/
-SELECT * FROM barchart_labels;
-/
-CREATE OR REPLACE PROCEDURE export_barchart_labels
+/ CREATE OR REPLACE PROCEDURE export_barchart_labels
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -977,8 +887,7 @@ BEGIN
   FROM barchart_labels e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'barchart_labels.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_barchart_labels
+/ CREATE OR REPLACE PROCEDURE import_barchart_labels
 IS
   xrow CLOB;
 BEGIN
@@ -1000,16 +909,7 @@ WHEN NOT matched THEN
       imp_t. LABEL
     );
 END;
-/
-BEGIN
-  export_barchart_labels();
-  import_barchart_labels();
-END;
---barchart
-/
-SELECT * FROM barchart;
-/
-CREATE OR REPLACE PROCEDURE export_barchart
+/ CREATE OR REPLACE PROCEDURE export_barchart
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -1019,8 +919,7 @@ BEGIN
   FROM barchart e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'barchart.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_barchart
+/ CREATE OR REPLACE PROCEDURE import_barchart
 IS
   xrow CLOB;
 BEGIN
@@ -1054,16 +953,7 @@ WHEN NOT matched THEN
       imp_t. USER_ID
     );
 END;
-/
-BEGIN
-  export_barchart();
-  import_barchart();
-END;
---BUBBLECHART
-/
-SELECT * FROM BUBBLECHART;
-/
-CREATE OR REPLACE PROCEDURE export_BUBBLECHART
+/ CREATE OR REPLACE PROCEDURE export_BUBBLECHART
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -1073,8 +963,7 @@ BEGIN
   FROM BUBBLECHART e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'BUBBLECHART.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_BUBBLECHART
+/ CREATE OR REPLACE PROCEDURE import_BUBBLECHART
 IS
   xrow CLOB;
 BEGIN
@@ -1111,16 +1000,7 @@ WHEN NOT matched THEN
       imp_t. USER_ID
     );
 END;
-/
-BEGIN
-  export_BUBBLECHART();
-  import_BUBBLECHART();
-END;
---LINECHART
-/
-SELECT * FROM LINECHART;
-/
-CREATE OR REPLACE PROCEDURE export_LINECHART
+/ CREATE OR REPLACE PROCEDURE export_LINECHART
 IS
   file1 utl_file.file_type;
   xrow CLOB;
@@ -1130,8 +1010,7 @@ BEGIN
   FROM LINECHART e;
   DBMS_XSLPROCESSOR.CLOB2FILE( xrow, 'EXPORTFILE', 'LINECHART.TXT');
 END;
-/
-CREATE OR REPLACE PROCEDURE import_LINECHART
+/ CREATE OR REPLACE PROCEDURE import_LINECHART
 IS
   xrow CLOB;
 BEGIN
@@ -1174,16 +1053,9 @@ WHEN NOT matched THEN
       imp_t. USER_ID
     );
 END;
-/
-BEGIN
-  export_LINECHART();
-  import_LINECHART();
-END;
-
 
 --general
-/
-create or replace procedure exportApp
+/ CREATE or replace procedure exportApp
 is
 begin
   export_USERS();
@@ -1197,9 +1069,7 @@ begin
   export_bubblechart();
   export_barchart_labels();
 end;
-
-/
-create or replace procedure importApp
+/ CREATE or replace procedure importApp
 is
 begin
   import_USERS();
@@ -1212,9 +1082,4 @@ begin
   import_linechart();
   import_bubblechart();
   import_barchart_labels();
-end;
-/
-begin
-  exportApp();
-  importApp();
 end;

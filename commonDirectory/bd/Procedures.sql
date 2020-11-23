@@ -1,7 +1,11 @@
 ---------------------------------ITEMS
 
 create or replace procedure INSERT_ITEM 
-  (item_id in INT, item_name in varchar2, item_description in varchar2, item_key_name in varchar2, item_img in varchar2) IS
+  (item_id in INT, 
+  item_name in varchar2, 
+  item_description in varchar2, 
+  item_key_name in varchar2, 
+  item_img in varchar2) IS
   exist PLS_INTEGER;
   begin
     SELECT COUNT(1)
@@ -10,7 +14,12 @@ create or replace procedure INSERT_ITEM
      WHERE id = item_id
        AND ROWNUM = 1;
     if exist = 1 then
-      update ITEMS set  name = item_name,description = item_description, key_name = item_key_name, img = item_img where id=item_id;
+      update ITEMS set  
+        name = item_name,
+        description = item_description, 
+        key_name = item_key_name, 
+        img = item_img 
+      where id=item_id;
     else 
         insert into ITEMS (id, name, description, key_name, img)
       values 
@@ -18,18 +27,11 @@ create or replace procedure INSERT_ITEM
     end if;
   end;
 /
---drop procedure INSERT_ITEM;
-/
-begin
-  INSERT_ITEM(1, 'her', 'desc2');
-end;
-/
 create or replace procedure SELECT_ITEMS(curs out SYS_REFCURSOR) is
   begin
     open curs for select * from ITEMS order by name;
   end;
 /
-select * from ITEMS order by id desc;
 --------------------------------------------HERO ROLE
 
 create or replace procedure INSERT_HERO_ROLE 
@@ -55,9 +57,6 @@ create or replace procedure SELECT_HERO_ROLES(curs out SYS_REFCURSOR) is
     open curs for select * from Roles order by name;
   end;
 /
-select * from Roles;
---drop procedure INSERT_HERO_ROLE;
-/
 
 --uniting heroes and role_hero
 create or replace procedure INSERT_HEROES_ROLES
@@ -81,22 +80,13 @@ create or replace procedure SELECT_HEROES_ROLES(curs out SYS_REFCURSOR) is
     open curs for select * from HeroesRoles;
   end;
 /
-select * from HeroesRoles ;
---drop procedure INSERT_HEROES_ROLES;
-/
 create or replace procedure CLEAR_HEROES_ROLES
   is
   begin
     execute immediate 'truncate table HeroesRoles';
   end;
 /
---drop procedure CLEAR_HEROES_ROLES;
-/
-begin 
-  --CLEAR_HEROES_ROLES;
-end;
-/
---------------------------------------------HERO ROLE
+--------------------------------------------HERO 
 
 create or replace procedure INSERT_HERO 
   (hero_id in INT, hero_name in varchar2, img in varchar2, icon in varchar2) IS
@@ -125,19 +115,6 @@ create or replace procedure SELECT_HEROES(curs out SYS_REFCURSOR) is
     open curs for select * from Heroes order by name;
   end;
 /
-select * from Heroes;
---drop procedure INSERT_HERO;
-/
-begin
-  --INSERT_HERO(1, 'hero1');
-end;
-/
-begin
-  --INSERT_HERO_ROLE(1, 'herorole1');
-end;
-
-
-/
 create or replace procedure ClearAllDb
 is begin
   execute immediate 'truncate table boughtItems';
@@ -150,11 +127,6 @@ is begin
   execute immediate 'ALTER TABLE PLAYERSMATCHES DISABLE CONSTRAINT PLAYERSMATCHES_FK1';
   execute immediate 'truncate table matches';
   execute immediate 'ALTER TABLE PLAYERSMATCHES enable CONSTRAINT PLAYERSMATCHES_FK1';
-end;
-/
-
-begin
-  ClearAllDb;
 end;
 /
 

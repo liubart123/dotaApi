@@ -413,8 +413,6 @@ public class SuperService {
         query += "group by xAxis.name";
         query += " having count(*) > " + chart.minCountOfMatches;
 
-
-
         ResultSet rs = rep.executeQuery(query);
         Float maxBubbleSize = 15f;
         Float minBubbleSize = 2f;
